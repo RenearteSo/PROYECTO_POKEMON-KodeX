@@ -139,6 +139,175 @@ public class Pokemon {
 		this.estadoActual = new Estado();
 		this.ubicacion = "";
 	}
+	
+	//Getters and setters
+	public int getIdPokemon() {
+		return idPokemon;
+	}
+
+	public void setIdPokemon(int idPokemon) {
+		this.idPokemon = idPokemon;
+	}
+
+	public int getIdEntrenador() {
+		return idEntrenador;
+	}
+
+	public void setIdEntrenador(int idEntrenador) {
+		this.idEntrenador = idEntrenador;
+	}
+
+	public Pokedex getNumPokedex() {
+		return numPokedex;
+	}
+
+	public void setNumPokedex(Pokedex numPokedex) {
+		this.numPokedex = numPokedex;
+	}
+
+	public Objeto getObjetoEquipado() {
+		return objetoEquipado;
+	}
+
+	public void setObjetoEquipado(Objeto objetoEquipado) {
+		this.objetoEquipado = objetoEquipado;
+	}
+
+	public String getMote() {
+		return mote;
+	}
+
+	public void setMote(String mote) {
+		this.mote = mote;
+	}
+
+	public int getVitalidad() {
+		return vitalidad;
+	}
+
+	public void setVitalidad(int vitalidad) {
+		this.vitalidad = vitalidad;
+	}
+
+	public int getAtaque() {
+		return ataque;
+	}
+
+	public void setAtaque(int ataque) {
+		this.ataque = ataque;
+	}
+
+	public int getDefensa() {
+		return defensa;
+	}
+
+	public void setDefensa(int defensa) {
+		this.defensa = defensa;
+	}
+
+	public int getVelocidad() {
+		return velocidad;
+	}
+
+	public void setVelocidad(int velocidad) {
+		this.velocidad = velocidad;
+	}
+
+	public int getEstamina() {
+		return estamina;
+	}
+
+	public void setEstamina(int estamina) {
+		this.estamina = estamina;
+	}
+
+	public int getExp() {
+		return exp;
+	}
+
+	public void setExp(int exp) {
+		this.exp = exp;
+	}
+
+	public int getNivel() {
+		return nivel;
+	}
+
+	public void setNivel(int nivel) {
+		this.nivel = nivel;
+	}
+
+	public int getFertilidad() {
+		return fertilidad;
+	}
+
+	public void setFertilidad(int fertilidad) {
+		this.fertilidad = fertilidad;
+	}
+
+	public int getAtaqueEspecial() {
+		return ataqueEspecial;
+	}
+
+	public void setAtaqueEspecial(int ataqueEspecial) {
+		this.ataqueEspecial = ataqueEspecial;
+	}
+
+	public int getDefensaEspecial() {
+		return defensaEspecial;
+	}
+
+	public void setDefensaEspecial(int defensaEspecial) {
+		this.defensaEspecial = defensaEspecial;
+	}
+
+	public Movimiento[] getMovimiento() {
+		return movimiento;
+	}
+
+	public void setMovimiento(Movimiento[] movimiento) {
+		this.movimiento = movimiento;
+	}
+
+	public LinkedList<TipoPokemon> getTipoPokemon() {
+		return tipoPokemon;
+	}
+
+	public void setTipoPokemon(LinkedList<TipoPokemon> tipoPokemon) {
+		this.tipoPokemon = tipoPokemon;
+	}
+
+	public String getSexo() {
+		return sexo;
+	}
+
+	public void setSexo(String sexo) {
+		this.sexo = sexo;
+	}
+
+	public Estado getEstadoActual() {
+		return estadoActual;
+	}
+
+	public void setEstadoActual(Estado estadoActual) {
+		this.estadoActual = estadoActual;
+	}
+
+	public String getUbicacion() {
+		return ubicacion;
+	}
+
+	public void setUbicacion(String ubicacion) {
+		this.ubicacion = ubicacion;
+	}
+
+	public int getNIVELDEF() {
+		return NIVELDEF;
+	}
+
+	public int getFERTILIDADDEF() {
+		return FERTILIDADDEF;
+	}
 
 	// Creamos un método de clase para generar las stats aleatorias cuando el
 	// pokemon nace. Las generamos por defecto
@@ -151,6 +320,31 @@ public class Pokemon {
 		//Operador terniario
 		//Condición: Numero que genera Math.random es menor que 0.5? Si es verdadero es macho, si es falso es hembra.
 		return (Math.random() < 0.5) ? "MACHO" : "HEMBRA";
+	}
+	// Método para la subida de nivel del pokemon
+	public boolean subirNivel() {
+		boolean subidaNivel = false;
+		//Usamos un bucle While para los caso en los que se gane mucha experiencia.
+		while(this.exp >= this.nivel*10) {
+			this.exp-=(this.nivel*10); //Gastamos la experiencia que teníamos
+			this.nivel++;
+			subidaNivel = true;
+			
+			// Al subir de nivel se mejorará de 1 a 5 aleatoriamente cada estadística de nuestro pokemon.
+			this.vitalidad+= (int)(Math.random()*(5 - 1 +1) + 1);
+			this.ataque+= (int)(Math.random()*(5 - 1 +1) + 1);
+			this.defensa+= (int)(Math.random()*(5 - 1 +1) + 1);
+			this.ataqueEspecial+= (int)(Math.random()*(5 - 1 +1) + 1);
+			this.defensaEspecial+= (int)(Math.random()*(5 - 1 +1) + 1);
+			this.velocidad+= (int)(Math.random()*(5 - 1 +1) + 1);
+			
+			//Creamos la condición para que cada 3 niveles nuestro pokemon pueda aprender un nuevo movimiento!
+			if(this.nivel % 3 == 0) {
+				System.out.println("¡El pokemon puede aprender un nuevo movimiento!");
+			}
+		} 
+		
+		return subidaNivel;
 	}
 
 	//Método toString
