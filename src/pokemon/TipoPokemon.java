@@ -1,5 +1,6 @@
 package pokemon;
 
+//Enum de tipo pokemon 
 public enum TipoPokemon {
 	AGUA, BICHO, DRAGON, ELECTRICO, FANTASMA, FUEGO, 
     HIELO, LUCHA, NORMAL, PLANTA, PSIQUICO, ROCA, 
