@@ -14,12 +14,12 @@ public class Objeto {
 		this.idObjeto = 0;
 		this.nomObjeto = "";
 		this.precioObjeto = 0;
-		this.modAtaque = 0;
-		this.modDefensa = 0;
-		this.modVelocidad = 0;
-		this.modDefEsp = 0;
-		this.modEstamina = 0;
-		this.modRecupEstamina = 0;
+		this.modAtaque = 1.0;
+		this.modDefensa = 1.0;
+		this.modVelocidad = 1.0;
+		this.modDefEsp = 1.0;
+		this.modEstamina = 1.0;
+		this.modRecupEstamina = 1.0;
 	}
 	
 	// Constructor parametrizado
@@ -36,6 +36,20 @@ public class Objeto {
 		this.modEstamina = modEstamina;
 		this.modRecupEstamina = modRecupEstamina;
 	}
+	
+	// Constructor copia
+		public Objeto(Objeto o) {
+			super();
+			this.idObjeto = o.idObjeto;
+			this.nomObjeto = o.nomObjeto;
+			this.precioObjeto = o.precioObjeto;
+			this.modAtaque = o.modAtaque;
+			this.modDefensa = o.modDefensa;
+			this.modVelocidad = o.modVelocidad;
+			this.modDefEsp = o.modDefEsp;
+			this.modEstamina = o.modEstamina;
+			this.modRecupEstamina = o.modRecupEstamina;
+		}
 
 	// Getters para obtener informacion del objeto (los setters no son necesarios al no modificar los valores)
 	
@@ -79,7 +93,7 @@ public class Objeto {
 	
 	@Override
 	public String toString() {
-	    return "--- DETALLES DEL OBJETO" + idObjeto + "---\n" +
+	    return "--- DETALLES DEL OBJETO " + idObjeto + "---\n" +
 	           "Nombre: " + nomObjeto + "\n" +
 	           "Precio: " + precioObjeto + " pokedollars\n" +
 	           "----------------------------\n" +
