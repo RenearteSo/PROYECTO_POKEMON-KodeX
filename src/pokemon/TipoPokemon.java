@@ -1,5 +1,6 @@
 package pokemon;
 
+//Enum de tipo pokemon 
 public enum TipoPokemon {
 	AGUA,
 	BICHO,
