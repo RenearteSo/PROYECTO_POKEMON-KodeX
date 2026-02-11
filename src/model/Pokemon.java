@@ -1,4 +1,4 @@
-package pokemon;
+package model;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -114,8 +114,9 @@ public class Pokemon {
 		this.estadoActual = p.estadoActual;
 		this.ubicacion = p.ubicacion;
 	}
-	
-	//Creamos un constructor Nacimiento, en el que solamente se pidan los valores que no se van a conocer cuando el pokemon nace.
+
+	// Creamos un constructor Nacimiento, en el que solamente se pidan los valores
+	// que no se van a conocer cuando el pokemon nace.
 	public Pokemon(Pokedex numPokedex, String mote) {
 		super();
 		this.idPokemon = 0;
@@ -139,8 +140,8 @@ public class Pokemon {
 		this.estadoActual = new Estado();
 		this.ubicacion = "";
 	}
-	
-	//Getters and setters
+
+	// Getters and setters
 	public int getIdPokemon() {
 		return idPokemon;
 	}
@@ -187,6 +188,9 @@ public class Pokemon {
 
 	public void setVitalidad(int vitalidad) {
 		this.vitalidad = vitalidad;
+		if (this.vitalidad < 0) {
+			this.vitalidad = 0; // Condición para que la vida no baje a negativo
+		}
 	}
 
 	public int getAtaque() {
@@ -301,53 +305,109 @@ public class Pokemon {
 		this.ubicacion = ubicacion;
 	}
 
-	public int getNIVELDEF() {
-		return NIVELDEF;
-	}
-
-	public int getFERTILIDADDEF() {
-		return FERTILIDADDEF;
-	}
-
 	// Creamos un método de clase para generar las stats aleatorias cuando el
 	// pokemon nace. Las generamos por defecto
 	private static int generarStatAleatoria() {
 		return (int) (Math.random() * 10) + 1;
 	}
-	
-	//Creamos método para la aleatoriedad del sexo.
+
+	// Creamos método para la aleatoriedad del sexo.
 	private static String generarSexoAleatorio() {
-		//Operador terniario
-		//Condición: Numero que genera Math.random es menor que 0.5? Si es verdadero es macho, si es falso es hembra.
+		// Operador terniario
+		// Condición: Numero que genera Math.random es menor que 0.5? Si es verdadero es
+		// macho, si es falso es hembra.
 		return (Math.random() < 0.5) ? "MACHO" : "HEMBRA";
 	}
+
 	// Método para la subida de nivel del pokemon
 	public boolean subirNivel() {
 		boolean subidaNivel = false;
-		//Usamos un bucle While para los caso en los que se gane mucha experiencia.
-		while(this.exp >= this.nivel*10) {
-			this.exp-=(this.nivel*10); //Gastamos la experiencia que teníamos
+		// Usamos un bucle While para los caso en los que se gane mucha experiencia.
+		while (this.exp >= this.nivel * 10) {
+			this.exp -= (this.nivel * 10); // Gastamos la experiencia que teníamos
 			this.nivel++;
 			subidaNivel = true;
-			
-			// Al subir de nivel se mejorará de 1 a 5 aleatoriamente cada estadística de nuestro pokemon.
-			this.vitalidad+= (int)(Math.random()*(5 - 1 +1) + 1);
-			this.ataque+= (int)(Math.random()*(5 - 1 +1) + 1);
-			this.defensa+= (int)(Math.random()*(5 - 1 +1) + 1);
-			this.ataqueEspecial+= (int)(Math.random()*(5 - 1 +1) + 1);
-			this.defensaEspecial+= (int)(Math.random()*(5 - 1 +1) + 1);
-			this.velocidad+= (int)(Math.random()*(5 - 1 +1) + 1);
-			
-			//Creamos la condición para que cada 3 niveles nuestro pokemon pueda aprender un nuevo movimiento!
-			if(this.nivel % 3 == 0) {
+
+			// Al subir de nivel se mejorará de 1 a 5 aleatoriamente cada estadística de
+			// nuestro pokemon.
+			this.vitalidad += (int) (Math.random() * (5 - 1 + 1) + 1);
+			this.ataque += (int) (Math.random() * (5 - 1 + 1) + 1);
+			this.defensa += (int) (Math.random() * (5 - 1 + 1) + 1);
+			this.ataqueEspecial += (int) (Math.random() * (5 - 1 + 1) + 1);
+			this.defensaEspecial += (int) (Math.random() * (5 - 1 + 1) + 1);
+			this.velocidad += (int) (Math.random() * (5 - 1 + 1) + 1);
+
+			// Creamos la condición para que cada 3 niveles nuestro pokemon pueda aprender
+			// un nuevo movimiento!
+			if (this.nivel % 3 == 0) {
 				System.out.println("¡El pokemon puede aprender un nuevo movimiento!");
 			}
-		} 
-		
+		}
+
 		return subidaNivel;
 	}
 
-	//Método toString
+	// Creamos el método atacar a otro pokemon
+	// Le pasamos como argumentos un pokemon al que atacar y un movimiento.
+	public void atacar(Pokemon pokemonEnemigo, Movimiento movElegido) {
+		int coste = movElegido.calcularCosteEstamina(); // Llamamos al método gestCosteEstamina de la calse movimiento
+		if (this.estamina >= coste) {
+			this.estamina -= coste; // Restamos el coste de la estamina del movimiento a nuestras estamina actual.
+
+			// Generamos la lógica del daño y se la aplicamos al pokemon rival restánbdole
+			// su defensa
+			int danio = (this.ataque + movElegido.getPotencia()) - pokemonEnemigo.getDefensa();
+			if (danio < 0) {
+				danio = 0; // Condición para evitar daños negativos
+			}
+
+			// Metemos en el método atacar la comprobación de ventaja y desventaja que es
+			// dependiente de la clase TipoPokemon
+			double efectividad = 1.0; // Es la efectividad estandar
+
+			// (!!!!!FALTA LA PARTE DE ALEXIS!!!!)
+
+			int danioFinal = 0;
+			danioFinal = (int) (danio * efectividad);// fórmula de daño para conocer el daño final aplicando la
+														// EFECTIVIDAD
+														// de la VENTAJA o DESVENTAJA
+
+			pokemonEnemigo.setVitalidad(pokemonEnemigo.getVitalidad() - danioFinal); // actualizamos la vida del Pokemon
+			// enemigo
+		} else {
+			this.descansar();
+		}
+	}
+
+	// Creamos el método descansar para recuperar la estamina perdida que gastamos
+	// en combate o haceindo algún movimiento
+	public void descansar() {
+		// Cuando el pokemon descansa recupera 20 puntos de estamina.
+		this.estamina += 20;
+		// Condición para que la estamina no supere los 100 puntos
+		if (this.estamina > 100) {
+			this.estamina = 100;
+		}
+	}
+
+	// Método aprender nuevo movimiento.
+	public Movimiento aprenderMovimiento(Movimiento nuevoMov, int indice) {
+		// Condición para evitar que se introduzca un índice erróneo en nuestro array
+		if (indice < 0 || indice >= this.movimiento.length) {
+			return null;
+		}
+		// Reemplazamos el movimiento que queremos olvidar y lo guardamos en una
+		// variable para luego en el MAIN guardarlo en una COLECCIÓN.
+		Movimiento movOlvidado = this.movimiento[indice];
+		// Sobreescribimos el nuevo movimiento encima y lo guardamos en nuestro array de
+		// movimientos actuales del pokemon
+		this.movimiento[indice] = nuevoMov;
+		
+		//Devolvemos el viejo para que luego el MAIN lo gestione.
+		return movOlvidado;
+	}
+
+	// Método toString
 	@Override
 	public String toString() {
 		return "Pokemon [NIVELDEF=" + NIVELDEF + ", FERTILIDADDEF=" + FERTILIDADDEF + ", idPokemon=" + idPokemon
@@ -358,6 +418,5 @@ public class Pokemon {
 				+ defensaEspecial + ", movimiento=" + Arrays.toString(movimiento) + ", tipoPokemon=" + tipoPokemon
 				+ ", sexo=" + sexo + ", estadoActual=" + estadoActual + ", ubicacion=" + ubicacion + "]";
 	}
-	
-	
+
 }

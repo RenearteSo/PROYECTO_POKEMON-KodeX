@@ -1,4 +1,4 @@
-package pokemon;
+package model;
 
 //Enum de tipo pokemon 
 public enum TipoPokemon {
