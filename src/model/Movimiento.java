@@ -129,7 +129,7 @@ public class Movimiento {
 	}
 
 	// Método Coste de estamina
-	// Calculamo el coste de estamina en base al tipo de movimiento.
+	// Calculamos el coste de estamina en base al tipo de movimiento.
 	public int calcularCosteEstamina() {
 		if (this.tipoMovimiento.equalsIgnoreCase("ATAQUE")) {
 			this.costeEstamina = this.potencia / 2;
@@ -138,6 +138,7 @@ public class Movimiento {
 		} else if (this.tipoMovimiento.equalsIgnoreCase("MEJORA")) {
 			this.costeEstamina = this.numTurnos * 10;
 		}
+		//Se necesita para la clase pokemon
 
 		return this.costeEstamina;
 	}
