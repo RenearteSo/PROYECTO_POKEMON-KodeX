@@ -1,0 +1,143 @@
+package model;
+
+
+public class Movimiento {
+	private int idMovimiento, potencia, pp, numTurnos, costeEstamina, nivelAprendizaje;
+    private String claseMovimiento; // ataque, estado, mejora
+    private String nomMovimiento;
+    private String descripMovimiento;
+    private String estado;  // El efecto a aplica - ejemplo: Quemado
+    private String mejora;  // La estadistica que mejora - ejemplo: Defensa 
+    private TipoPokemon tipoPokemon;
+    
+    
+	// Constructor por defecto
+    public Movimiento() {
+		super();
+		this.claseMovimiento = "ataque";
+		this.nomMovimiento = "Sin nombre";
+		this.tipoPokemon = TipoPokemon.NORMAL;
+	}
+
+ // constructor parametrizado
+ 	public Movimiento(int idMovimiento, int potencia, int pp, int numTurnos, int costeEstamina, int nivelAprendizaje,
+ 			String claseMovimiento, String nomMovimiento, String descripMovimiento, String estado, String mejora,
+ 			TipoPokemon tipo) {
+ 		super();
+ 		this.idMovimiento = idMovimiento;
+ 		this.potencia = potencia;
+ 		this.pp = pp;
+ 		this.numTurnos = numTurnos;
+ 		this.costeEstamina = calcularCosteEstamina();
+ 		this.nivelAprendizaje = nivelAprendizaje;
+ 		this.claseMovimiento = claseMovimiento.toLowerCase(); // nombre en minuscula
+ 		this.nomMovimiento = nomMovimiento;
+ 		this.descripMovimiento = descripMovimiento;
+ 		this.estado = estado;
+ 		this.mejora = mejora;
+ 		this.tipoPokemon = tipo;
+ 	}
+ 	
+ 	// constructor copia
+ 	public Movimiento(Movimiento m) {
+ 		super();
+ 		this.idMovimiento = m.idMovimiento;
+ 		this.potencia = m.potencia;
+ 		this.pp = m.pp;
+ 		this.numTurnos = m.numTurnos;
+ 		this.costeEstamina = m.costeEstamina;
+ 		this.nivelAprendizaje = m.nivelAprendizaje;
+ 		this.claseMovimiento = m.claseMovimiento;
+ 		this.nomMovimiento = m.nomMovimiento;
+ 		this.descripMovimiento = m.descripMovimiento;
+ 		this.estado = m.estado;
+ 		this.mejora = m.mejora;
+ 		this.tipoPokemon = m.tipoPokemon;
+ 	}
+
+ 	// Getters para obtener informacion del objeto (los setters no son necesarios al no modificar los valores)
+
+	public int getIdMovimiento() {
+		return idMovimiento;
+	}
+
+	public int getPotencia() {
+		return potencia;
+	}
+
+	public int getPp() {
+		return pp;
+	}
+
+	public int getNumTurnos() {
+		return numTurnos;
+	}
+
+	public int getCosteEstamina() {
+		return costeEstamina;
+	}
+
+	public int getNivelAprendizaje() {
+		return nivelAprendizaje;
+	}
+
+	public String getClaseMovimiento() {
+		return claseMovimiento;
+	}
+
+	public String getNomMovimiento() {
+		return nomMovimiento;
+	}
+
+	public String getDescripMovimiento() {
+		return descripMovimiento;
+	}
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public String getMejora() {
+		return mejora;
+	}
+
+	public TipoPokemon getTipoPokemon() {
+		return tipoPokemon;
+	}
+
+	// Método privado para el coste de estamina
+	// Calculamos el coste de estamina en base al tipo de movimiento.
+	public int calcularCosteEstamina() {
+		if (this.claseMovimiento.equals("ataque")){ // si el tipo es ataque, dividimos la potencia entre 2
+			this.costeEstamina = this.potencia / 2;
+		} else if (this.claseMovimiento.equals("estado")){ // si es el estado multiplicamos * 10 el numero de turnos
+			this.costeEstamina = this.numTurnos * 10;
+		} else if (this.claseMovimiento.equals("mejora")){
+			this.costeEstamina = this.numTurnos * 10;
+		}
+
+		return this.costeEstamina;
+	}
+	
+
+	public boolean puedeRealizarTurno(int estaminaActual) {
+		int costeEstamina = this.costeEstamina;
+		
+		if (estaminaActual >= costeEstamina) { // si el coste es menor a la estamina se puede atacar
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	// toString
+		@Override
+		public String toString() {
+			return "Movimiento [idMovimiento=" + idMovimiento + ", potencia=" + potencia + ", pp=" + pp + ", numTurnos="
+					+ numTurnos + ", costeEstamina=" + costeEstamina + ", nivelAprendizaje=" + nivelAprendizaje
+					+ ", claseMovimiento=" + claseMovimiento + ", nomMovimiento=" + nomMovimiento + ", descripMovimiento="
+					+ descripMovimiento + ", estado=" + estado + ", mejora=" + mejora + ", tipo=" + tipoPokemon + "]";
+		}
+		
+
+}
