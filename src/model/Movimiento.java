@@ -1,155 +1,143 @@
 package model;
 
-public class Movimiento {
-	private int idMovimiento, potencia, PP, numTurnos, costeEstamina;
-	// Clase movimiento si es de: mejora, estado, ataque.
-	private String tipoMovimiento;
-	private String nomMovimiento;
-	private String descripMovimiento;
-	private TipoPokemon tipoPokemon; // cogemos el tipo de la clase
 
+public class Movimiento {
+	private int idMovimiento, potencia, pp, numTurnos, costeEstamina, nivelAprendizaje;
+    private String claseMovimiento; // ataque, estado, mejora
+    private String nomMovimiento;
+    private String descripMovimiento;
+    private String estado;  // El efecto a aplica - ejemplo: Quemado
+    private String mejora;  // La estadistica que mejora - ejemplo: Defensa 
+    private TipoPokemon tipoPokemon;
+    
+    
 	// Constructor por defecto
-	public Movimiento() {
+    public Movimiento() {
 		super();
-		this.idMovimiento = 0;
-		this.potencia = 0;
-		this.PP = 0;
-		this.numTurnos = 0;
-		this.costeEstamina = 0;
-		this.tipoMovimiento = "";
-		this.nomMovimiento = "";
-		this.descripMovimiento = "";
+		this.claseMovimiento = "ataque";
+		this.nomMovimiento = "Sin nombre";
 		this.tipoPokemon = TipoPokemon.NORMAL;
 	}
 
-	// Constructor con parámetros
-	public Movimiento(int idMovimiento, int potencia, int PP, int numTurnos, int costeEstamina, String tipoMovimiento,
-			String nomMovimiento, String descripMovimiento, TipoPokemon tipoPokemon) {
-		super();
-		this.idMovimiento = idMovimiento;
-		this.potencia = potencia; // OJO! El orden de los parámetros aquí importa, Se ha cambiado la potencia y el
-									// tipo de movimeitno a antes de costeEstamina y de que aplique el método para
-									// que no salga un valor 0 siempre
-		this.tipoMovimiento = tipoMovimiento;
-		this.PP = PP;
-		this.numTurnos = numTurnos;
-		this.costeEstamina = calcularCosteEstamina();// Pasamos el método de calcular el coste de estamina al
-														// constructor con parámetros para que automáticamente se
-														// calcule el oste del movimiento.
-		this.nomMovimiento = nomMovimiento;
-		this.descripMovimiento = descripMovimiento;
-		this.tipoPokemon = tipoPokemon;
-	}
+ // constructor parametrizado
+ 	public Movimiento(int idMovimiento, int potencia, int pp, int numTurnos, int costeEstamina, int nivelAprendizaje,
+ 			String claseMovimiento, String nomMovimiento, String descripMovimiento, String estado, String mejora,
+ 			TipoPokemon tipo) {
+ 		super();
+ 		this.idMovimiento = idMovimiento;
+ 		this.potencia = potencia;
+ 		this.pp = pp;
+ 		this.numTurnos = numTurnos;
+ 		this.costeEstamina = calcularCosteEstamina();
+ 		this.nivelAprendizaje = nivelAprendizaje;
+ 		this.claseMovimiento = claseMovimiento.toLowerCase(); // nombre en minuscula
+ 		this.nomMovimiento = nomMovimiento;
+ 		this.descripMovimiento = descripMovimiento;
+ 		this.estado = estado;
+ 		this.mejora = mejora;
+ 		this.tipoPokemon = tipo;
+ 	}
+ 	
+ 	// constructor copia
+ 	public Movimiento(Movimiento m) {
+ 		super();
+ 		this.idMovimiento = m.idMovimiento;
+ 		this.potencia = m.potencia;
+ 		this.pp = m.pp;
+ 		this.numTurnos = m.numTurnos;
+ 		this.costeEstamina = m.costeEstamina;
+ 		this.nivelAprendizaje = m.nivelAprendizaje;
+ 		this.claseMovimiento = m.claseMovimiento;
+ 		this.nomMovimiento = m.nomMovimiento;
+ 		this.descripMovimiento = m.descripMovimiento;
+ 		this.estado = m.estado;
+ 		this.mejora = m.mejora;
+ 		this.tipoPokemon = m.tipoPokemon;
+ 	}
 
-	// Constructor copia
-	public Movimiento(Movimiento m) {
-		super();
-		this.idMovimiento = m.idMovimiento;
-		this.potencia = m.potencia;
-		this.PP = m.PP;
-		this.numTurnos = m.numTurnos;
-		this.costeEstamina = m.costeEstamina;
-		this.tipoMovimiento = m.tipoMovimiento;
-		this.nomMovimiento = m.nomMovimiento;
-		this.descripMovimiento = m.descripMovimiento;
-		this.tipoPokemon = m.tipoPokemon;
-	}
+ 	// Getters para obtener informacion del objeto (los setters no son necesarios al no modificar los valores)
 
-	// Setters and getters
 	public int getIdMovimiento() {
 		return idMovimiento;
-	}
-
-	public void setIdMovimiento(int idMovimiento) {
-		this.idMovimiento = idMovimiento;
 	}
 
 	public int getPotencia() {
 		return potencia;
 	}
 
-	public void setPotencia(int potencia) {
-		this.potencia = potencia;
-	}
-
-	public int getPP() {
-		return PP;
-	}
-
-	public void setPP(int pP) {
-		PP = pP;
+	public int getPp() {
+		return pp;
 	}
 
 	public int getNumTurnos() {
 		return numTurnos;
 	}
 
-	public void setNumTurnos(int numTurnos) {
-		this.numTurnos = numTurnos;
-	}
-
 	public int getCosteEstamina() {
 		return costeEstamina;
 	}
 
-	public void setCosteEstamina(int costeEstamina) {
-		this.costeEstamina = costeEstamina;
+	public int getNivelAprendizaje() {
+		return nivelAprendizaje;
 	}
 
-	public String getTipoMovimiento() {
-		return tipoMovimiento;
-	}
-
-	public void setTipoMovimiento(String tipoMovimiento) {
-		this.tipoMovimiento = tipoMovimiento;
+	public String getClaseMovimiento() {
+		return claseMovimiento;
 	}
 
 	public String getNomMovimiento() {
 		return nomMovimiento;
 	}
 
-	public void setNomMovimiento(String nomMovimiento) {
-		this.nomMovimiento = nomMovimiento;
-	}
-
 	public String getDescripMovimiento() {
 		return descripMovimiento;
 	}
 
-	public void setDescripMovimiento(String descripMovimiento) {
-		this.descripMovimiento = descripMovimiento;
+	public String getEstado() {
+		return estado;
+	}
+
+	public String getMejora() {
+		return mejora;
 	}
 
 	public TipoPokemon getTipoPokemon() {
 		return tipoPokemon;
 	}
 
-	public void setTipoPokemon(TipoPokemon tipoPokemon) {
-		this.tipoPokemon = tipoPokemon;
-	}
-
-	// Método Coste de estamina
+	// Método privado para el coste de estamina
 	// Calculamos el coste de estamina en base al tipo de movimiento.
 	public int calcularCosteEstamina() {
-		if (this.tipoMovimiento.equalsIgnoreCase("ATAQUE")) {
+		if (this.claseMovimiento.equals("ataque")){ // si el tipo es ataque, dividimos la potencia entre 2
 			this.costeEstamina = this.potencia / 2;
-		} else if (this.tipoMovimiento.equalsIgnoreCase("ESTADO")) {
+		} else if (this.claseMovimiento.equals("estado")){ // si es el estado multiplicamos * 10 el numero de turnos
 			this.costeEstamina = this.numTurnos * 10;
-		} else if (this.tipoMovimiento.equalsIgnoreCase("MEJORA")) {
+		} else if (this.claseMovimiento.equals("mejora")){
 			this.costeEstamina = this.numTurnos * 10;
 		}
-		//Se necesita para la clase pokemon
 
 		return this.costeEstamina;
 	}
+	
 
-	// Método toString
-	@Override
-	public String toString() {
-		return "Movimiento [idMovimiento=" + idMovimiento + ", potencia=" + potencia + ", PP=" + PP + ", numTurnos="
-				+ numTurnos + ", costeEstamina=" + costeEstamina + ", tipoMovimiento=" + tipoMovimiento
-				+ ", nomMovimiento=" + nomMovimiento + ", descripMovimiento=" + descripMovimiento + ", tipoPokemon="
-				+ tipoPokemon + "]";
+	public boolean puedeRealizarTurno(int estaminaActual) {
+		int costeEstamina = this.costeEstamina;
+		
+		if (estaminaActual >= costeEstamina) { // si el coste es menor a la estamina se puede atacar
+			return true;
+		} else {
+			return false;
+		}
 	}
+
+	// toString
+		@Override
+		public String toString() {
+			return "Movimiento [idMovimiento=" + idMovimiento + ", potencia=" + potencia + ", pp=" + pp + ", numTurnos="
+					+ numTurnos + ", costeEstamina=" + costeEstamina + ", nivelAprendizaje=" + nivelAprendizaje
+					+ ", claseMovimiento=" + claseMovimiento + ", nomMovimiento=" + nomMovimiento + ", descripMovimiento="
+					+ descripMovimiento + ", estado=" + estado + ", mejora=" + mejora + ", tipo=" + tipoPokemon + "]";
+		}
+		
 
 }
