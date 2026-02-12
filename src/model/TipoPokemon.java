@@ -207,7 +207,7 @@ public enum TipoPokemon {
 	 * @return Resultado del multiplicador
 	 */
 	
-	public double multiplicador(TipoPokemon oponente1, TipoPokemon oponente2) {
+	public double calculoDaño(TipoPokemon oponente1, TipoPokemon oponente2) {
 
 		// Calculamos como afecta un ataque al primer tipo pokemon.
 		double m1 = multiplicador(oponente1);
@@ -233,7 +233,7 @@ public enum TipoPokemon {
 	public String obtenerVentaja(TipoPokemon oponente1, TipoPokemon oponente2) {
 
 		// Obtenemos el numero
-		double multi = multiplicador(oponente1, oponente2);
+		double multi = calculoDaño(oponente1, oponente2);
 
 		//Ventaja que corresponde a cada numero.
 		if(multi >= 2.0) {
