@@ -28,7 +28,7 @@ public class Entrenador {
 		this.nombreEntrenador = "";
 		this.tipoEntrenador = "";
 		this.pokedollar = 0;
-		this.nivelEntrenador = nivelEntrenador;
+		this.nivelEntrenador = 0;
 		this.password = "";
 		this.rutaImgFrontal = "";
 		this.equipoPrincipal = new Pokemon[6];
@@ -75,7 +75,6 @@ public class Entrenador {
 			this.equipoSecundario = new LinkedList<Pokemon>(e.equipoSecundario); // Aqui usamos la misma lógica, creamos
 			// una nueva lista con los datos que ya teníamos para evitar que las
 			// modificaciones alteren los demás pokemons
-
 		} else {
 			this.equipoSecundario = new LinkedList<Pokemon>();
 		}
@@ -167,6 +166,9 @@ public class Entrenador {
 	public void setMochila(LinkedList<Objeto> mochila) {
 		this.mochila = mochila;
 	}
+	
+	
+	
 	//Método toString
 	@Override
 	public String toString() {

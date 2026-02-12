@@ -365,7 +365,21 @@ public class Pokemon {
 			// dependiente de la clase TipoPokemon
 			double efectividad = 1.0; // Es la efectividad estandar
 
-			// (!!!!!FALTA LA PARTE DE ALEXIS!!!!)
+			// Obtenemos el Tipo del Movimiento que se usa.
+			TipoPokemon tipoAtaque = movElegido.getTipoPokemon();
+
+			// Obtenemos los tipos del enemigo. Puede ser de 1 o 2 tipos. Usamos la Linked
+			// list para guardarlos y recuperarlos de ahí.
+			TipoPokemon tipoDefensor1 = pokemonEnemigo.getTipoPokemon().get(0);
+			TipoPokemon tipoDefensor2 = null;
+			
+
+			// Si el enemigo tiene un segundo tipo, lo cogemos también.
+			if (pokemonEnemigo.getTipoPokemon().size() > 1) {
+				tipoDefensor2 = pokemonEnemigo.getTipoPokemon().get(1);
+			}
+			
+			efectividad = tipoAtaque.calculoDaño(tipoDefensor1, tipoDefensor2);
 
 			int danioFinal = 0;
 			danioFinal = (int) (danio * efectividad);// fórmula de daño para conocer el daño final aplicando la
@@ -402,8 +416,8 @@ public class Pokemon {
 		// Sobreescribimos el nuevo movimiento encima y lo guardamos en nuestro array de
 		// movimientos actuales del pokemon
 		this.movimiento[indice] = nuevoMov;
-		
-		//Devolvemos el viejo para que luego el MAIN lo gestione.
+
+		// Devolvemos el viejo para que luego el MAIN lo gestione.
 		return movOlvidado;
 	}
 
