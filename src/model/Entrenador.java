@@ -219,6 +219,7 @@ public class Entrenador {
 	}
 	
 	//Método entrenar
+<<<<<<< HEAD
 	public void entrenarPokemon(Pokemon p, Entrenamiento entreno) {
 		//Calculamos cuánto cuesta el entrenamiento.
 		int coste = entreno.calcularCoste(p);
@@ -234,6 +235,12 @@ public class Entrenador {
 		System.out.println("Has pagado " + coste + " Pokedollares");
 		//Aplicamos la mejora
 		entreno.aplicarMejora(p);
+=======
+	public boolean entrenarPokemon(Pokemon p, int pokedollarGastado) {
+		
+		
+		return true;
+>>>>>>> branch 'main' of https://github.com/RenearteSo/PROYECTO_POKEMON-KodeX
 	}
 
 	// Método toString, ocultando la contraseña.
