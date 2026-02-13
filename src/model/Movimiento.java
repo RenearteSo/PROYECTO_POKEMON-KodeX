@@ -104,6 +104,55 @@ public class Movimiento {
 	public TipoPokemon getTipoPokemon() {
 		return tipoPokemon;
 	}
+	
+
+	public void setIdMovimiento(int idMovimiento) {
+		this.idMovimiento = idMovimiento;
+	}
+
+	public void setPotencia(int potencia) {
+		this.potencia = potencia;
+	}
+
+	public void setPp(int pp) {
+		this.pp = pp;
+	}
+
+	public void setNumTurnos(int numTurnos) {
+		this.numTurnos = numTurnos;
+	}
+
+	public void setCosteEstamina(int costeEstamina) {
+		this.costeEstamina = costeEstamina;
+	}
+
+	public void setNivelAprendizaje(int nivelAprendizaje) {
+		this.nivelAprendizaje = nivelAprendizaje;
+	}
+
+	public void setClaseMovimiento(String claseMovimiento) {
+		this.claseMovimiento = claseMovimiento;
+	}
+
+	public void setNomMovimiento(String nomMovimiento) {
+		this.nomMovimiento = nomMovimiento;
+	}
+
+	public void setDescripMovimiento(String descripMovimiento) {
+		this.descripMovimiento = descripMovimiento;
+	}
+
+	public void setEstado(Estado estado) {
+		this.estado = estado;
+	}
+
+	public void setMejora(String mejora) {
+		this.mejora = mejora;
+	}
+
+	public void setTipoPokemon(TipoPokemon tipoPokemon) {
+		this.tipoPokemon = tipoPokemon;
+	}
 
 	// Método privado para el coste de estamina
 	// Calculamos el coste de estamina en base al tipo de movimiento.
@@ -130,13 +179,20 @@ public class Movimiento {
 	}
 
 	// toString
-		@Override
-		public String toString() {
-			return "Movimiento [idMovimiento=" + idMovimiento + ", potencia=" + potencia + ", pp=" + pp + ", numTurnos="
-					+ numTurnos + ", costeEstamina=" + costeEstamina + ", nivelAprendizaje=" + nivelAprendizaje
-					+ ", claseMovimiento=" + claseMovimiento + ", nomMovimiento=" + nomMovimiento + ", descripMovimiento="
-					+ descripMovimiento + ", estado=" + estado + ", mejora=" + mejora + ", tipo=" + tipoPokemon + "]";
-		}
-		
+	@Override
+	public String toString() {
+	    return "--- DETALLES DEL MOVIMIENTO " + idMovimiento + " ---\n" +
+	           "Nombre: " + nomMovimiento + " [" + tipoPokemon + "]\n" +
+	           "Clase: " + claseMovimiento + " | Estado: " + estado + "\n" +
+	           "Descripción: " + descripMovimiento + "\n" +
+	           "----------------------------\n" +
+	           "ESTADÍSTICAS DE COMBATE:\n" +
+	           "Potencia: " + potencia + " | PP: " + pp + " | Estamina: " + costeEstamina + "\n" +
+	           "Turnos: " + numTurnos + " | Nivel aprendizaje: " + nivelAprendizaje + "\n" +
+	           "----------------------------\n" +
+	           "EFECTOS ADICIONALES:\n" +
+	           "Mejora: " + mejora + "\n" +
+	           "----------------------------";
+	}
 
 }
