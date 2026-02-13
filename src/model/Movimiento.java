@@ -6,7 +6,7 @@ public class Movimiento {
     private String claseMovimiento; // ataque, estado, mejora
     private String nomMovimiento;
     private String descripMovimiento;
-    private String estado;  // El efecto a aplica - ejemplo: Quemado
+    private Estado estado;  // El efecto a aplica - ejemplo: Quemado
     private String mejora;  // La estadistica que mejora - ejemplo: Defensa 
     private TipoPokemon tipoPokemon;
     
@@ -21,8 +21,8 @@ public class Movimiento {
 
  // constructor parametrizado
  	public Movimiento(int idMovimiento, int potencia, int pp, int numTurnos, int costeEstamina, int nivelAprendizaje,
- 			String claseMovimiento, String nomMovimiento, String descripMovimiento, String estado, String mejora,
- 			TipoPokemon tipo) {
+ 			String claseMovimiento, String nomMovimiento, String descripMovimiento, Estado estado, String mejora,
+ 			TipoPokemon tipoPokemon) {
  		super();
  		this.idMovimiento = idMovimiento;
  		this.potencia = potencia;
@@ -35,7 +35,7 @@ public class Movimiento {
  		this.descripMovimiento = descripMovimiento;
  		this.estado = estado;
  		this.mejora = mejora;
- 		this.tipoPokemon = tipo;
+ 		this.tipoPokemon = tipoPokemon;
  	}
  	
  	// constructor copia
@@ -93,7 +93,7 @@ public class Movimiento {
 		return descripMovimiento;
 	}
 
-	public String getEstado() {
+	public Estado getEstado() {
 		return estado;
 	}
 
