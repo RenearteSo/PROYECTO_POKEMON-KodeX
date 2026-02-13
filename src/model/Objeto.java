@@ -89,8 +89,46 @@ public class Objeto {
 		return modRecupEstamina;
 	}
 
-	// Metodo toString que muestra solo el nombre del objeto.
 	
+	
+	public void setIdObjeto(int idObjeto) {
+		this.idObjeto = idObjeto;
+	}
+
+	public void setNomObjeto(String nomObjeto) {
+		this.nomObjeto = nomObjeto;
+	}
+
+	public void setPrecioObjeto(int precioObjeto) {
+		this.precioObjeto = precioObjeto;
+	}
+
+	public void setModAtaque(double modAtaque) {
+		this.modAtaque = modAtaque;
+	}
+
+	public void setModDefensa(double modDefensa) {
+		this.modDefensa = modDefensa;
+	}
+
+	public void setModVelocidad(double modVelocidad) {
+		this.modVelocidad = modVelocidad;
+	}
+
+	public void setModDefEsp(double modDefEsp) {
+		this.modDefEsp = modDefEsp;
+	}
+
+	public void setModEstamina(double modEstamina) {
+		this.modEstamina = modEstamina;
+	}
+
+	public void setModRecupEstamina(double modRecupEstamina) {
+		this.modRecupEstamina = modRecupEstamina;
+	}
+	
+	// Metodo toString que muestra todos los datos.
+
 	@Override
 	public String toString() {
 	    return "--- DETALLES DEL OBJETO " + idObjeto + "---\n" +
