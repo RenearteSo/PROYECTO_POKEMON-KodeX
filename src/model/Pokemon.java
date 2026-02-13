@@ -21,6 +21,7 @@ public class Pokemon {
 	private String sexo;
 	private Estado estadoActual; // Usamos composición para poder asignar los efectos de cada estado específico a
 									// nuestro pokemon.
+	private int turnosEstado;
 	private String ubicacion;
 
 	// Constructor por defecto
@@ -44,7 +45,8 @@ public class Pokemon {
 		this.movimiento = new Movimiento[4];
 		this.tipoPokemon = new LinkedList<TipoPokemon>();
 		this.sexo = generarSexoAleatorio();
-		this.estadoActual = new Estado();
+		this.estadoActual = Estado.SALUDABLE;
+		this.turnosEstado = 0;
 		this.ubicacion = "";
 	}
 
@@ -52,7 +54,7 @@ public class Pokemon {
 	public Pokemon(int idPokemon, int idEntrenador, Pokedex numPokedex, Objeto objetoEquipado, String mote,
 			int vitalidad, int ataque, int defensa, int velocidad, int estamina, int exp, int nivel, int fertilidad,
 			int ataqueEspecial, int defensaEspecial, Movimiento[] movimiento, LinkedList<TipoPokemon> tipoPokemon,
-			String sexo, Estado estadoActual, String ubicacion) {
+			String sexo, Estado estadoActual, String ubicacion, int turnosEstado) {
 		super();
 		this.idPokemon = idPokemon;
 		this.idEntrenador = idEntrenador;
@@ -74,6 +76,7 @@ public class Pokemon {
 		this.sexo = sexo;
 		this.estadoActual = estadoActual;
 		this.ubicacion = ubicacion;
+		this.turnosEstado = turnosEstado;
 	}
 
 	// Constructor copia
@@ -112,6 +115,7 @@ public class Pokemon {
 		}
 		this.sexo = p.sexo;
 		this.estadoActual = p.estadoActual;
+		this.turnosEstado = p.turnosEstado;
 		this.ubicacion = p.ubicacion;
 	}
 
@@ -137,7 +141,7 @@ public class Pokemon {
 		this.movimiento = new Movimiento[4];
 		this.tipoPokemon = new LinkedList<TipoPokemon>();
 		this.sexo = generarSexoAleatorio();
-		this.estadoActual = new Estado();
+		this.estadoActual = Estado.SALUDABLE;
 		this.ubicacion = "";
 	}
 
@@ -301,6 +305,14 @@ public class Pokemon {
 		return ubicacion;
 	}
 
+	public int getTurnosEstado() {
+		return turnosEstado;
+	}
+
+	public void setTurnosEstado(int turnosEstado) {
+		this.turnosEstado = turnosEstado;
+	}
+
 	public void setUbicacion(String ubicacion) {
 		this.ubicacion = ubicacion;
 	}
@@ -347,16 +359,68 @@ public class Pokemon {
 		return subidaNivel;
 	}
 
+	// Método para comprobar si el estado permite atacar
+	private boolean puedeMoverse() {
+		switch (this.estadoActual) {
+		case PARALIZADO:
+			// 25% de probabilidad de no moverse
+			if (Math.random() < 0.25) {
+				System.out.println(this.mote + " está paralizado y no se puede mover.");
+				return false;
+			}
+			break;
+		case DORMIDO:
+			if (this.turnosEstado > 0) {
+				System.out.println(this.mote + " está dormido.");
+				this.turnosEstado--; // Restamos un turno al estado dormido
+				return false;
+			} else {
+				System.out.println(this.mote + " se ha despertado.");
+				this.estadoActual = Estado.SALUDABLE; // Vuelve al estado por defecto, al sano
+			}
+			break;
+		case CONGELADO:
+			// 20% de probabilidad de descongelarse
+			if (Math.random() < 0.20) {
+				System.out.println(this.mote + "se ha descongelado.");
+				this.estadoActual = Estado.SALUDABLE;
+			} else {
+				System.out.println(this.mote + "está congelado.");
+				return false;
+			}
+			break;
+		default:
+			break;
+
+		}
+		// Si es Saludable, Quemado o Envenenado, sí puede atacar (aunque recibe daño
+		// luego)
+		return true;
+	}
+
 	// Creamos el método atacar a otro pokemon
 	// Le pasamos como argumentos un pokemon al que atacar y un movimiento.
 	public void atacar(Pokemon pokemonEnemigo, Movimiento movElegido) {
+		// Primero comprobamos si el pokemon puede moverse
+		if (!puedeMoverse()) {
+			this.descansar(); // Pierde el turno
+			return;
+		}
+
 		int coste = movElegido.calcularCosteEstamina(); // Llamamos al método gestCosteEstamina de la calse movimiento
 		if (this.estamina >= coste) {
 			this.estamina -= coste; // Restamos el coste de la estamina del movimiento a nuestras estamina actual.
 
+			// Si por ejemplo el pokemon está quemado, el ataque físico se reduce a la
+			// mitad.
+			int ataqueReal = this.ataque;
+			if (this.estadoActual == Estado.QUEMADO && movElegido.getClaseMovimiento().equals("ataque")) {
+				ataqueReal = ataqueReal / 2;
+			}
+
 			// Generamos la lógica del daño y se la aplicamos al pokemon rival restánbdole
 			// su defensa
-			int danio = (this.ataque + movElegido.getPotencia()) - pokemonEnemigo.getDefensa();
+			int danio = (ataqueReal + movElegido.getPotencia()) - pokemonEnemigo.getDefensa();
 			if (danio < 0) {
 				danio = 0; // Condición para evitar daños negativos
 			}
@@ -367,18 +431,16 @@ public class Pokemon {
 
 			// Obtenemos el Tipo del Movimiento que se usa.
 			TipoPokemon tipoAtaque = movElegido.getTipoPokemon();
-
 			// Obtenemos los tipos del enemigo. Puede ser de 1 o 2 tipos. Usamos la Linked
 			// list para guardarlos y recuperarlos de ahí.
 			TipoPokemon tipoDefensor1 = pokemonEnemigo.getTipoPokemon().get(0);
 			TipoPokemon tipoDefensor2 = null;
-			
 
 			// Si el enemigo tiene un segundo tipo, lo cogemos también.
 			if (pokemonEnemigo.getTipoPokemon().size() > 1) {
 				tipoDefensor2 = pokemonEnemigo.getTipoPokemon().get(1);
 			}
-			
+
 			efectividad = tipoAtaque.calculoDaño(tipoDefensor1, tipoDefensor2);
 
 			int danioFinal = 0;
@@ -388,6 +450,17 @@ public class Pokemon {
 
 			pokemonEnemigo.setVitalidad(pokemonEnemigo.getVitalidad() - danioFinal); // actualizamos la vida del Pokemon
 			// enemigo
+
+			// Entramos en esta condición si el movimiento es de tipo ESTADO:
+			if (movElegido.getClaseMovimiento().equalsIgnoreCase("estado") && movElegido.getEstado() != null) {
+				if (pokemonEnemigo.getEstadoActual() == Estado.SALUDABLE) {
+					// Aplicamos y actualizamos el pokemon al movimiento que hemos elegido antes que
+					// lleva consigo su estado.
+					pokemonEnemigo.setEstadoActual(movElegido.getEstado());
+					System.out.println("¡" + pokemonEnemigo.getMote() + " ahora está " + movElegido.getEstado() + "!");
+				}
+			}
+
 		} else {
 			this.descansar();
 		}
