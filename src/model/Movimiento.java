@@ -118,7 +118,6 @@ public class Movimiento {
 
 		return this.costeEstamina;
 	}
-	
 
 	public boolean puedeRealizarTurno(int estaminaActual) {
 		int costeEstamina = this.costeEstamina;
