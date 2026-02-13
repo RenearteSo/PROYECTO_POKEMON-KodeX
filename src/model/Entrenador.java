@@ -78,15 +78,15 @@ public class Entrenador {
 		} else {
 			this.equipoSecundario = new LinkedList<Pokemon>();
 		}
-		//Comprobamos mochila y copiamos de manera profunda
+		// Comprobamos mochila y copiamos de manera profunda
 		if (this.mochila != null) {
 			this.mochila = new LinkedList<Objeto>(e.mochila);
 		} else {
 			this.mochila = new LinkedList<Objeto>();
 		}
 	}
-	
-	//Getters and setters Entrenador
+
+	// Getters and setters Entrenador
 	public int getIdEntrenador() {
 		return idEntrenador;
 	}
@@ -167,9 +167,58 @@ public class Entrenador {
 		this.mochila = mochila;
 	}
 	
-	
-	
-	//Método toString
+	//Método para mover un pokemon del equipo principal al secundario.
+	public boolean moverPokemon(int indice) {
+		//Comprobamos si el índice es válido
+			if (indice < 0 || indice > this.equipoPrincipal.length || this.equipoPrincipal[indice] == null) {
+				return false;
+			}
+			int contador = 0;
+			//Contamos cuántos pokemos tengo en el equipo principal.
+			for(Pokemon p : this.equipoPrincipal) {
+				if (p != null) {
+					contador++;
+				}
+				// Creamos la condición para evitar quedarnos a 0 de pokemons
+				if(contador <= 1) {
+					return false;
+				}
+			}
+			//Generamos la condición para mover al pokemon
+			Pokemon p = this.equipoPrincipal[indice]; //Cogemos al pokemon específico del índice que elegimos
+			this.equipoSecundario.add(p); //Lo metemos en la lista
+			this.equipoPrincipal[indice] = null; // Lo borramos del equipo principal
+		
+			return true;
+	}
+	//Método para mover el pokemon de la caja secundaria a la principal
+	public boolean moverPokeSecundario(int indice) {
+		//Comprobamos si el índice es válido
+		if(indice < 0 || indice < this.equipoSecundario.size()) {
+			return false;
+		}
+			//Recorremos el equipo principal en busca de un hueco
+			int huecoLibre = -1; //BANDERA QUE DECLARA QUE SIGNIFICA NINGÚN SITIO!
+			for(int i = 0; i < this.equipoPrincipal.length; i++) {
+				if(this.equipoPrincipal[i] == null) {
+					huecoLibre = i; //Encontramos el hueco !
+					break;
+				}
+			}
+			//Condición para saber que si el hueco sigue siendo -1, es que no había realmente sitio ya que el equipo está lleno!
+			if(huecoLibre == -1) {
+				return false; // Cortamos aquí para que no siga y no dé error
+			}
+			
+			//Al pasar las condiciones podemos usarlo y rellenar el array
+			Pokemon p = this.equipoSecundario.get(indice); // Cogemos al Pokémon de la caja
+			this.equipoPrincipal[huecoLibre] = p; // Lo ponemos en el hueco libre
+			this.equipoSecundario.remove(indice); // Lo borramos de la caja
+			
+		return true;
+	}
+
+	// Método toString 
 	@Override
 	public String toString() {
 		return "Entrenador [idEntrenador=" + idEntrenador + ", nombreEntrenador=" + nombreEntrenador
@@ -178,6 +227,5 @@ public class Entrenador {
 				+ ", equipoPrincipal=" + Arrays.toString(equipoPrincipal) + ", equipoSecundario=" + equipoSecundario
 				+ ", mochila=" + mochila + "]";
 	}
-	
-	
+
 }
