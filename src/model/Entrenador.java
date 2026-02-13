@@ -217,6 +217,13 @@ public class Entrenador {
 			
 		return true;
 	}
+	
+	//Método entrenar
+	public boolean entrenarPokemon(Pokemon p, int pokedollarGastado) {
+		
+		
+		return true;
+	}
 
 	// Método toString 
 	@Override
