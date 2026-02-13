@@ -218,14 +218,19 @@ public class Entrenador {
 		return true;
 	}
 
-	// Método toString 
+	// Método toString, ocultando la contraseña.
 	@Override
 	public String toString() {
-		return "Entrenador [idEntrenador=" + idEntrenador + ", nombreEntrenador=" + nombreEntrenador
-				+ ", tipoEntrenador=" + tipoEntrenador + ", pokedollar=" + pokedollar + ", nivelEntrenador="
-				+ nivelEntrenador + ", password=" + password + ", rutaImgFrontal=" + rutaImgFrontal
-				+ ", equipoPrincipal=" + Arrays.toString(equipoPrincipal) + ", equipoSecundario=" + equipoSecundario
-				+ ", mochila=" + mochila + "]";
+	    return "--- DETALLES DEL ENTRENADOR " + idEntrenador + " ---\n" +
+	           "Nombre: " + nombreEntrenador + "\n" +
+	           "Tipo: " + tipoEntrenador + " | Nivel: " + nivelEntrenador + "\n" +
+	           "Dinero: " + pokedollar + " pokedollars\n" +
+	           "----------------------------\n" +
+	           "EQUIPO Y MOCHILA:\n" +
+	           "Principal: " + Arrays.toString(equipoPrincipal) + "\n" +
+	           "Secundario: " + equipoSecundario + "\n" +
+	           "Mochila: " + mochila + "\n" +
+	           "----------------------------";
 	}
 
 }
