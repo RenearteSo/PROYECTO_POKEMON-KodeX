@@ -219,10 +219,21 @@ public class Entrenador {
 	}
 	
 	//Método entrenar
-	public boolean entrenarPokemon(Pokemon p, int pokedollarGastado) {
+	public void entrenarPokemon(Pokemon p, Entrenamiento entreno) {
+		//Calculamos cuánto cuesta el entrenamiento.
+		int coste = entreno.calcularCoste(p);
 		
-		
-		return true;
+		//Comprobamos si tenemos suficientes pokedollares.
+		if(this.pokedollar < coste) {
+			System.out.println("No tienes suficientes Pokedollares.");
+			System.out.println("Coste necesario: " + coste + " | tienes: " + this.pokedollar + "");
+			return;
+		}
+		//Realizamos el pago
+		this.pokedollar -= coste;
+		System.out.println("Has pagado " + coste + " Pokedollares");
+		//Aplicamos la mejora
+		entreno.aplicarMejora(p);
 	}
 
 	// Método toString, ocultando la contraseña.

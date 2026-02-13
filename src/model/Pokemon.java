@@ -316,51 +316,51 @@ public class Pokemon {
 	public void setUbicacion(String ubicacion) {
 		this.ubicacion = ubicacion;
 	}
-	
+
 	// Método para obtener el ataque total con el objeto aplicado al pokemon.
-		public int ataqueObjetoAplicado() {
-			double modificador = 1.0;
-			// Si tiene un objeto leemos su modificador
-			if (this.objetoEquipado != null) {
-				modificador = this.objetoEquipado.getModAtaque();
-			}
-			// Devolvemos el ataque base * el modificador
-			return (int) (this.ataque * modificador);
+	public int ataqueObjetoAplicado() {
+		double modificador = 1.0;
+		// Si tiene un objeto leemos su modificador
+		if (this.objetoEquipado != null) {
+			modificador = this.objetoEquipado.getModAtaque();
 		}
+		// Devolvemos el ataque base * el modificador
+		return (int) (this.ataque * modificador);
+	}
 
-		// Método para obtener la defensa total con el objeto aplicado al pokemon.
-		public int defensaObjetoAplicado() {
-			double modificador = 1.0;
-			// Si tiene un objeto leemos su modificador
-			if (this.objetoEquipado != null) {
-				modificador = this.objetoEquipado.getModDefensa();
-			}
-			// Devolvemos el ataque base * el modificador
-			return (int) (this.defensa * modificador);
+	// Método para obtener la defensa total con el objeto aplicado al pokemon.
+	public int defensaObjetoAplicado() {
+		double modificador = 1.0;
+		// Si tiene un objeto leemos su modificador
+		if (this.objetoEquipado != null) {
+			modificador = this.objetoEquipado.getModDefensa();
 		}
+		// Devolvemos el ataque base * el modificador
+		return (int) (this.defensa * modificador);
+	}
 
-		// Método para obtener la velocidad total con el objeto aplicado al pokemon.
-		public int velocidadaObjetoAplicado() {
-			double modificador = 1.0;
-			// Si tiene un objeto leemos su modificador
-			if (this.objetoEquipado != null) {
-				modificador = this.objetoEquipado.getModVelocidad();
-			}
-			// Devolvemos el ataque base * el modificador
-			return (int) (this.velocidad * modificador);
+	// Método para obtener la velocidad total con el objeto aplicado al pokemon.
+	public int velocidadaObjetoAplicado() {
+		double modificador = 1.0;
+		// Si tiene un objeto leemos su modificador
+		if (this.objetoEquipado != null) {
+			modificador = this.objetoEquipado.getModVelocidad();
 		}
+		// Devolvemos el ataque base * el modificador
+		return (int) (this.velocidad * modificador);
+	}
 
-		// Método para obtener la defensa especial total con el objeto aplicado al
-		// pokemon.
-		public int defEspecialObjetoAplicado() {
-			double modificador = 1.0;
-			// Si tiene un objeto leemos su modificador
-			if (this.objetoEquipado != null) {
-				modificador = this.objetoEquipado.getModDefEsp();
-			}
-			// Devolvemos el ataque base * el modificador
-			return (int) (this.defensaEspecial * modificador);
+	// Método para obtener la defensa especial total con el objeto aplicado al
+	// pokemon.
+	public int defEspecialObjetoAplicado() {
+		double modificador = 1.0;
+		// Si tiene un objeto leemos su modificador
+		if (this.objetoEquipado != null) {
+			modificador = this.objetoEquipado.getModDefEsp();
 		}
+		// Devolvemos el ataque base * el modificador
+		return (int) (this.defensaEspecial * modificador);
+	}
 
 	// Creamos un método de clase para generar las stats aleatorias cuando el
 	// pokemon nace. Las generamos por defecto
@@ -503,10 +503,10 @@ public class Pokemon {
 					// lleva consigo su estado.
 					pokemonEnemigo.setEstadoActual(movElegido.getEstado());
 					System.out.println("¡" + pokemonEnemigo.getMote() + " ahora está " + movElegido.getEstado() + "!");
-					//Si es sueño, contamos los turnos a aplicar de forma aleatoria
-					if(movElegido.getEstado() == Estado.DORMIDO) {
-	                    pokemonEnemigo.setTurnosEstado((int)(Math.random() * 3) + 1);
-	                }
+					// Si es sueño, contamos los turnos a aplicar de forma aleatoria
+					if (movElegido.getEstado() == Estado.DORMIDO) {
+						pokemonEnemigo.setTurnosEstado((int) (Math.random() * 3) + 1);
+					}
 				}
 			}
 
@@ -519,24 +519,24 @@ public class Pokemon {
 	// en combate o haceindo algún movimiento
 	public void descansar() {
 		double modRecup = 1.0;
-		//Calculamos la recuperación con objeto
-		if(this.objetoEquipado != null) {
+		// Calculamos la recuperación con objeto
+		if (this.objetoEquipado != null) {
 			modRecup = this.objetoEquipado.getModRecupEstamina();
 		}
 		int cantRecuperada = (int) (20 * modRecup);
 		this.estamina += cantRecuperada;
-		
-		//Cálculo para halla el tope máximo de recuperación
+
+		// Cálculo para halla el tope máximo de recuperación
 		double modMax = 1.0;
-		if(this.objetoEquipado != null) {
+		if (this.objetoEquipado != null) {
 			modMax = this.objetoEquipado.getModEstamina();
 		}
-		//El tope ya no es 100 fijo, es 100 * modificador.
+		// El tope ya no es 100 fijo, es 100 * modificador.
 		int topeMax = (int) (100 * modMax);
-		if(this.estamina > topeMax){ //Ajustamos el tope si nos pasamos de él.
+		if (this.estamina > topeMax) { // Ajustamos el tope si nos pasamos de él.
 			this.estamina = topeMax;
 		}
-		
+
 	}
 
 	// Método aprender nuevo movimiento.
@@ -559,13 +559,13 @@ public class Pokemon {
 	// Método toString
 	@Override
 	public String toString() {
-		return "Pokemon [NIVELDEF=" + NIVELDEF + ", FERTILIDADDEF=" + FERTILIDADDEF + ", idPokemon=" + idPokemon
-				+ ", idEntrenador=" + idEntrenador + ", numPokedex=" + numPokedex + ", objetoEquipado=" + objetoEquipado
-				+ ", mote=" + mote + ", vitalidad=" + vitalidad + ", ataque=" + ataque + ", defensa=" + defensa
-				+ ", velocidad=" + velocidad + ", estamina=" + estamina + ", exp=" + exp + ", nivel=" + nivel
-				+ ", fertilidad=" + fertilidad + ", ataqueEspecial=" + ataqueEspecial + ", defensaEspecial="
-				+ defensaEspecial + ", movimiento=" + Arrays.toString(movimiento) + ", tipoPokemon=" + tipoPokemon
-				+ ", sexo=" + sexo + ", estadoActual=" + estadoActual + ", ubicacion=" + ubicacion + "]";
+		return "Pokemon [idPokemon=" + idPokemon + ", idEntrenador=" + idEntrenador + ", numPokedex=" + numPokedex
+				+ ", objetoEquipado=" + objetoEquipado + ", mote=" + mote + ", vitalidad=" + vitalidad + ", ataque="
+				+ ataque + ", defensa=" + defensa + ", velocidad=" + velocidad + ", estamina=" + estamina + ", exp="
+				+ exp + ", nivel=" + nivel + ", fertilidad=" + fertilidad + ", ataqueEspecial=" + ataqueEspecial
+				+ ", defensaEspecial=" + defensaEspecial + ", movimiento=" + Arrays.toString(movimiento)
+				+ ", tipoPokemon=" + tipoPokemon + ", sexo=" + sexo + ", estadoActual=" + estadoActual + ", ubicacion="
+				+ ubicacion + "]";
 	}
 
 }
