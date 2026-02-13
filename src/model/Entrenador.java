@@ -166,96 +166,89 @@ public class Entrenador {
 	public void setMochila(LinkedList<Objeto> mochila) {
 		this.mochila = mochila;
 	}
-	
-	//Método para mover un pokemon del equipo principal al secundario.
+
+	// Método para mover un pokemon del equipo principal al secundario.
 	public boolean moverPokemon(int indice) {
-		//Comprobamos si el índice es válido
-			if (indice < 0 || indice > this.equipoPrincipal.length || this.equipoPrincipal[indice] == null) {
-				return false;
-			}
-			int contador = 0;
-			//Contamos cuántos pokemos tengo en el equipo principal.
-			for(Pokemon p : this.equipoPrincipal) {
-				if (p != null) {
-					contador++;
-				}
-				// Creamos la condición para evitar quedarnos a 0 de pokemons
-				if(contador <= 1) {
-					return false;
-				}
-			}
-			//Generamos la condición para mover al pokemon
-			Pokemon p = this.equipoPrincipal[indice]; //Cogemos al pokemon específico del índice que elegimos
-			this.equipoSecundario.add(p); //Lo metemos en la lista
-			this.equipoPrincipal[indice] = null; // Lo borramos del equipo principal
-		
-			return true;
-	}
-	//Método para mover el pokemon de la caja secundaria a la principal
-	public boolean moverPokeSecundario(int indice) {
-		//Comprobamos si el índice es válido
-		if(indice < 0 || indice < this.equipoSecundario.size()) {
+		// Comprobamos si el índice es válido
+		if (indice < 0 || indice > this.equipoPrincipal.length || this.equipoPrincipal[indice] == null) {
 			return false;
 		}
-			//Recorremos el equipo principal en busca de un hueco
-			int huecoLibre = -1; //BANDERA QUE DECLARA QUE SIGNIFICA NINGÚN SITIO!
-			for(int i = 0; i < this.equipoPrincipal.length; i++) {
-				if(this.equipoPrincipal[i] == null) {
-					huecoLibre = i; //Encontramos el hueco !
-					break;
-				}
+		int contador = 0;
+		// Contamos cuántos pokemos tengo en el equipo principal.
+		for (Pokemon p : this.equipoPrincipal) {
+			if (p != null) {
+				contador++;
 			}
-			//Condición para saber que si el hueco sigue siendo -1, es que no había realmente sitio ya que el equipo está lleno!
-			if(huecoLibre == -1) {
-				return false; // Cortamos aquí para que no siga y no dé error
-			}
-			
-			//Al pasar las condiciones podemos usarlo y rellenar el array
-			Pokemon p = this.equipoSecundario.get(indice); // Cogemos al Pokémon de la caja
-			this.equipoPrincipal[huecoLibre] = p; // Lo ponemos en el hueco libre
-			this.equipoSecundario.remove(indice); // Lo borramos de la caja
-			
+		}
+		// Creamos la condición para evitar quedarnos a 0 de pokemons
+		if (contador <= 1) {
+			return false;
+		}
+
+		// Generamos la condición para mover al pokemon
+		Pokemon p = this.equipoPrincipal[indice]; // Cogemos al pokemon específico del índice que elegimos
+		this.equipoSecundario.add(p); // Lo metemos en la lista
+		this.equipoPrincipal[indice] = null; // Lo borramos del equipo principal
+
 		return true;
 	}
-	
-	//Método entrenar
-<<<<<<< HEAD
+
+	// Método para mover el pokemon de la caja secundaria a la principal
+	public boolean moverPokeSecundario(int indice) {
+		// Comprobamos si el índice es válido
+		if (indice < 0 || indice > this.equipoSecundario.size()) {
+			return false;
+		}
+		// Recorremos el equipo principal en busca de un hueco
+		int huecoLibre = -1; // BANDERA QUE DECLARA QUE SIGNIFICA NINGÚN SITIO!
+		for (int i = 0; i < this.equipoPrincipal.length; i++) {
+			if (this.equipoPrincipal[i] == null) {
+				huecoLibre = i; // Encontramos el hueco !
+				break;
+			}
+		}
+		// Condición para saber que si el hueco sigue siendo -1, es que no había
+		// realmente sitio ya que el equipo está lleno!
+		if (huecoLibre == -1) {
+			return false; // Cortamos aquí para que no siga y no dé error
+		}
+
+		// Al pasar las condiciones podemos usarlo y rellenar el array
+		Pokemon p = this.equipoSecundario.get(indice); // Cogemos al Pokémon de la caja
+		this.equipoPrincipal[huecoLibre] = p; // Lo ponemos en el hueco libre
+		this.equipoSecundario.remove(indice); // Lo borramos de la caja
+
+		return true;
+	}
+
+	// Método entrenar
+
 	public void entrenarPokemon(Pokemon p, Entrenamiento entreno) {
-		//Calculamos cuánto cuesta el entrenamiento.
+		// Calculamos cuánto cuesta el entrenamiento.
 		int coste = entreno.calcularCoste(p);
-		
-		//Comprobamos si tenemos suficientes pokedollares.
-		if(this.pokedollar < coste) {
+
+		// Comprobamos si tenemos suficientes pokedollares.
+		if (this.pokedollar < coste) {
 			System.out.println("No tienes suficientes Pokedollares.");
 			System.out.println("Coste necesario: " + coste + " | tienes: " + this.pokedollar + "");
 			return;
 		}
-		//Realizamos el pago
+		// Realizamos el pago
 		this.pokedollar -= coste;
 		System.out.println("Has pagado " + coste + " Pokedollares");
-		//Aplicamos la mejora
+		// Aplicamos la mejora
 		entreno.aplicarMejora(p);
-=======
-	public boolean entrenarPokemon(Pokemon p, int pokedollarGastado) {
-		
-		
-		return true;
->>>>>>> branch 'main' of https://github.com/RenearteSo/PROYECTO_POKEMON-KodeX
+
 	}
 
 	// Método toString, ocultando la contraseña.
 	@Override
 	public String toString() {
-	    return "--- DETALLES DEL ENTRENADOR " + idEntrenador + " ---\n" +
-	           "Nombre: " + nombreEntrenador + "\n" +
-	           "Tipo: " + tipoEntrenador + " | Nivel: " + nivelEntrenador + "\n" +
-	           "Dinero: " + pokedollar + " pokedollars\n" +
-	           "----------------------------\n" +
-	           "EQUIPO Y MOCHILA:\n" +
-	           "Principal: " + Arrays.toString(equipoPrincipal) + "\n" +
-	           "Secundario: " + equipoSecundario + "\n" +
-	           "Mochila: " + mochila + "\n" +
-	           "----------------------------";
+		return "--- DETALLES DEL ENTRENADOR " + idEntrenador + " ---\n" + "Nombre: " + nombreEntrenador + "\n"
+				+ "Tipo: " + tipoEntrenador + " | Nivel: " + nivelEntrenador + "\n" + "Dinero: " + pokedollar
+				+ " pokedollars\n" + "----------------------------\n" + "EQUIPO Y MOCHILA:\n" + "Principal: "
+				+ Arrays.toString(equipoPrincipal) + "\n" + "Secundario: " + equipoSecundario + "\n" + "Mochila: "
+				+ mochila + "\n" + "----------------------------";
 	}
 
 }
