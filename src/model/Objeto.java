@@ -88,8 +88,6 @@ public class Objeto {
 	public double getModRecupEstamina() {
 		return modRecupEstamina;
 	}
-
-	
 	
 	public void setIdObjeto(int idObjeto) {
 		this.idObjeto = idObjeto;
