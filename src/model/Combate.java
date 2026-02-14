@@ -1,5 +1,7 @@
 package model;
 
+import java.util.LinkedList;
+
 public class Combate {
 	
 	// TAREAS POR HACER EN LA CLASE COMBATE:
@@ -10,7 +12,7 @@ public class Combate {
 	
     private Entrenador jugador;
     private Entrenador rival;
-    private int turno; // por definir si es tipo Turno
+    private LinkedList<Turno>turno; // LinkedList
     private int koJugador; // pokemons debilitados NUESTROS
     private int koRival;   // pokemons debilitados del ENEMIGO
     private Entrenador ganador;
@@ -18,7 +20,7 @@ public class Combate {
     public Combate(Entrenador jugador, Entrenador rival) { // al empezar combate añadimos el jugador y el rival
         this.jugador = jugador;
         this.rival = rival;
-        this.turno = 1; // PUEDE SER TIPO TURNO, NO INT, COMPROBAR ESTO
+        this.turno = new LinkedList<Turno>(); // Creo que debería ser un linkedList para ir guardando los turnos
         this.koJugador = 0;
         this.koRival = 0;
         // LOG AQUI O EN TURNO, hay que comprobarlo
