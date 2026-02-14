@@ -15,7 +15,7 @@ public class Combate {
     private int koRival;   // pokemons debilitados del ENEMIGO
     private Entrenador ganador;
     
-    public Combate(Entrenador jugador, Entrenador rival) { // añadimos 
+    public Combate(Entrenador jugador, Entrenador rival) { // al empezar combate añadimos el jugador y el rival
         this.jugador = jugador;
         this.rival = rival;
         this.turno = 1; // PUEDE SER TIPO TURNO, NO INT, COMPROBAR ESTO
