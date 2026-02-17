@@ -47,7 +47,7 @@
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-            <ImageView fitHeight="403.0" fitWidth="680.0" layoutX="-23.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="850.0" fitWidth="880.0" layoutX="-150.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../img/Login/FONDO_LOGIN_POKEMON.gif" />
                </image>
