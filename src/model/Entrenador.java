@@ -240,6 +240,105 @@ public class Entrenador {
 		entreno.aplicarMejora(p);
 
 	}
+	
+	//Método para poner a criar
+	public Pokemon ponerACriar(Pokemon p1, Pokemon p2) {
+	    
+	    //Generamos comprobaciones básicas antes de poner a criar
+	    if (p1.getIdPokemon() == p2.getIdPokemon()) {
+	        System.out.println("¡No puedes criar al mismo Pokémon consigo mismo!");
+	        return null;
+	    }
+	    
+	    //Comprobamos sexo
+	    if (p1.getSexo().equals(p2.getSexo())) {
+	        System.out.println("¡Necesitas un macho y una hembra!");
+	        return null;
+	    }
+	    
+	    //Comprobamos fertilidad
+	    if (p1.getFertilidad() <= 0 || p2.getFertilidad() <= 0) {
+	        System.out.println("Uno de los Pokémon ya no es fértil.");
+	        return null;
+	    }
+	    
+	    //Comprobamos dinero
+	    int costeCrianza = 200;
+	    if (this.pokedollar < costeCrianza) {
+	        System.out.println("No tienes suficiente dinero para la guardería.");
+	        return null;
+	    }
+	    
+	    // Si todo está en orden, procedemos
+	    
+	    this.pokedollar -= costeCrianza; // Cobramos
+
+	    // Restamos fertilidad a los padres
+	    p1.setFertilidad(p1.getFertilidad() - 1);
+	    p2.setFertilidad(p2.getFertilidad() - 1);
+	    
+	    System.out.println("¡Han puesto un huevo!");
+	    
+	    // LLAMAMOS AL MÉTODO DE POKEMON QUE CREAMOS ANTES
+	    Pokemon bebe = Pokemon.engendrarHijo(p1, p2);
+	    
+	    // Asignamos el ID del entrenador al bebé
+	    bebe.setIdEntrenador(this.idEntrenador);
+	    
+	    return bebe; // Devolvemos el bebé al Main para que le ponga nombre
+	}
+	    
+	// Creamos un método para guardar el pokemon cuando lo capturamos.
+	public void guardarPokemon(Pokemon nuevoPokemon) {
+		// Le asignamos el id del entrenador
+		nuevoPokemon.setIdEntrenador(this.idEntrenador);
+
+		// Buscamos hueco en el array principal (Equipo principal)
+		for (int i = 0; i < this.equipoPrincipal.length; i++) {
+			if (this.equipoPrincipal[i] == null) {
+				this.equipoPrincipal[i] = nuevoPokemon;
+				System.out.println("¡" + nuevoPokemon.getMote() + " ha sido añadido a tu equipo principal!");
+				return;
+			}
+		}
+		// En caso de que no hubiera hueco lo guardamos en el equipo secundario.
+		this.equipoSecundario.add(nuevoPokemon);
+		System.out.println("Equipo lleno. " + nuevoPokemon.getMote() + " ha sido enviado a la caja.");
+	}
+
+	public boolean capturarPokemon(Pokemon salvaje, Objeto pokeball) {
+		// Gastamos la pokeball
+		this.mochila.remove(pokeball);
+		System.out.println(this.nombreEntrenador + " usó " + pokeball.getNomObjeto() + "...");
+
+		// Calculamos la probabilidad de captura del pokemon mediante la medición de la
+		// vitalidad
+		int vidaMax = 100;
+		int vidaActual = salvaje.getVitalidad();
+
+		// Fórmula simple de probabilidad para la captura: (VidaMax -
+		// VidaAvtual)/VidaMax.
+
+		double probabilidadBase = (double) (vidaMax - vidaActual) / vidaMax;
+
+		// Aplicamos los bonus de estado si se diera el caso.
+		if (salvaje.getEstadoActual() == Estado.DORMIDO || salvaje.getEstadoActual() == Estado.CONGELADO) {
+			probabilidadBase += 0.2; // Aumentamos la probabilidad un 20% más
+		} else if (salvaje.getEstadoActual() != Estado.SALUDABLE) {
+			probabilidadBase += 0.1; // Aumentamos un 10 % más por estado quemado, paralizado, etc
+		}
+
+		double suerte = Math.random(); // Lanzamos un número entre el 0.0 y 1.0
+		if (suerte < probabilidadBase) {
+			System.out.println("¡" + salvaje.getMote() + " capturado!"); // Capturado!
+			guardarPokemon(salvaje); // Aprovechamos la captura para guardar nuestro nuevo pokemon con el método
+										// creado antes!
+			return true;
+		} else {
+			System.out.println("¡Vaya!" + salvaje.getMote() + "se ha escapado.");
+			return false;
+		}
+	}
 
 	// Método toString, ocultando la contraseña.
 	@Override

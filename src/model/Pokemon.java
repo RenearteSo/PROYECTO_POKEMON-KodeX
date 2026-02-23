@@ -404,6 +404,36 @@ public class Pokemon {
 		return subidaNivel;
 	}
 
+	// Creamos método para concebir a un pokemon.
+	public static Pokemon engendrarHijo(Pokemon padre, Pokemon madre) {
+		// Hereda la especie de la madre (regla clásica de Pokémon)
+		// Usamos el constructor de copia o nacimiento
+		Pokemon hijo = new Pokemon(madre.getNumPokedex(), "Huevo de " + madre.getMote());
+
+		// Hacemos que herede la media de los STATS de padre y madre
+		// Vitalidad
+		hijo.setVitalidad((padre.getVitalidad() + madre.getVitalidad()) / 2);
+		// Ataque
+		hijo.setAtaque((padre.getAtaque() + madre.getAtaque()) / 2);
+		// Defensa
+		hijo.setDefensa((padre.getDefensa() + madre.getDefensa()) / 2);
+		// Velocidad
+		hijo.setVelocidad((padre.getVelocidad() + madre.getVelocidad()) / 2);
+		// Ataque Especial
+		hijo.setAtaqueEspecial((padre.getAtaqueEspecial() + madre.getAtaqueEspecial()) / 2);
+		// Defensa Especial
+		hijo.setDefensaEspecial((padre.getDefensaEspecial() + madre.getDefensaEspecial()) / 2);
+		
+		
+		// Nivel al que nace el hijo
+		hijo.setNivel(1);
+		hijo.setEstamina(100); //Nace descansado
+		hijo.setExp(0); //Nace sin exp.
+		hijo.setFertilidad(5); //Nacse con el máximo de fertilidad
+		
+		return hijo;
+	}
+
 	// Método para comprobar si el estado permite atacar
 	private boolean puedeMoverse() {
 		switch (this.estadoActual) {
