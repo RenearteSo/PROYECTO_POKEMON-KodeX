@@ -434,80 +434,36 @@ public class Pokemon {
 		return hijo;
 	}
 
-	// Método para comprobar si el estado permite atacar
-	private boolean puedeMoverse() {
-		switch (this.estadoActual) {
-		case PARALIZADO:
-			// 25% de probabilidad de no moverse
-			if (Math.random() < 0.25) {
-				System.out.println(this.mote + " está paralizado y no se puede mover.");
-				return false;
-			}
-			break;
-		case DORMIDO:
-			if (this.turnosEstado > 0) {
-				System.out.println(this.mote + " está dormido.");
-				this.turnosEstado--; // Restamos un turno al estado dormido
-				return false;
-			} else {
-				System.out.println(this.mote + " se ha despertado.");
-				this.estadoActual = Estado.SALUDABLE; // Vuelve al estado por defecto, al sano
-			}
-			break;
-		case CONGELADO:
-			// 20% de probabilidad de descongelarse
-			if (Math.random() < 0.20) {
-				System.out.println(this.mote + "se ha descongelado.");
-				this.estadoActual = Estado.SALUDABLE;
-			} else {
-				System.out.println(this.mote + "está congelado.");
-				return false;
-			}
-			break;
-		default:
-			break;
-
-		}
-		// Si es Saludable, Quemado o Envenenado, sí puede atacar (aunque recibe daño
-		// luego)
-		return true;
-	}
-
 	// Creamos el método atacar a otro pokemon
 	// Le pasamos como argumentos un pokemon al que atacar y un movimiento.
 	public void atacar(Pokemon pokemonEnemigo, Movimiento movElegido) {
-		// Primero comprobamos si el pokemon puede moverse
-		if (!puedeMoverse()) {
-			this.descansar(); // Pierde el turno
-			return;
-		}
+		
+		// --- CAMBIO: Hemos quitado el if(!puedeMoverse()) que había aquí ---
 
-		int coste = movElegido.calcularCosteEstamina(); // Llamamos al método gestCosteEstamina de la calse movimiento
+		int coste = movElegido.calcularCosteEstamina(); // Llamamos al método gestCosteEstamina de la clase movimiento
+			
 		if (this.estamina >= coste) {
 			this.estamina -= coste; // Restamos el coste de la estamina del movimiento a nuestras estamina actual.
 
-			// Si por ejemplo el pokemon está quemado, el ataque físico se reduce a la
-			// mitad.
+			// Si por ejemplo el pokemon está quemado, el ataque físico se reduce a la mitad.
 			int ataqueReal = this.ataqueObjetoAplicado();
 			if (this.estadoActual == Estado.QUEMADO && movElegido.getClaseMovimiento().equals("ataque")) {
 				ataqueReal = ataqueReal / 2;
 			}
 
-			// Generamos la lógica del daño y se la aplicamos al pokemon rival restánbdole
-			// su defensa
+			// Generamos la lógica del daño y se la aplicamos al pokemon rival restándole su defensa
 			int danio = (ataqueReal + movElegido.getPotencia()) - pokemonEnemigo.defensaObjetoAplicado();
 			if (danio < 0) {
 				danio = 0; // Condición para evitar daños negativos
 			}
 
-			// Metemos en el método atacar la comprobación de ventaja y desventaja que es
-			// dependiente de la clase TipoPokemon
-			double efectividad = 1.0; // Es la efectividad estandar
+			// Metemos en el método atacar la comprobación de ventaja y desventaja
+			double efectividad = 1.0; 
 
 			// Obtenemos el Tipo del Movimiento que se usa.
 			TipoPokemon tipoAtaque = movElegido.getTipoPokemon();
-			// Obtenemos los tipos del enemigo. Puede ser de 1 o 2 tipos. Usamos la Linked
-			// list para guardarlos y recuperarlos de ahí.
+				
+			// Obtenemos los tipos del enemigo.
 			TipoPokemon tipoDefensor1 = pokemonEnemigo.getTipoPokemon().get(0);
 			TipoPokemon tipoDefensor2 = null;
 
@@ -518,32 +474,61 @@ public class Pokemon {
 
 			efectividad = tipoAtaque.calculoDaño(tipoDefensor1, tipoDefensor2);
 
-			int danioFinal = 0;
-			danioFinal = (int) (danio * efectividad);// fórmula de daño para conocer el daño final aplicando la
-														// EFECTIVIDAD
-														// de la VENTAJA o DESVENTAJA
+			// --- NUEVO: INMUNIDAD TOTAL DE DAÑO (Ej: Eléctrico vs Tierra) ---
+			if (efectividad == 0.0) {
+				System.out.println("¡No afecta a " + pokemonEnemigo.getMote() + "!");
+				return; // Cortamos el ataque. No hace daño ni aplica estados.
+			}
 
-			pokemonEnemigo.setVitalidad(pokemonEnemigo.getVitalidad() - danioFinal); // actualizamos la vida del Pokemon
-			// enemigo
+			// Si es un ataque de hacer daño (y no de estado)
+			if (movElegido.getClaseMovimiento().equalsIgnoreCase("ataque")) {
+				int danioFinal = (int) (danio * efectividad);
+				pokemonEnemigo.setVitalidad(pokemonEnemigo.getVitalidad() - danioFinal); 
+					
+				// Mensajes clásicos de efectividad
+				if (efectividad >= 2.0) {
+					System.out.println("¡Es súper eficaz!");
+				} else if (efectividad < 1.0) {
+					System.out.println("No es muy eficaz...");
+				}
+			}
 
-			// Entramos en esta condición si el movimiento es de tipo ESTADO:
+			// --- NUEVO: LÓGICA DE ESTADOS E INMUNIDADES (Ej: Fuego no se quema) ---
 			if (movElegido.getClaseMovimiento().equalsIgnoreCase("estado") && movElegido.getEstado() != null) {
+					
 				if (pokemonEnemigo.getEstadoActual() == Estado.SALUDABLE) {
-					// Aplicamos y actualizamos el pokemon al movimiento que hemos elegido antes que
-					// lleva consigo su estado.
-					pokemonEnemigo.setEstadoActual(movElegido.getEstado());
-					System.out.println("¡" + pokemonEnemigo.getMote() + " ahora está " + movElegido.getEstado() + "!");
-					// Si es sueño, contamos los turnos a aplicar de forma aleatoria
-					if (movElegido.getEstado() == Estado.DORMIDO) {
-						pokemonEnemigo.setTurnosEstado((int) (Math.random() * 3) + 1);
+						
+					boolean esInmune = false;
+						
+					// Recorremos los tipos del enemigo para ver si es inmune al estado
+					for (TipoPokemon tipo : pokemonEnemigo.getTipoPokemon()) {
+						if (movElegido.getEstado() == Estado.QUEMADO && tipo == TipoPokemon.FUEGO) esInmune = true;
+						if (movElegido.getEstado() == Estado.CONGELADO && tipo == TipoPokemon.HIELO) esInmune = true;
+						if (movElegido.getEstado() == Estado.HELADO && tipo == TipoPokemon.HIELO) esInmune = true;
+						if (movElegido.getEstado() == Estado.DRENADORAS && tipo == TipoPokemon.PLANTA) esInmune = true;
+						if (movElegido.getEstado() == Estado.PARALIZADO && tipo == TipoPokemon.ELECTRICO) esInmune = true; 
+						if ((movElegido.getEstado() == Estado.ENVENENADO || movElegido.getEstado() == Estado.GRAVEMENTE_ENVENENADO) && tipo == TipoPokemon.VENENO) esInmune = true;
+					}
+
+					// Si NO es inmune, le pegamos la enfermedad
+					if (!esInmune) {
+						pokemonEnemigo.setEstadoActual(movElegido.getEstado());
+						System.out.println("¡" + pokemonEnemigo.getMote() + " ahora está " + movElegido.getEstado() + "!");
+							
+						if (movElegido.getEstado() == Estado.DORMIDO) {
+							pokemonEnemigo.setTurnosEstado((int) (Math.random() * 3) + 1);
+						}
+					} else {
+						System.out.println("¡No afectó a " + pokemonEnemigo.getMote() + " porque su tipo lo hace inmune!");
 					}
 				}
 			}
 
-		} else {
-			this.descansar();
+			} else {
+				this.descansar();
+				System.out.println(this.mote + " está demasiado cansado y tiene que descansar.");
+			}
 		}
-	}
 
 	// Creamos el método descansar para recuperar la estamina perdida que gastamos
 	// en combate o haceindo algún movimiento
