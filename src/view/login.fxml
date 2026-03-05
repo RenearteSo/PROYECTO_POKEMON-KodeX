@@ -54,19 +54,25 @@
             </ImageView>
             <Pane fx:id="panelFondoIzq" prefHeight="486.0" prefWidth="255.0" style="-fx-background-color: #ffffff;">
                <children>
-                  <TextField fx:id="usuario" layoutX="83.0" layoutY="187.0" promptText="Usuario" />
+                  <TextField fx:id="usuario" layoutX="83.0" layoutY="187.0" prefHeight="22.0" prefWidth="149.0" promptText="Usuario">
+                     <font>
+                        <Font name="Consolas" size="12.0" />
+                     </font></TextField>
                   <ImageView fx:id="logoKodexTexto" fitHeight="222.0" fitWidth="565.0" layoutX="16.0" layoutY="-73.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../img/Login/KODEX%20BLACK.png" />
                      </image>
                   </ImageView>
-                  <PasswordField fx:id="passwd" layoutX="83.0" layoutY="225.0" promptText="Contraseña" />
+                  <PasswordField fx:id="passwd" layoutX="83.0" layoutY="225.0" prefHeight="22.0" prefWidth="149.0" promptText="Contraseña">
+                     <font>
+                        <Font name="Consolas" size="12.0" />
+                     </font></PasswordField>
                   <Button fx:id="confirmarLogin" cancelButton="true" layoutX="88.0" layoutY="280.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="79.0" style="-fx-background-color: #bc2f2f; -fx-border-color: #ffffff; -fx-border-width: 2px;" text="Entrar" textAlignment="CENTER" textFill="WHITE">
                      <font>
                         <Font name="Consolas" size="12.0" />
                      </font>
                   </Button>
-                  <Label fx:id="errorLogin" layoutX="45.0" layoutY="250.0" prefHeight="25.0" prefWidth="165.0" text="Credenciales incorrectas." textFill="#ff3535">
+                  <Label fx:id="errorLogin" layoutX="45.0" layoutY="250.0" prefHeight="25.0" prefWidth="165.0" text="Credenciales incorrectas." textFill="#ff3535" visible="false">
                      <font>
                         <Font name="Consolas Italic" size="12.0" />
                      </font></Label>
