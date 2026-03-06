@@ -43,47 +43,52 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.loginController">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-            <ImageView fitHeight="850.0" fitWidth="880.0" layoutX="-150.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="1427.0" fitWidth="2304.0" layoutX="-150.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../img/Login/FONDO_LOGIN_POKEMON.gif" />
                </image>
             </ImageView>
-            <Pane fx:id="panelFondoIzq" prefHeight="486.0" prefWidth="255.0" style="-fx-background-color: #ffffff;">
+            <Pane fx:id="panelFondoIzq" prefHeight="1304.0" prefWidth="791.0" style="-fx-background-color: #ffffff;">
                <children>
-                  <TextField fx:id="usuario" layoutX="83.0" layoutY="187.0" prefHeight="22.0" prefWidth="149.0" promptText="Usuario">
+                  <TextField fx:id="usuario" layoutX="294.0" layoutY="527.0" prefHeight="46.0" prefWidth="407.0" promptText="Usuario">
                      <font>
-                        <Font name="Consolas" size="12.0" />
+                        <Font name="Consolas" size="26.0" />
                      </font></TextField>
-                  <ImageView fx:id="logoKodexTexto" fitHeight="222.0" fitWidth="565.0" layoutX="16.0" layoutY="-73.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="logoKodexTexto" fitHeight="608.0" fitWidth="620.0" layoutX="70.0" layoutY="-223.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../img/Login/KODEX%20BLACK.png" />
                      </image>
                   </ImageView>
-                  <PasswordField fx:id="passwd" layoutX="83.0" layoutY="225.0" prefHeight="22.0" prefWidth="149.0" promptText="Contraseña">
+                  <PasswordField fx:id="passwd" layoutX="292.0" layoutY="609.0" prefHeight="49.0" prefWidth="411.0" promptText="Contraseña">
                      <font>
-                        <Font name="Consolas" size="12.0" />
+                        <Font name="Consolas" size="26.0" />
                      </font></PasswordField>
-                  <Button fx:id="confirmarLogin" cancelButton="true" layoutX="88.0" layoutY="280.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="79.0" style="-fx-background-color: #bc2f2f; -fx-border-color: #ffffff; -fx-border-width: 2px;" text="Entrar" textAlignment="CENTER" textFill="WHITE">
+                  <Button fx:id="confirmarLogin" cancelButton="true" layoutX="223.0" layoutY="729.0" mnemonicParsing="false" onAction="#login" prefHeight="89.0" prefWidth="375.0" style="-fx-background-color: #bc2f2f; -fx-border-color: #ffffff; -fx-border-width: 2px;" text="Entrar" textAlignment="CENTER" textFill="WHITE">
                      <font>
-                        <Font name="Consolas" size="12.0" />
+                        <Font name="Consolas" size="26.0" />
                      </font>
                   </Button>
-                  <Label fx:id="errorLogin" layoutX="45.0" layoutY="250.0" prefHeight="25.0" prefWidth="165.0" text="Credenciales incorrectas." textFill="#ff3535" visible="false">
+                  <Label fx:id="errorLogin" layoutX="80.0" layoutY="683.0" prefHeight="31.0" prefWidth="632.0" text="Credenciales incorrectas." textAlignment="CENTER" textFill="#ff3535" visible="false">
                      <font>
-                        <Font name="Consolas Italic" size="12.0" />
+                        <Font name="Consolas Italic" size="26.0" />
                      </font></Label>
-                  <Label fx:id="labelUsuario" layoutX="12.0" layoutY="190.0" prefHeight="17.0" prefWidth="48.0" style="-fx-text-fill: #000000;" text="Usuario" textFill="WHITE">
+                  <Label fx:id="labelUsuario" layoutX="71.0" layoutY="512.0" prefHeight="73.0" prefWidth="199.0" style="-fx-text-fill: #000000;" text="Usuario" textFill="WHITE">
                      <font>
-                        <Font name="Consolas Bold" size="12.0" />
+                        <Font name="Consolas Bold" size="30.0" />
                      </font></Label>
-                  <Label fx:id="labelUsuario" layoutX="12.0" layoutY="227.0" prefHeight="17.0" prefWidth="68.0" style="-fx-text-fill: #000000;" text="Contraseña" textFill="WHITE" textOverrun="CLIP">
+                  <Label fx:id="labelUsuario" layoutX="70.0" layoutY="613.0" prefHeight="35.0" prefWidth="288.0" style="-fx-text-fill: #000000;" text="Contraseña" textFill="WHITE" textOverrun="CLIP">
                      <font>
-                        <Font name="Consolas Bold" size="12.0" />
+                        <Font name="Consolas Bold" size="30.0" />
                      </font></Label>
+                  <Button fx:id="cancelarLogin" cancelButton="true" layoutX="225.0" layoutY="840.0" mnemonicParsing="false" onAction="#cerrarLogin" prefHeight="89.0" prefWidth="374.0" style="-fx-background-color: #bc2f2f; -fx-border-color: #ffffff; -fx-border-width: 2px;" text="Cancelar" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Consolas" size="26.0" />
+                     </font>
+                  </Button>
                </children>
             </Pane>
       </children>

@@ -17,6 +17,7 @@ public class MainJuego extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("../view/login.fxml"));
         primaryStage.setTitle("Mundo Pokemon - KodeX");
         primaryStage.setScene(new Scene(root));
+        primaryStage.setResizable(false);
         // Aquí llamamos a nuestro pokemons
         
         primaryStage.show();
