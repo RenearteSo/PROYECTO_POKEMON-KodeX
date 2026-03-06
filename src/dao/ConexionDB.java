@@ -9,7 +9,7 @@ public class ConexionDB {
 	public Connection dataBaseLink;
 
 	public Connection getConnection() {
-		String dataBaseName="pokemon";
+		String dataBaseName="proyecto-pokemon";
 		String dataBaseUser = "root";
 		String dataBasePassword = "";
 		String url = "jdbc:mysql://localhost:3306/" +dataBaseName;
