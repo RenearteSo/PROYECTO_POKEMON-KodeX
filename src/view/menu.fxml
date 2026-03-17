@@ -1,21 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.media.MediaView?>
+<?import javafx.scene.text.Font?>
 
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: black;;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.menuController">
    <children>
-      <AnchorPane prefHeight="1090.0" prefWidth="1920.0">
+      <MediaView id="menuFondo" fx:id="menuFondo" fitHeight="1080.0" fitWidth="1920.0" layoutX="864.0" layoutY="436.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <cursor>
+            <Cursor fx:constant="DEFAULT" />
+         </cursor>
+      </MediaView>
+      <VBox alignment="CENTER" layoutX="260.0" layoutY="360.0" prefHeight="1080.0" prefWidth="492.0" spacing="55.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1428.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ImageView fitHeight="1136.0" fitWidth="1976.0" layoutX="-6.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../img/Menu/VIDEO%20INICIO.gif" />
-               </image>
-            </ImageView>
+            <Button fx:id="botonCombate" mnemonicParsing="false" onMouseEntered="#entrarCombate" onMouseExited="#salirCombate" prefHeight="150.0" prefWidth="450.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 25px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Combate">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <font>
+                  <Font size="50.0" />
+               </font>
+            </Button>
+            <Button fx:id="botonEntrenamiento" mnemonicParsing="false" onMouseEntered="#entrarEntrenamiento" onMouseExited="#salirEntrenamiento" prefHeight="150.0" prefWidth="450.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-text-fill: white; -fx-font-family: &quot;Pokemon GB&quot;; -fx-font-size: 25px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Entrenamiento">
+               <font>
+                  <Font size="50.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="botonEquipo" mnemonicParsing="false" onMouseEntered="#entrarEquipo" onMouseExited="#salirEquipo" prefHeight="150.0" prefWidth="450.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 25px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Equipo">
+               <font>
+                  <Font size="50.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="botonCaptura" mnemonicParsing="false" onMouseEntered="#entrarCaptura" onMouseExited="#salirCaptura" prefHeight="150.0" prefWidth="450.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 25px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Captura">
+               <font>
+                  <Font size="50.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
          </children>
-      </AnchorPane>
+      </VBox>
    </children>
-</VBox>
+</AnchorPane>
