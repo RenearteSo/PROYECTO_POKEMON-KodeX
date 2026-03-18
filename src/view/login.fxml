@@ -21,6 +21,8 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.loginController">
    <children>
+      <MediaView fx:id="videoFondo" fitHeight="800.0" fitWidth="1200.0" preserveRatio="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Pane fx:id="panelFondoIzq" prefHeight="800.0" prefWidth="1200.0">
@@ -114,9 +116,9 @@
                         </InnerShadow>
                      </effect>
                   </Button>
-                  <Button fx:id="cancelarLogin" layoutX="992.0" layoutY="17.0" mnemonicParsing="false" onAction="#cerrarLogin" prefHeight="70.0" prefWidth="194.0" style="-fx-background-color: #bc2f2f; -fx-border-color: #ffffff; -fx-border-width: 1px;" text="Salir" textFill="WHITE">
+                  <Button fx:id="cancelarLogin" layoutX="155.0" layoutY="597.0" mnemonicParsing="false" onAction="#cerrarLogin" prefHeight="70.0" prefWidth="194.0" style="-fx-background-color: #bc2f2f; -fx-border-color: #ffffff; -fx-border-width: 1px;  -fx-font-family: &quot;Pokemon GB&quot;;" text="Cancelar" textFill="WHITE">
                      <font>
-                        <Font name="Noto Sans Bold" size="22.0" />
+                        <Font name="Pokemon GB" size="14.0" />
                      </font>
                   </Button>
                   <ImageView fitHeight="81.0" fitWidth="44.0" layoutX="85.0" layoutY="287.0" pickOnBounds="true" preserveRatio="true">
@@ -129,10 +131,14 @@
                         <Image url="@../img/Login/contrasenia.png" />
                      </image>
                   </ImageView>
-                  <MediaView fx:id="videoFondo" fitHeight="855.0" fitWidth="1500.0" layoutX="2.0" layoutY="-4.0" />
                </children>
             </Pane>
          </children>
       </VBox>
+            <ImageView id="botonPantalla" fx:id="botonPantalla" fitHeight="40.0" fitWidth="40.0" layoutX="1214.0" layoutY="23.0" onMouseClicked="#gestionarPantalla" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+         <image>
+            <Image url="@../img/Menu/botonAgrandar.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>
