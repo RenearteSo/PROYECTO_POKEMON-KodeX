@@ -1,6 +1,9 @@
 package controller;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
@@ -9,6 +12,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.media.MediaView;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.io.IOException;
+
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.util.Duration;
@@ -171,7 +177,6 @@ public class menuController {
 		cambiarVideoConEfecto("VIDEO INICIO.mp4");
 	}
 
-
 	@FXML
 	void entrarCrianza(MouseEvent event) {
 		botonCrianza.setScaleX(1.1);
@@ -199,14 +204,13 @@ public class menuController {
 		botonCasino.setScaleY(1.0);
 		cambiarVideoConEfecto("VIDEO INICIO.mp4");
 	}
-	
+
 	@FXML
 	void entrarCombate(MouseEvent event) {
 		botonCombate.setScaleX(1.1);
 		botonCombate.setScaleY(1.1);
 		cambiarVideoConEfecto("Combate.mp4");
 	}
-
 
 	@FXML
 	void salirCombate(MouseEvent event) {
@@ -215,14 +219,13 @@ public class menuController {
 		cambiarVideoConEfecto("VIDEO INICIO.mp4");
 	}
 
-	
 	@FXML
 	void entrarCaptura(MouseEvent event) {
 		botonCaptura.setScaleX(1.1);
 		botonCaptura.setScaleY(1.1);
 		cambiarVideoConEfecto("Captura.mp4");
 	}
-	
+
 	@FXML
 	void salirCaptura(MouseEvent event) {
 		botonCaptura.setScaleX(1.0);
@@ -275,5 +278,49 @@ public class menuController {
 	@FXML
 	private void ocultarSlider(MouseEvent event) {
 		sliderVolumen.setVisible(false);
+	}
+
+	// Creamos método genérico para cambiar de vistas
+	// Se le pasa el nombre del FXML y el botón que tendrá el enveto clickar
+	private void cambiarEscena(String fxml, Button botonReferencia) {
+		try {
+			// Paramos la música antes de cargar nada nuevo
+			if (musicaMenu != null) {
+				musicaMenu.stop();
+				musicaMenu.dispose(); // Liberamos RAM (Backend rules!)
+			}
+
+			// También paramos el vídeo de Rayquaza para que no consuma CPU
+			if (mediaPlayer != null) {
+				mediaPlayer.stop();
+				mediaPlayer.dispose(); //Liberar la memoria
+			}
+
+			// Buscamos el archivo FXML
+			javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("../view/" + fxml));
+			javafx.scene.Parent root = loader.load();
+
+			// Obtenemos el Stage y mantenemos el FullScreen
+			javafx.stage.Stage stage = (javafx.stage.Stage) botonReferencia.getScene().getWindow();
+			boolean enPantallaCompleta = stage.isFullScreen();
+
+			// Lanzamos el escenario
+			// El truco mágico: Cambiamos el "suelo" de la escena, no la escena entera
+			stage.getScene().setRoot(root);
+			stage.setFullScreen(enPantallaCompleta);
+			stage.setFullScreenExitHint("");
+
+			stage.show();
+
+		} catch (java.io.IOException e) {
+			System.err.println("Error al cargar " + fxml + ": " + e.getMessage());
+		}
+	}
+
+	// Creamos método para ir a la vista Captura
+	@FXML
+	void irCaptura(MouseEvent event) {
+		// Usamos el método genérico
+		cambiarEscena("captura.fxml", botonCaptura);
 	}
 }

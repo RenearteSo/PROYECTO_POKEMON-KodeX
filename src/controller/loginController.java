@@ -77,8 +77,7 @@ public class loginController implements Initializable {
 	private Image imgVolMax = new Image(getClass().getResourceAsStream("/img/Menu/volumenMax.png"));
 	private Image imgVolMin = new Image(getClass().getResourceAsStream("/img/Menu/volumenMin.png"));
 	private Image imgVolMute = new Image(getClass().getResourceAsStream("/img/Menu/sinVolumen.png"));
-	
-	
+
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		try {
@@ -227,68 +226,92 @@ public class loginController implements Initializable {
 		st.close();
 	}
 
+	// Método para entrar al menú pulsando enter
+	@FXML
+	void gestionarEnter(javafx.scene.input.KeyEvent event) throws SQLException {
+		// Si la tecla pulsada es ENTER
+		if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
+			// Llamamos directamente al método login pasándole null
+			// Elmétodo login recibe un ActionEvent que no usaremos aquí
+			login(null);
+		}
+	}
+
 	@FXML
 	void login(ActionEvent event) throws SQLException {
-		// ANIMACION AL PULSAR ENTRAR
-		ScaleTransition click = new ScaleTransition(Duration.millis(200), confirmarLogin);
-		click.setToX(0.99);
-		click.setToY(0.99);
-		click.setCycleCount(2);
-		click.setAutoReverse(true);
-		click.play();
 
-		// Si hay campos vacios:
-		if (usuario.getText().isEmpty()) {
+		//LIMPIEZA INICIAL
+		errorLogin.setVisible(false);
+
+		//Validamos campos primero
+		// Usamos return para que si falta algo, no intente conectarse a la base de datos
+		if (usuario.getText().trim().isEmpty()) {
 			errorLogin.setText("Error: Inserta un nombre de usuario.");
 			errorLogin.setVisible(true);
-		} else if (passwd.getText().isEmpty()) {
+			return; // Detiene el método aquí
+		}
+
+		if (passwd.getText().trim().isEmpty()) {
 			errorLogin.setText("Error: Inserta una contraseña.");
 			errorLogin.setVisible(true);
-		} else {
-			// campos rellenos
-			errorLogin.setVisible(false);
-			String loginUsuario = usuario.getText();
-			String loginContrasenia = passwd.getText();
+			return; // Detiene el método aquí
+		}
 
-			// CONEXIÓN BASE DE DATOS //
-			ConexionDB conexionObj = new ConexionDB(); // nos conectamos desde ConexionDB
-			Connection connectDB = conexionObj.getConnection(); // obtenemos esa conexión
+		// ANIMACION AL PULSAR ENTRAR
+		// Si el evento no es nulo, ejecutamos la animación del botón
+		// Si es nulo significa que pulsamos Enter, no el botón físico
+		if (event != null) {
+			ScaleTransition click = new ScaleTransition(Duration.millis(200), confirmarLogin);
+			click.setToX(0.99);
+			click.setToY(0.99);
+			click.setCycleCount(2);
+			click.setAutoReverse(true);
+			click.play();
+		}
 
-			if (connectDB != null) { // si la conexion es correcta
-				try {
-					String verificarLogin = "SELECT PASSWORD " // buscamos la contraseña en la base de datos
-							+ "FROM ENTRENADOR " + "WHERE NOM_ENTRENADOR = ? "; // ? para luego reemplazar por el valor
-																				// introducido
+		String loginUsuario = usuario.getText();
+		String loginContrasenia = passwd.getText();
 
-					PreparedStatement statement = connectDB.prepareStatement(verificarLogin); // preparamos la consulta
+		// CONEXIÓN BASE DE DATOS //
+		ConexionDB conexionObj = new ConexionDB(); // nos conectamos desde ConexionDB
+		Connection connectDB = conexionObj.getConnection(); // obtenemos esa conexión
 
-					statement.setString(1, loginUsuario); // cambiamos el primer ? del prepareStatement
+		if (connectDB != null) { // si la conexion es correcta
+			try {
+				String verificarLogin = "SELECT PASSWORD " // buscamos la contraseña en la base de datos
+						+ "FROM ENTRENADOR " + "WHERE NOM_ENTRENADOR = ? "; // ? para luego reemplazar por el valor
+																			// introducido
 
-					ResultSet rs = statement.executeQuery(); // realizamos la consulta
+				PreparedStatement statement = connectDB.prepareStatement(verificarLogin); // preparamos la consulta
 
-					if (rs.next()) { // si existe
-						String passwordBD = rs.getString("PASSWORD"); // Obtenemos la contraseña de la base de datos
-						if (passwordBD.equals(loginContrasenia)) {
-							abrirMenu();
-						} else {
-							// el usuario existe pero la contraseña está mal
-							errorLogin.setText("Contraseña incorrecta. Intentalo de nuevo.");
-							errorLogin.setVisible(true);
-						}
-					} else { // el usuario no existe, lo registramos
-						preguntarRegistro(loginUsuario, loginContrasenia, connectDB);
+				statement.setString(1, loginUsuario); // cambiamos el primer ? del prepareStatement
+
+				ResultSet rs = statement.executeQuery(); // realizamos la consulta
+
+				if (rs.next()) { // si existe
+					String passwordBD = rs.getString("PASSWORD"); // Obtenemos la contraseña de la base de datos
+					if (passwordBD.equals(loginContrasenia)) {
+						abrirMenu();
+					} else {
+						// el usuario existe pero la contraseña está mal
+						errorLogin.setText("Contraseña incorrecta. Intentalo de nuevo.");
+						errorLogin.setVisible(true);
 					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-					errorLogin.setText("Error al conectar con la base de datos.");
-					errorLogin.setVisible(true);
-				} finally {
-					connectDB.close();
+				} else { // el usuario no existe, lo registramos
+					preguntarRegistro(loginUsuario, loginContrasenia, connectDB);
 				}
-			} else {
-				errorLogin.setText("Error: No se ha podido conectar a la base de datos.");
+			} catch (SQLException e) {
+				e.printStackTrace();
+				errorLogin.setText("Error al conectar con la base de datos.");
 				errorLogin.setVisible(true);
+			} finally {
+				if (connectDB != null)
+					connectDB.close();
 			}
+		} else {
+			errorLogin.setText("Error: No se ha podido conectar a la base de datos.");
+			errorLogin.setVisible(true);
+
 		}
 	}
 
@@ -348,12 +371,12 @@ public class loginController implements Initializable {
 
 	private void abrirMenu() {
 		try {
-			
-			//Paramos la música del Login
-	        if (musicaLogin != null) {
-	            musicaLogin.stop(); // Corta el sonido de raíz
-	            musicaLogin.dispose(); // Libera la memoria 
-	        }
+
+			// Paramos la música del Login
+			if (musicaLogin != null) {
+				musicaLogin.stop(); // Corta el sonido de raíz
+				musicaLogin.dispose(); // Libera la memoria
+			}
 			// cargamos la nueva vista desde el paquete view
 			javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("../view/menu.fxml"));
 			javafx.scene.Parent root = loader.load(); // cargamos la vista
@@ -366,7 +389,8 @@ public class loginController implements Initializable {
 			boolean enPantallaCompleta = stage.isFullScreen();
 
 			// cambiamos la escena y la mostramos
-			stage.setScene(new javafx.scene.Scene(root));
+			// cambiamos solo el contenido de la escena actual si ya existe.
+			stage.getScene().setRoot(root);
 
 			// Restauramos el estado ANTES del show
 			stage.setFullScreen(enPantallaCompleta);

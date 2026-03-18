@@ -105,7 +105,7 @@
                         <Font name="Consolas" size="18.0" />
                      </font>
                   </Label>
-                  <Button fx:id="confirmarLogin" alignment="BASELINE_LEFT" layoutX="99.0" layoutY="500.0" mnemonicParsing="false" onAction="#login" onMouseEntered="#animarEntradaBoton" onMouseExited="#animarSalidaBoton" prefHeight="70.0" prefWidth="320.0" style="-fx-background-color: #FF6B6B; -fx-border-color: #ffffff; -fx-border-width: 1px;" text="      ENTRAR     &gt;" textFill="WHITE">
+                  <Button fx:id="confirmarLogin" alignment="BASELINE_LEFT" defaultButton="true" layoutX="99.0" layoutY="500.0" mnemonicParsing="false" onAction="#login" onMouseEntered="#animarEntradaBoton" onMouseExited="#animarSalidaBoton" prefHeight="70.0" prefWidth="320.0" style="-fx-background-color: #FF6B6B; -fx-border-color: #ffffff; -fx-border-width: 1px;" text="      ENTRAR     &gt;" textFill="WHITE">
                      <font>
                         <Font name="Pokemon GB" size="16.0" />
                      </font>
@@ -117,7 +117,7 @@
                         </InnerShadow>
                      </effect>
                   </Button>
-                  <Button fx:id="cancelarLogin" layoutX="155.0" layoutY="597.0" mnemonicParsing="false" onAction="#cerrarLogin" prefHeight="70.0" prefWidth="194.0" style="-fx-background-color: #bc2f2f; -fx-border-color: #ffffff; -fx-border-width: 1px;  -fx-font-family: &quot;Pokemon GB&quot;;" text="Cancelar" textFill="WHITE">
+                  <Button fx:id="cancelarLogin" layoutX="99.0" layoutY="597.0" mnemonicParsing="false" onAction="#cerrarLogin" prefHeight="70.0" prefWidth="320.0" style="-fx-background-color: #bc2f2f; -fx-border-color: #ffffff; -fx-border-width: 1px;  -fx-font-family: &quot;Pokemon GB&quot;;" text="Cancelar" textFill="WHITE">
                      <font>
                         <Font name="Pokemon GB" size="14.0" />
                      </font>

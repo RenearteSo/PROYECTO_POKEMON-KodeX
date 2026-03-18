@@ -35,7 +35,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="botonCaptura" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarCaptura" onMouseExited="#salirCaptura" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Captura">
+            <Button fx:id="botonCaptura" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#irCaptura" onMouseEntered="#entrarCaptura" onMouseExited="#salirCaptura" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Captura">
                <font>
                   <Font size="35.0" />
                </font>
