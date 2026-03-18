@@ -38,7 +38,7 @@ public class menuController {
 	// Variable para los vídeos
 	private javafx.scene.media.MediaPlayer mediaPlayer;
 
-	// Variable global para la música (fuera de los métodos)
+	// Variable global para la música, fuera de los métodos
 	private javafx.scene.media.MediaPlayer musicaMenu;
 
 	// ESTO SE EJECUTA AL ABRIR EL JUEGO

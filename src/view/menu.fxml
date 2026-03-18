@@ -65,6 +65,6 @@
             <Image url="@../img/Menu/volumenMax.png" />
          </image>
       </ImageView>
-      <Slider fx:id="sliderVolumen" layoutX="1208.0" layoutY="570.0" max="1.0" onMouseExited="#ocultarSlider" orientation="VERTICAL" value="0.5" visible="false" AnchorPane.bottomAnchor="90.0" AnchorPane.rightAnchor="50.0" />
+      <Slider fx:id="sliderVolumen" layoutX="1208.0" layoutY="570.0" max="1.0" onMouseExited="#ocultarSlider" orientation="VERTICAL" value="0.5" visible="false" AnchorPane.bottomAnchor="90.0" AnchorPane.rightAnchor="55.0" />
    </children>
 </AnchorPane>
