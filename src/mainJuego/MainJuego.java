@@ -14,7 +14,7 @@ public class MainJuego extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Aquí es donde usamos las distintas clases de proyecto
-        Parent root = FXMLLoader.load(getClass().getResource("../view/menu.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("../view/captura.fxml"));
         primaryStage.setTitle("Mundo Pokemon - KodeX");
         primaryStage.setScene(new Scene(root));
         primaryStage.setResizable(false);
