@@ -16,7 +16,7 @@
       </MediaView>
       <VBox alignment="CENTER" layoutX="260.0" layoutY="360.0" prefHeight="1080.0" prefWidth="492.0" spacing="55.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1428.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Button fx:id="botonCombate" mnemonicParsing="false" onMouseEntered="#entrarCombate" onMouseExited="#salirCombate" prefHeight="150.0" prefWidth="450.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 25px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Combate">
+            <Button fx:id="botonCombate" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarCombate" onMouseExited="#salirCombate" prefHeight="150.0" prefWidth="450.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 25px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Combate">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
@@ -24,7 +24,7 @@
                   <Font size="50.0" />
                </font>
             </Button>
-            <Button fx:id="botonEntrenamiento" mnemonicParsing="false" onMouseEntered="#entrarEntrenamiento" onMouseExited="#salirEntrenamiento" prefHeight="150.0" prefWidth="450.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-text-fill: white; -fx-font-family: &quot;Pokemon GB&quot;; -fx-font-size: 25px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Entrenamiento">
+            <Button fx:id="botonEntrenamiento" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarEntrenamiento" onMouseExited="#salirEntrenamiento" prefHeight="150.0" prefWidth="450.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-text-fill: white; -fx-font-family: &quot;Pokemon GB&quot;; -fx-font-size: 25px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Entrenamiento">
                <font>
                   <Font size="50.0" />
                </font>
@@ -32,7 +32,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="botonEquipo" mnemonicParsing="false" onMouseEntered="#entrarEquipo" onMouseExited="#salirEquipo" prefHeight="150.0" prefWidth="450.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 25px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Equipo">
+            <Button fx:id="botonEquipo" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarEquipo" onMouseExited="#salirEquipo" prefHeight="150.0" prefWidth="450.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 25px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Equipo">
                <font>
                   <Font size="50.0" />
                </font>
@@ -40,7 +40,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="botonCaptura" mnemonicParsing="false" onMouseEntered="#entrarCaptura" onMouseExited="#salirCaptura" prefHeight="150.0" prefWidth="450.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 25px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Captura">
+            <Button fx:id="botonCaptura" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarCaptura" onMouseExited="#salirCaptura" prefHeight="150.0" prefWidth="450.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 25px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Captura">
                <font>
                   <Font size="50.0" />
                </font>

@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.media.MediaView;
+import javafx.scene.text.Font;
 import javafx.animation.FadeTransition;
 import javafx.util.Duration;
 
@@ -15,6 +16,12 @@ public class menuController {
     //ESTO SE EJECUTA AL ABRIR EL JUEGO
     @FXML
     public void initialize() {
+    	
+    	try {
+    	    Font.loadFont(getClass().getResourceAsStream("/fonts/Pokemon_GB.ttf"), 25);
+    	} catch (Exception e) {
+    	    System.out.println("No se pudo cargar la fuente: " + e.getMessage());
+    	}
         // Ponemos a Rayquaza directamente la primera vez
         // Aquí no hace falta fundido porque la ventana se está abriendo
         ponerVideo("VIDEO INICIO.mp4");
