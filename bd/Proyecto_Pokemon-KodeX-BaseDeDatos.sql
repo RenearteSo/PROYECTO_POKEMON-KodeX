@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `pokemon`
+-- Base de datos: `proyecto_pokemon`
 --
 
 -- --------------------------------------------------------
@@ -326,6 +326,17 @@ INSERT INTO `pokedex` (`NUM_POKEDEX`, `NUM_POKEDEX_EVO`, `NOM_POKEMON`, `NIVEL_E
 (149, NULL, 'Dragonite', NULL, 'img/img_pokedex/149.png', 'img/Front/149.png', 'img/Back/149.png', 'audio/Pokemon/149.wav', 'audio/Pokemon/cries_pokemon_legacy_149.ogg'),
 (150, NULL, 'Mewtwo', NULL, 'img/img_pokedex/150.png', 'img/Front/150.png', 'img/Back/150.png', 'audio/Pokemon/150.wav', 'audio/Pokemon/cries_pokemon_legacy_150.ogg'),
 (151, NULL, 'Mew', NULL, 'img/img_pokedex/151.png', 'img/Front/151.png', 'img/Back/151.png', 'audio/Pokemon/151.wav', 'audio/Pokemon/cries_pokemon_legacy_151.ogg');
+
+INSERT INTO objeto (ID_OBJETO, NOM_OBJETO, PRECIO_OBJETO, MOD_ATAQUE, MOD_DEFENSA, MOD_VELOCIDAD) 
+VALUES (1, 'Pesa', 150, 20, 20, -20);
+INSERT INTO objeto (ID_OBJETO, NOM_OBJETO, PRECIO_OBJETO, MOD_ATAQUE, MOD_DEFENSA, MOD_VELOCIDAD) 
+VALUES (2, 'Pluma', 100, 0, -20, 30); 
+INSERT INTO objeto (ID_OBJETO, NOM_OBJETO, PRECIO_OBJETO, MOD_ATAQUE, MOD_DEFENSA, MOD_VELOCIDAD) 
+VALUES (3, 'Chaleco', 200, -15, 20, -15); 
+INSERT INTO objeto (ID_OBJETO, NOM_OBJETO, PRECIO_OBJETO, MOD_ATAQUE, MOD_DEFENSA, MOD_VELOCIDAD) 
+VALUES (4, 'Bastón', 120, 0, 0, -15);
+INSERT INTO objeto (ID_OBJETO, NOM_OBJETO, PRECIO_OBJETO, MOD_ATAQUE, MOD_DEFENSA, MOD_VELOCIDAD) 
+VALUES (5, 'Pilas', 180, 0, 0, 0); 
 
 -- --------------------------------------------------------
 

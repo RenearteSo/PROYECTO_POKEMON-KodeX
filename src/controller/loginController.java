@@ -11,6 +11,7 @@ import dao.ConexionDB;
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,11 +19,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -54,6 +58,13 @@ public class loginController implements Initializable {
     
     @FXML
     private MediaView videoFondo;
+    
+    @FXML
+    private ImageView botonPantalla;
+    
+	private Image imgAgrandar = new Image(getClass().getResourceAsStream("/img/Menu/botonAgrandar.png"));
+	private Image imgEncoger = new Image(getClass().getResourceAsStream("/img/Menu/botonMinimizar.png"));
+	
     
     @FXML
     void animarEntradaBoton(javafx.scene.input.MouseEvent event) {
@@ -225,10 +236,59 @@ public class loginController implements Initializable {
         }
     }
     
-            
+	// Método para los botones de agrandar y minimizar según en la pantalla que
+	// estemos
+	@FXML
+	void gestionarPantalla(MouseEvent event) {
+		// Obtenemos la ventana actual
+		Stage stage = (Stage) botonPantalla.getScene().getWindow();
+
+		if (!stage.isFullScreen()) {
+			stage.setFullScreen(true);
+			botonPantalla.setImage(imgEncoger);
+		} else {
+			stage.setFullScreen(false);
+			botonPantalla.setImage(imgAgrandar);
+		}
+	}   
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+		try {
+			//Cargamos la fuente real desde el archivo
+		    Font pokemonFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PokemonGb-RAeo.ttf"), 25);
+		    
+		    // Si no se carga, lanzamos una excepción para que se registre en el log de errores
+		    if (pokemonFont == null) {
+		        throw new Exception("La fuente /fonts/PokemonGb-RAeo.ttf no pudo ser localizada.");
+		    }
+		} catch (Exception e) {
+		    System.err.println("Error al cargar recursos: " + e.getMessage());
+		}
+		
+		// Esto obliga al vídeo a estirarse al tamaño de la ventana
+		javafx.application.Platform.runLater(() -> {
+			// CAMBIA "idDelVideo" POR EL NOMBRE QUE TENGA TU MEDIAVIEW EN EL CÓDIGO
+			videoFondo.fitWidthProperty().bind(videoFondo.getScene().widthProperty());
+			videoFondo.fitHeightProperty().bind(videoFondo.getScene().heightProperty());
+		});
+		
+		Platform.runLater(() -> {
+			Stage stage = (Stage) botonPantalla.getScene().getWindow();
+			// Esto mira si la pantalla cambia a FullScreen por cualquier motivo
+			stage.fullScreenProperty().addListener((obs, oldVal, newVal) -> {
+				if (newVal) { // Si es true está en grande
+					botonPantalla.setImage(imgEncoger);
+				} else { // Si es false está en pequeño
+					botonPantalla.setImage(imgAgrandar);
+				}
+			});
+		});
+		
+		botonPantalla.setImage(imgEncoger);
+		
+		
+
     	// VIDEO FONDO//
     	MediaPlayer mediaPlayer;
     	try {
