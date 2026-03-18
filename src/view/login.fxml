@@ -25,7 +25,7 @@
          <children>
             <Pane fx:id="panelFondoIzq" prefHeight="800.0" prefWidth="1200.0">
                <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" height="265.0" layoutX="34.0" layoutY="220.0" opacity="0.81" stroke="TRANSPARENT" strokeType="INSIDE" width="487.0">
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" height="265.0" layoutX="34.0" layoutY="220.0" opacity="0.8" stroke="TRANSPARENT" strokeType="INSIDE" width="487.0">
                      <fill>
                         <RadialGradient centerX="0.5" centerY="0.5" focusDistance="0.02298850574712641" radius="0.6494252873563219">
                            <stops>
@@ -81,7 +81,7 @@
                         <Image url="@../img/Login/KODEX%20BLACK.png" />
                      </image>
                   </ImageView>
-                  <TextField fx:id="usuario" layoutX="76.0" layoutY="274.0" prefHeight="70.0" prefWidth="417.0" promptText="Usuario" style="-fx-background-color: transparent; -fx-border-color: #ffffff; -fx-border-radius: 6px;">
+                  <TextField fx:id="usuario" layoutX="76.0" layoutY="274.0" prefHeight="70.0" prefWidth="417.0" promptText="Usuario" style="-fx-background-color: transparent; -fx-border-color: #ffffff; -fx-border-radius: 6px; -fx-text-fill: #ffffff">
                      <font>
                         <Font name="Pokemon GB" size="14.0" />
                      </font>
@@ -89,7 +89,7 @@
                         <Insets left="55.0" right="50.0" />
                      </padding>
                   </TextField>
-                  <PasswordField fx:id="passwd" layoutX="76.0" layoutY="365.0" prefHeight="70.0" prefWidth="417.0" promptText="Contraseña" style="-fx-background-color: transparent; -fx-border-color: #ffffff; -fx-border-width: 1px; -fx-border-radius: 6px;">
+                  <PasswordField fx:id="passwd" layoutX="76.0" layoutY="365.0" prefHeight="70.0" prefWidth="417.0" promptText="Contraseña" style="-fx-background-color: transparent; -fx-border-color: #ffffff; -fx-border-width: 1px; -fx-border-radius: 6px; -fx-text-fill: #ffffff">
                      <font>
                         <Font name="Pokemon GB" size="14.0" />
                      </font>
@@ -97,9 +97,9 @@
                         <Insets left="55.0" right="50.0" />
                      </padding>
                   </PasswordField>
-                  <Label fx:id="errorLogin" layoutX="50.0" layoutY="450.0" prefHeight="31.0" prefWidth="450.0" text="Credenciales incorrectas." textFill="#ff3535" visible="false">
+                  <Label fx:id="errorLogin" layoutX="50.0" layoutY="450.0" prefHeight="31.0" prefWidth="450.0" text="Credenciales incorrectas." textFill="#ff3535" textOverrun="CLIP" visible="false">
                      <font>
-                        <Font name="Consolas" size="20.0" />
+                        <Font name="Consolas" size="18.0" />
                      </font>
                   </Label>
                   <Button fx:id="confirmarLogin" alignment="BASELINE_LEFT" layoutX="99.0" layoutY="500.0" mnemonicParsing="false" onAction="#login" onMouseEntered="#animarEntradaBoton" onMouseExited="#animarSalidaBoton" prefHeight="70.0" prefWidth="320.0" style="-fx-background-color: #FF6B6B; -fx-border-color: #ffffff; -fx-border-width: 1px;" text="      ENTRAR     &gt;" textFill="WHITE">
