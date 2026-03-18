@@ -18,12 +18,15 @@ public class MainJuego extends Application {
         primaryStage.setTitle("Mundo Pokemon - KodeX");
         primaryStage.setScene(new Scene(root));
         primaryStage.setResizable(false);
-        // Aquí llamamos a nuestro pokemons
         
+
         //Para poner la pantalla completa
         primaryStage.setFullScreen(true);
         //Para quitar el mensaje de pantalla completa pulsar ESC
         primaryStage.setFullScreenExitHint("");
+
+        // primaryStage.setFullScreen(true);
+        // Aquí llamamos a nuestro pokemons
         primaryStage.show();
     }
 
