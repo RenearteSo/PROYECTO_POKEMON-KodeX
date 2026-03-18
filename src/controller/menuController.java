@@ -16,7 +16,7 @@ import javafx.util.Duration;
 public class menuController {
 
 	@FXML
-	private Button botonCaptura, botonCombate, botonEntrenamiento, botonEquipo;
+	private Button botonCaptura, botonCombate, botonEntrenamiento, botonEquipo, botonCrianza, botonCasino;
 	@FXML
 	private MediaView menuFondo;
 	// Declaramos las variables para gestionar los botones de pantalla completa y
@@ -25,29 +25,36 @@ public class menuController {
 	private ImageView botonPantalla;
 	private Image imgAgrandar = new Image(getClass().getResourceAsStream("/img/Menu/botonAgrandar.png"));
 	private Image imgEncoger = new Image(getClass().getResourceAsStream("/img/Menu/botonMinimizar.png"));
+
 	// Inicializamos las variables para el sonido
 	@FXML
 	private ImageView botonSonido;
 	@FXML
 	private Slider sliderVolumen;
-	private Image imgVolumen = new Image(getClass().getResourceAsStream("/img/Menu/volumenBajo.png"));
+	private Image imgVolMax = new Image(getClass().getResourceAsStream("/img/Menu/volumenMax.png"));
+	private Image imgVolMin = new Image(getClass().getResourceAsStream("/img/Menu/volumenMin.png"));
+	private Image imgVolMute = new Image(getClass().getResourceAsStream("/img/Menu/sinVolumen.png"));
 
+	// Variable para los vídeos
 	private javafx.scene.media.MediaPlayer mediaPlayer;
+
+	// Variable global para la música (fuera de los métodos)
+	private javafx.scene.media.MediaPlayer musicaMenu;
 
 	// ESTO SE EJECUTA AL ABRIR EL JUEGO
 	@FXML
 	public void initialize() {
-
 		try {
-			//Cargamos la fuente real desde el archivo
-		    Font pokemonFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PokemonGb-RAeo.ttf"), 25);
-		    
-		    // Si no se carga, lanzamos una excepción para que se registre en el log de errores
-		    if (pokemonFont == null) {
-		        throw new Exception("La fuente /fonts/PokemonGb-RAeo.ttf no pudo ser localizada.");
-		    }
+			// Cargamos la fuente real desde el archivo
+			Font pokemonFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PokemonGb-RAeo.ttf"), 25);
+
+			// Si no se carga, lanzamos una excepción para que se registre en el log de
+			// errores
+			if (pokemonFont == null) {
+				throw new Exception("La fuente /fonts/PokemonGb-RAeo.ttf no pudo ser localizada.");
+			}
 		} catch (Exception e) {
-		    System.err.println("Error al cargar recursos: " + e.getMessage());
+			System.err.println("Error al cargar recursos: " + e.getMessage());
 		}
 		// Ponemos a Rayquaza directamente la primera vez
 		// Aquí no hace falta fundido porque la ventana se está abriendo
@@ -72,15 +79,29 @@ public class menuController {
 			});
 		});
 
-		// Vinculamos el volumen del MediaPlayer al valor del Slider
+		// Iniciamos la música primero
+		iniciarMusica();
+
+		// Vinculamos el volumen del MediaPlayer al valor del Slider luego de instanciar
+		// el método
 		sliderVolumen.valueProperty().addListener((obs, oldVal, newVal) -> {
-			if (mediaPlayer != null) {
-				mediaPlayer.setVolume(newVal.doubleValue());
+			double vol = newVal.doubleValue();
+
+			if (musicaMenu != null) {
+				musicaMenu.setVolume(vol);
+
+				// Cambiamos el icono según el nivel
+				if (vol == 0) {
+					botonSonido.setImage(imgVolMute);
+				} else if (vol < 0.5) {
+					botonSonido.setImage(imgVolMin);
+				} else {
+					botonSonido.setImage(imgVolMax);
+				}
 			}
 		});
-
-		// Mostramos el botón volumen
-		botonSonido.setImage(imgVolumen);
+		// Esto fuerza al slider a moverse al arrancar para que el icono se actualice
+		sliderVolumen.setValue(sliderVolumen.getValue());
 
 		// Forzamos que empiece con el icono de encoger
 		botonPantalla.setImage(imgEncoger);
@@ -119,8 +140,23 @@ public class menuController {
 		}
 	}
 
-	// EVENTOS DE LOS BOTONES (ENTRAR Y SALIR)
+	// Método para poner la música
+	private void iniciarMusica() {
+		try {
+			String ruta = getClass().getResource("/audio/musica/musicaMenu.mp3").toExternalForm();
+			javafx.scene.media.Media sonido = new javafx.scene.media.Media(ruta);
+			musicaMenu = new javafx.scene.media.MediaPlayer(sonido);
 
+			musicaMenu.setCycleCount(javafx.scene.media.MediaPlayer.INDEFINITE);
+			// El slider controlará ESTA variable musicaMenu
+			musicaMenu.setVolume(sliderVolumen.getValue());
+			musicaMenu.play();
+		} catch (Exception e) {
+			System.err.println("Error música: " + e.getMessage());
+		}
+	}
+
+	// EVENTOS DE LOS BOTONES (ENTRAR Y SALIR)
 	@FXML
 	void entrarEntrenamiento(MouseEvent event) {
 		botonEntrenamiento.setScaleX(1.1);
@@ -135,12 +171,42 @@ public class menuController {
 		cambiarVideoConEfecto("VIDEO INICIO.mp4");
 	}
 
+
+	@FXML
+	void entrarCrianza(MouseEvent event) {
+		botonCrianza.setScaleX(1.1);
+		botonCrianza.setScaleY(1.1);
+		cambiarVideoConEfecto("Crianza.mp4");
+	}
+
+	@FXML
+	void salirCrianza(MouseEvent event) {
+		botonCrianza.setScaleX(1.0);
+		botonCrianza.setScaleY(1.0);
+		cambiarVideoConEfecto("VIDEO INICIO.mp4");
+	}
+
+	@FXML
+	void entrarCasino(MouseEvent event) {
+		botonCasino.setScaleX(1.1);
+		botonCasino.setScaleY(1.1);
+		cambiarVideoConEfecto("Casino.mp4");
+	}
+
+	@FXML
+	void salirCasino(MouseEvent event) {
+		botonCasino.setScaleX(1.0);
+		botonCasino.setScaleY(1.0);
+		cambiarVideoConEfecto("VIDEO INICIO.mp4");
+	}
+	
 	@FXML
 	void entrarCombate(MouseEvent event) {
 		botonCombate.setScaleX(1.1);
 		botonCombate.setScaleY(1.1);
 		cambiarVideoConEfecto("Combate.mp4");
 	}
+
 
 	@FXML
 	void salirCombate(MouseEvent event) {
@@ -149,13 +215,14 @@ public class menuController {
 		cambiarVideoConEfecto("VIDEO INICIO.mp4");
 	}
 
+	
 	@FXML
 	void entrarCaptura(MouseEvent event) {
 		botonCaptura.setScaleX(1.1);
 		botonCaptura.setScaleY(1.1);
 		cambiarVideoConEfecto("Captura.mp4");
 	}
-
+	
 	@FXML
 	void salirCaptura(MouseEvent event) {
 		botonCaptura.setScaleX(1.0);
@@ -197,7 +264,11 @@ public class menuController {
 	@FXML
 	private void mostrarBarraVolumen(MouseEvent event) {
 		// Si la barra está invisible, la muestra. Si está visible, la esconde.
-		sliderVolumen.setVisible(!sliderVolumen.isVisible());
+		if (event.getClickCount() == 2) { // Si hace doble clic, mutea
+			sliderVolumen.setValue(0);
+		} else {
+			sliderVolumen.setVisible(!sliderVolumen.isVisible());
+		}
 	}
 
 	// Método para ocultar la barra del slider

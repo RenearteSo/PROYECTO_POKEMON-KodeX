@@ -17,7 +17,7 @@
             <Cursor fx:constant="DEFAULT" />
          </cursor>
       </MediaView>
-      <VBox alignment="CENTER_LEFT" layoutX="260.0" layoutY="360.0" prefHeight="800.0" prefWidth="492.0" spacing="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="CENTER_LEFT" layoutX="39.0" prefHeight="800.0" prefWidth="492.0" spacing="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="39.0" AnchorPane.topAnchor="0.0">
          <children>
             <Button fx:id="botonCombate" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarCombate" onMouseExited="#salirCombate" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Combate">
                <cursor>
@@ -35,14 +35,6 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="botonEquipo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarEquipo" onMouseExited="#salirEquipo" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Equipo">
-               <font>
-                  <Font size="35.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
             <Button fx:id="botonCaptura" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarCaptura" onMouseExited="#salirCaptura" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Captura">
                <font>
                   <Font size="35.0" />
@@ -51,6 +43,16 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
+            <Button fx:id="botonEquipo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarEquipo" onMouseExited="#salirEquipo" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Equipo">
+               <font>
+                  <Font size="35.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="botonCasino" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarCasino" onMouseExited="#salirCasino" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: White; -fx-font-size: 20; -fx-font-weight: Bold; -fx-background-radius: 15;" text="Casino" />
+            <Button fx:id="botonCrianza" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarCrianza" onMouseExited="#salirCrianza" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: White; -fx-font-size: 20px; -fx-font-weight: Bold; -fx-background-radius: 15;" text="Crianza" />
          </children>
       </VBox>
       <ImageView id="botonPantalla" fx:id="botonPantalla" fitHeight="40.0" fitWidth="40.0" layoutX="1214.0" layoutY="23.0" onMouseClicked="#gestionarPantalla" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
@@ -60,9 +62,9 @@
       </ImageView>
       <ImageView id="botonSonido" fx:id="botonSonido" fitHeight="50.0" fitWidth="50.0" layoutX="1066.0" layoutY="636.0" onMouseClicked="#mostrarBarraVolumen" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="40.0">
          <image>
-            <Image url="@../img/Menu/volumenBajo.png" />
+            <Image url="@../img/Menu/volumenMax.png" />
          </image>
       </ImageView>
-      <Slider fx:id="sliderVolumen" layoutX="1208.0" layoutY="570.0" max="1.0" onMouseExited="#ocultarSlider" orientation="VERTICAL" value="0.5" visible="false" AnchorPane.bottomAnchor="90.0" AnchorPane.rightAnchor="40.0" />
+      <Slider fx:id="sliderVolumen" layoutX="1208.0" layoutY="570.0" max="1.0" onMouseExited="#ocultarSlider" orientation="VERTICAL" value="0.5" visible="false" AnchorPane.bottomAnchor="90.0" AnchorPane.rightAnchor="50.0" />
    </children>
 </AnchorPane>
