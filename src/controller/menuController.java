@@ -39,9 +39,15 @@ public class menuController {
 	public void initialize() {
 
 		try {
-			Font.loadFont(getClass().getResourceAsStream("/fonts/Pokemon_GB.ttf"), 25);
+			//Cargamos la fuente real desde el archivo
+		    Font pokemonFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PokemonGb-RAeo.ttf"), 25);
+		    
+		    // Si no se carga, lanzamos una excepción para que se registre en el log de errores
+		    if (pokemonFont == null) {
+		        throw new Exception("La fuente /fonts/PokemonGb-RAeo.ttf no pudo ser localizada.");
+		    }
 		} catch (Exception e) {
-			System.out.println("No se pudo cargar la fuente: " + e.getMessage());
+		    System.err.println("Error al cargar recursos: " + e.getMessage());
 		}
 		// Ponemos a Rayquaza directamente la primera vez
 		// Aquí no hace falta fundido porque la ventana se está abriendo

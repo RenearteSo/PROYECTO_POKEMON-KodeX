@@ -112,7 +112,6 @@ public class loginController implements Initializable {
     		
     		
     		// CONEXIÓN BASE DE DATOS //
-    		
     		ConexionDB conexionObj = new ConexionDB();  // nos conectamos desde ConexionDB
             Connection connectDB = conexionObj.getConnection(); // obtenemos esa conexión
     		
