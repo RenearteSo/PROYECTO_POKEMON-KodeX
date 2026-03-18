@@ -2,16 +2,25 @@ package controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.media.MediaView;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.util.Duration;
 
 public class menuController {
 
     @FXML private Button botonCaptura, botonCombate, botonEntrenamiento, botonEquipo;
     @FXML private MediaView menuFondo;
+    //Declaramos las variables para gestionar los botones de pantalla completa y pantalla pequeña
+    @FXML
+    private ImageView botonPantalla;
+    private Image imgAgrandar = new Image(getClass().getResourceAsStream("/img/Menu/botonAgrandar.png"));
+    private Image imgEncoger = new Image(getClass().getResourceAsStream("/img/Menu/botonMinimizar.png"));
 
     //ESTO SE EJECUTA AL ABRIR EL JUEGO
     @FXML
@@ -25,6 +34,28 @@ public class menuController {
         // Ponemos a Rayquaza directamente la primera vez
         // Aquí no hace falta fundido porque la ventana se está abriendo
         ponerVideo("VIDEO INICIO.mp4");
+        
+     // Esto obliga al vídeo a estirarse al tamaño de la ventana
+        javafx.application.Platform.runLater(() -> {
+            // CAMBIA "idDelVideo" POR EL NOMBRE QUE TENGA TU MEDIAVIEW EN EL CÓDIGO
+        	menuFondo.fitWidthProperty().bind(menuFondo.getScene().widthProperty());
+        	menuFondo.fitHeightProperty().bind(menuFondo.getScene().heightProperty());
+        });
+        
+        Platform.runLater(() -> {
+            Stage stage = (Stage) botonPantalla.getScene().getWindow();
+            // Esto mira si la pantalla cambia a FullScreen por cualquier motivo
+            stage.fullScreenProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal) { // Si es true está en grande
+                	botonPantalla.setImage(imgEncoger);
+                } else { // Si es false está en pequeño
+                	botonPantalla.setImage(imgAgrandar);
+                }
+            });
+        });
+        
+     // Forzamos que empiece con el icono de encoger
+        botonPantalla.setImage(imgEncoger);
     }
 
     //MÉTODO MAESTRO PARA CAMBIAR VÍDEOS CON FUNDIDO SUAVE
@@ -116,5 +147,19 @@ public class menuController {
         botonEquipo.setScaleX(1.0);
         botonEquipo.setScaleY(1.0);
         cambiarVideoConEfecto("VIDEO INICIO.mp4");
+    }
+    //Método para los botones de agrandar y minimizar según en la pantalla que estemos
+    @FXML
+    void gestionarPantalla(MouseEvent event) {
+    	// Obtenemos la ventana actual
+        Stage stage = (Stage) botonPantalla.getScene().getWindow();
+        
+        if (!stage.isFullScreen()) {
+            stage.setFullScreen(true);
+            botonPantalla.setImage(imgEncoger);
+        } else {
+            stage.setFullScreen(false);
+            botonPantalla.setImage(imgAgrandar);
+        }
     }
 }

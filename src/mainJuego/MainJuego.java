@@ -20,6 +20,10 @@ public class MainJuego extends Application {
         primaryStage.setResizable(false);
         // Aquí llamamos a nuestro pokemons
         
+        //Para poner la pantalla completa
+        primaryStage.setFullScreen(true);
+        //Para quitar el mensaje de pantalla completa pulsar ESC
+        primaryStage.setFullScreenExitHint("");
         primaryStage.show();
     }
 
