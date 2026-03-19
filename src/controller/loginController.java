@@ -7,14 +7,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
+
 import dao.ConexionDB;
+import dao.EntrenadorCrud;
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -30,6 +35,7 @@ import javafx.scene.media.MediaView;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.Entrenador;
 
 public class loginController implements Initializable {
 
@@ -64,7 +70,7 @@ public class loginController implements Initializable {
 	private ImageView botonPantalla;
 
 	// Variable global para la música, fuera de los métodos
-	private javafx.scene.media.MediaPlayer musicaLogin;
+	private MediaPlayer musicaLogin;
 
 	private Image imgAgrandar = new Image(getClass().getResourceAsStream("/img/Menu/botonAgrandar.png"));
 	private Image imgEncoger = new Image(getClass().getResourceAsStream("/img/Menu/botonMinimizar.png"));
@@ -94,7 +100,7 @@ public class loginController implements Initializable {
 		}
 
 		// Esto obliga al vídeo a estirarse al tamaño de la ventana
-		javafx.application.Platform.runLater(() -> {
+		Platform.runLater(() -> {
 			// CAMBIA "idDelVideo" POR EL NOMBRE QUE TENGA TU MEDIAVIEW EN EL CÓDIGO
 			videoFondo.fitWidthProperty().bind(videoFondo.getScene().widthProperty());
 			videoFondo.fitHeightProperty().bind(videoFondo.getScene().heightProperty());
@@ -274,20 +280,20 @@ public class loginController implements Initializable {
 
 		// CONEXIÓN BASE DE DATOS //
 		ConexionDB conexionObj = new ConexionDB(); // nos conectamos desde ConexionDB
-		Connection connectDB = conexionObj.getConnection(); // obtenemos esa conexión
+		Connection conexion = conexionObj.getConnection(); // obtenemos esa conexión
 
-		if (connectDB != null) { // si la conexion es correcta
-			try {
-				String verificarLogin = "SELECT PASSWORD " // buscamos la contraseña en la base de datos
+		if (conexion != null) { // si la conexion es correcta
+				String sql  = "SELECT PASSWORD " // buscamos la contraseña en la base de datos
 						+ "FROM ENTRENADOR " + "WHERE NOM_ENTRENADOR = ? "; // ? para luego reemplazar por el valor
 																			// introducido
+			try {
+				PreparedStatement ps = conexion.prepareStatement(sql); // preparamos la consulta
 
-				PreparedStatement statement = connectDB.prepareStatement(verificarLogin); // preparamos la consulta
+				ps.setString(1, loginUsuario); // cambiamos el primer ? del prepareStatement
 
-				statement.setString(1, loginUsuario); // cambiamos el primer ? del prepareStatement
+				ResultSet rs = ps.executeQuery(); // realizamos la consulta
 
-				ResultSet rs = statement.executeQuery(); // realizamos la consulta
-
+    			
 				if (rs.next()) { // si existe
 					String passwordBD = rs.getString("PASSWORD"); // Obtenemos la contraseña de la base de datos
 					if (passwordBD.equals(loginContrasenia)) {
@@ -298,74 +304,35 @@ public class loginController implements Initializable {
 						errorLogin.setVisible(true);
 					}
 				} else { // el usuario no existe, lo registramos
-					preguntarRegistro(loginUsuario, loginContrasenia, connectDB);
+					// mostramos una alerta de confirmacion si el usuario no existe para poder
+					// registrarlo.
+					// mostramos la ventana y esperamos a que el usuario pulse un botón
+
+					int opcion = JOptionPane.showConfirmDialog(null, "Usuario NO encontrado, ¿desea registrarlo?");
+
+					// si el usuario pulsa aceptar, lo registramos
+					if(opcion == JOptionPane.YES_OPTION) {
+						Entrenador entrenador = new Entrenador (loginUsuario, loginContrasenia);
+						EntrenadorCrud.crearNuevoEntrenador(conexion, entrenador); // lo creamos en la base de datos
+						abrirMenu(); // pasamos al menu principal
+					} else {
+						// si cancela, ponemos en el label que no existe
+						errorLogin.setText("El usuario no existe.");
+						errorLogin.setVisible(true);
+					}
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 				errorLogin.setText("Error al conectar con la base de datos.");
 				errorLogin.setVisible(true);
 			} finally {
-				if (connectDB != null)
-					connectDB.close();
+				if (conexion != null)
+					conexion.close();
 			}
 		} else {
 			errorLogin.setText("Error: No se ha podido conectar a la base de datos.");
 			errorLogin.setVisible(true);
 
-		}
-	}
-
-	// metodo para preguntar si crear un usuario en la base de datos
-	private void preguntarRegistro(String nuevoUsuario, String nuevaContra, Connection connectDB) {
-		// mostramos una alerta de confirmacion si el usuario no existe para poder
-		// registrarlo.
-		javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
-				javafx.scene.control.Alert.AlertType.CONFIRMATION);
-		alert.setTitle("Usuario no encontrado");
-		alert.setHeaderText("El entrenador '" + nuevoUsuario + "' no existe.");
-		alert.setContentText("¿Quieres crear un nuevo entrenador con estas credenciales?");
-
-		// mostramos la ventana y esperamos a que el usuario pulse un botón
-		java.util.Optional<javafx.scene.control.ButtonType> result = alert.showAndWait();
-
-		// si el usuario pulsa aceptar, lo registramos
-		if (result.isPresent() && result.get() == javafx.scene.control.ButtonType.OK) {
-			crearNuevoEntrenador(nuevoUsuario, nuevaContra, connectDB);
-		} else {
-			// si cancela, ponemos en el label que no existe
-			errorLogin.setText("El usuario no existe.");
-			errorLogin.setVisible(true);
-		}
-	}
-
-	// registro de un nuevo entrenador en la base de datos
-	private void crearNuevoEntrenador(String usuario, String contrasenia, Connection connectDB) {
-
-		// pokedolares iniciales (800-1000)
-		int dineroInicial = (int) (Math.random() * (1000 - 800 + 1) + 800);
-
-		// preparamos la consulta SQL
-
-		String sql = "INSERT INTO ENTRENADOR (NOM_ENTRENADOR, PASSWORD, TIPO_ENTRENADOR, POKEDOLLAR, NIVEL_ENTRENADOR) "
-				+ "VALUES (?, ?, 'JUGADOR', ?, 1)";
-
-		try (java.sql.PreparedStatement pstmt = connectDB.prepareStatement(sql)) {
-
-			// le asignamos los parametros al prepareStatement
-			pstmt.setString(1, usuario); // sustituye el primer '?' por el nombre.
-			pstmt.setString(2, contrasenia);
-			pstmt.setInt(3, dineroInicial); // pokedollars entre 800 y 1000
-
-			int filasAfectadas = pstmt.executeUpdate(); // realizamos la ejecucion a la base de datos
-
-			if (filasAfectadas > 0) {
-				// USUARIO CREADO
-				abrirMenu(); // pasamos al menu principal
-			}
-		} catch (java.sql.SQLException e) {
-			e.printStackTrace();
-			errorLogin.setText("Error al registrar en la base de datos.");
-			errorLogin.setVisible(true);
 		}
 	}
 
@@ -378,12 +345,12 @@ public class loginController implements Initializable {
 				musicaLogin.dispose(); // Libera la memoria
 			}
 			// cargamos la nueva vista desde el paquete view
-			javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("../view/menu.fxml"));
-			javafx.scene.Parent root = loader.load(); // cargamos la vista
+			FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("../view/menu.fxml"));
+			Parent root = loader.load(); // cargamos la vista
 
 			// Obtenemos la ventana (Stage) actual desde la escena donde esta el boton
 			// entrar.
-			javafx.stage.Stage stage = (javafx.stage.Stage) confirmarLogin.getScene().getWindow();
+			Stage stage = (javafx.stage.Stage) confirmarLogin.getScene().getWindow();
 
 			// Guardamos si el usuario estaba en pantalla completa o no
 			boolean enPantallaCompleta = stage.isFullScreen();

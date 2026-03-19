@@ -21,20 +21,6 @@ public class Entrenador {
 	// que guardaremos en nuestra mochila
 	private LinkedList<Objeto> mochila;
 
-	// Constructor por defecto
-	public Entrenador() {
-		super();
-		this.idEntrenador = 0;
-		this.nombreEntrenador = "";
-		this.tipoEntrenador = "";
-		this.pokedollar = 0;
-		this.nivelEntrenador = 0;
-		this.password = "";
-		this.rutaImgFrontal = "";
-		this.equipoPrincipal = new Pokemon[6];
-		this.equipoSecundario = new LinkedList<Pokemon>();
-		this.mochila = new LinkedList<Objeto>();
-	}
 
 	// Constructor con parámetros
 	public Entrenador(int idEntrenador, String nombreEntrenador, String tipoEntrenador, int pokedollar,
@@ -51,6 +37,20 @@ public class Entrenador {
 		this.equipoPrincipal = equipoPrincipal;
 		this.equipoSecundario = equipoSecundario;
 		this.mochila = mochila;
+	}
+	
+	// Constructor para login
+	public Entrenador(String usuario, String password) {
+		this.idEntrenador = 0;
+		this.nombreEntrenador = usuario;
+		this.tipoEntrenador = "";
+		this.pokedollar = 0;
+		this.nivelEntrenador = 1;
+		this.password = password;
+		this.rutaImgFrontal = "";
+		this.equipoPrincipal = null;
+		this.equipoSecundario = null;
+		this.mochila = null;
 	}
 
 	// Constructor copia
