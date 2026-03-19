@@ -26,7 +26,7 @@ import model.Objeto;
 import model.Pokedex;
 import model.Pokemon;
 
-public class capturaController {
+public class capturaController implements DatosEntrenador{
 
     // Vinculamos los elementos del Scene Builder
     @FXML private ImageView fondoBatalla; 
@@ -193,10 +193,19 @@ public class capturaController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/menu.fxml"));
             Parent root = loader.load();
+            
+            //Caarga los datos de jugador
+            Object controlador = loader.getController();
+            if (controlador instanceof DatosEntrenador) {
+                ((DatosEntrenador) controlador).setEntrenador(this.jugadorActual);
+            }
+            
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setFullScreen(true); 
-            stage.show();
+            
+            boolean enPantallaCompleta = stage.isFullScreen();
+            stage.getScene().setRoot(root);
+			stage.setFullScreen(enPantallaCompleta);
+			stage.setFullScreenExitHint("");
         } catch (Exception e) {
             e.printStackTrace();
         }

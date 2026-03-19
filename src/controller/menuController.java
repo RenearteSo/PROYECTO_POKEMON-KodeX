@@ -12,14 +12,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.media.MediaView;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.scene.control.Label;
 
 import java.io.IOException;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.util.Duration;
+import model.Entrenador;
 
-public class menuController {
+public class menuController implements DatosEntrenador{
 
 	@FXML
 	private Button botonCaptura, botonCombate, botonEntrenamiento, botonEquipo, botonCrianza, botonCasino;
@@ -40,12 +42,18 @@ public class menuController {
 	private Image imgVolMax = new Image(getClass().getResourceAsStream("/img/Menu/volumenMax.png"));
 	private Image imgVolMin = new Image(getClass().getResourceAsStream("/img/Menu/volumenMin.png"));
 	private Image imgVolMute = new Image(getClass().getResourceAsStream("/img/Menu/sinVolumen.png"));
+	
+	//Etiquetas para nombre y pokedollar
+	@FXML
+    private Label etiquetaPokeDollar, etiquetaUsuario;
+	
 
 	// Variable para los vídeos
 	private javafx.scene.media.MediaPlayer mediaPlayer;
 
 	// Variable global para la música, fuera de los métodos
 	private javafx.scene.media.MediaPlayer musicaMenu;
+	private Entrenador entrenadorLog;
 
 	// ESTO SE EJECUTA AL ABRIR EL JUEGO
 	@FXML
@@ -106,11 +114,21 @@ public class menuController {
 				}
 			}
 		});
+		
 		// Esto fuerza al slider a moverse al arrancar para que el icono se actualice
 		sliderVolumen.setValue(sliderVolumen.getValue());
 
 		// Forzamos que empiece con el icono de encoger
 		botonPantalla.setImage(imgEncoger);
+	}
+	
+	//Método para recibir datos
+	public void recibirDatos(Entrenador ent) {
+		this.entrenadorLog = ent;
+		//Mostramos el nombre del usuario/entrenador en el menú y sus pokedólares
+				etiquetaUsuario.setText(ent.getNombreEntrenador());
+				etiquetaPokeDollar.setText(Integer.toString(ent.getPokedollar()));
+				
 	}
 
 	// MÉTODO MAESTRO PARA CAMBIAR VÍDEOS CON FUNDIDO SUAVE
@@ -287,7 +305,7 @@ public class menuController {
 			// Paramos la música antes de cargar nada nuevo
 			if (musicaMenu != null) {
 				musicaMenu.stop();
-				musicaMenu.dispose(); // Liberamos RAM (Backend rules!)
+				musicaMenu.dispose(); // Liberamos RAM 
 			}
 
 			// También paramos el vídeo de Rayquaza para que no consuma CPU
@@ -300,12 +318,17 @@ public class menuController {
 			javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("../view/" + fxml));
 			javafx.scene.Parent root = loader.load();
 
+			Object controlador = loader.getController();
+			if(controlador instanceof DatosEntrenador) {
+				((DatosEntrenador) controlador).setEntrenador(this.entrenadorLog);
+			}
+			
 			// Obtenemos el Stage y mantenemos el FullScreen
 			javafx.stage.Stage stage = (javafx.stage.Stage) botonReferencia.getScene().getWindow();
 			boolean enPantallaCompleta = stage.isFullScreen();
 
 			// Lanzamos el escenario
-			// El truco mágico: Cambiamos el "suelo" de la escena, no la escena entera
+			// Cambiamos la escena
 			stage.getScene().setRoot(root);
 			stage.setFullScreen(enPantallaCompleta);
 			stage.setFullScreenExitHint("");
@@ -322,5 +345,12 @@ public class menuController {
 	void irCaptura(MouseEvent event) {
 		// Usamos el método genérico
 		cambiarEscena("captura.fxml", botonCaptura);
+	}
+	
+	//Método implementado de la interfaz Datos Entrenador
+	@Override
+	public void setEntrenador(Entrenador e) {
+		recibirDatos(e);
+		
 	}
 }

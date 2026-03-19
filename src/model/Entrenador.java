@@ -85,6 +85,19 @@ public class Entrenador {
 			this.mochila = new LinkedList<Objeto>();
 		}
 	}
+	//Creamos constructor específico para el Login controller
+	public Entrenador(int idBD, String loginUsuario, String loginContrasenia, int dineroDB) {
+		this.idEntrenador = idBD;
+		this.nombreEntrenador = loginUsuario;
+		this.tipoEntrenador = "";
+		this.pokedollar = dineroDB;
+		this.nivelEntrenador = 1;
+		this.password = loginContrasenia;
+		this.rutaImgFrontal = "";
+		this.equipoPrincipal = null;
+		this.equipoSecundario = null;
+		this.mochila = null;
+	}
 
 	// Getters and setters Entrenador
 	public int getIdEntrenador() {
