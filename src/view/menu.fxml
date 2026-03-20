@@ -52,7 +52,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="botonCasino" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarCasino" onMouseExited="#salirCasino" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: White; -fx-font-size: 20; -fx-font-weight: Bold; -fx-background-radius: 15;" text="Casino" />
+            <Button fx:id="botonCasino" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#irCasino" onMouseEntered="#entrarCasino" onMouseExited="#salirCasino" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: White; -fx-font-size: 20; -fx-font-weight: Bold; -fx-background-radius: 15;" text="Casino" />
             <Button fx:id="botonCrianza" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarCrianza" onMouseExited="#salirCrianza" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: White; -fx-font-size: 20px; -fx-font-weight: Bold; -fx-background-radius: 15;" text="Crianza" />
          </children>
       </VBox>

@@ -347,6 +347,12 @@ public class menuController implements DatosEntrenador{
 		cambiarEscena("captura.fxml", botonCaptura);
 	}
 	
+	@FXML
+	void irCasino(MouseEvent event) {
+		// Usamos el método genérico
+		cambiarEscena("casino.fxml", botonCasino);
+	}
+	
 	//Método implementado de la interfaz Datos Entrenador
 	@Override
 	public void setEntrenador(Entrenador e) {

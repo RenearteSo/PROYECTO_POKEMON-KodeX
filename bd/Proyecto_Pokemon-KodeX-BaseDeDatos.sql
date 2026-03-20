@@ -338,41 +338,7 @@ VALUES (4, 'Bastón', 120, 0, 0, -15);
 INSERT INTO objeto (ID_OBJETO, NOM_OBJETO, PRECIO_OBJETO, MOD_ATAQUE, MOD_DEFENSA, MOD_VELOCIDAD) 
 VALUES (5, 'Pilas', 180, 0, 0, 0); 
 
---INSERT POKEDEX_TIPO
 
-INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
-(1,3),(2,3),(3,3),(43,3),(44,3),(45,3),(69,3),(70,3),(71,3),(102,3),(103,3),(114,3);
-INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
-(4,2),(5,2),(6,2),(37,2),(38,2),(58,2),(59,2),(77,2),(78,2),(126,2),(136,2),(146,2);
-INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
-(7,1),(8,1),(9,1),(54,1),(55,1),(60,1),(61,1),(62,1),(72,1),(73,1),(79,1),(80,1),(86,1),(87,1),(90,1),(91,1),(98,1),(99,1),(116,1),(117,1),(118,1),(119,1),(120,1),(121,1),(129,1),(130,1),(131,1),(134,1);
-INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
-(10,6),(11,6),(12,6),(13,6),(14,6),(15,6),(46,6),(47,6),(48,6),(49,6),(123,6),(127,6);
-INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
-(16,13),(17,13),(18,13),(19,13),(20,13),(21,13),(22,13),(39,13),(40,13),(52,13),(53,13),(83,13),(84,13),(85,13),(108,13),(113,13),(115,13),(128,13),(132,13),(133,13),(137,13),(143,13);
-INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
-(25,4),(26,4),(81,4),(82,4),(100,4),(101,4),(125,4),(135,4),(145,4);
-INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
-(23,7),(24,7),(29,7),(30,7),(31,7),(32,7),(33,7),(34,7),(88,7),(89,7),(109,7),(110,7);
-INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
-(63,9),(64,9),(65,9),(96,9),(97,9),(122,9),(150,9),(151,9);
-INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
-(56,11),(57,11),(66,11),(67,11),(68,11),(106,11),(107,11);
-INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
-(92,8),(93,8),(94,8);
-INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
-(124,10),(144,10);
-INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
-(147,12),(148,12),(149,12);
-INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
-(27,13),(28,13),(50,13),(51,13),(74,13),(75,13),(76,13),(95,13),(104,13),(105,13),(111,13),(112,13);
-
---INSERTS TIPO_POKEMON
-INSERT IGNORE INTO `tipos_pokemon` (`ID_TIPO`, `NOM_TIPO`) VALUES
-(1, 'AGUA'), (2, 'FUEGO'), (3, 'PLANTA'), (4, 'ELECTRICO'),
-(5, 'VOLADOR'), (6, 'BICHO'), (7, 'VENENO'), (8, 'FANTASMA'),
-(9, 'PSIQUICO'), (10, 'HIELO'), (11, 'LUCHA'), (12, 'DRAGON'),
-(13, 'NORMAL');
 -- --------------------------------------------------------
 
 --
@@ -447,6 +413,38 @@ CREATE TABLE `turno_combate` (
   `ACCION_RIVAL` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
+(1,3),(2,3),(3,3),(43,3),(44,3),(45,3),(69,3),(70,3),(71,3),(102,3),(103,3),(114,3);
+INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
+(4,2),(5,2),(6,2),(37,2),(38,2),(58,2),(59,2),(77,2),(78,2),(126,2),(136,2),(146,2);
+INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
+(7,1),(8,1),(9,1),(54,1),(55,1),(60,1),(61,1),(62,1),(72,1),(73,1),(79,1),(80,1),(86,1),(87,1),(90,1),(91,1),(98,1),(99,1),(116,1),(117,1),(118,1),(119,1),(120,1),(121,1),(129,1),(130,1),(131,1),(134,1);
+INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
+(10,6),(11,6),(12,6),(13,6),(14,6),(15,6),(46,6),(47,6),(48,6),(49,6),(123,6),(127,6);
+INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
+(16,13),(17,13),(18,13),(19,13),(20,13),(21,13),(22,13),(39,13),(40,13),(52,13),(53,13),(83,13),(84,13),(85,13),(108,13),(113,13),(115,13),(128,13),(132,13),(133,13),(137,13),(143,13);
+INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
+(25,4),(26,4),(81,4),(82,4),(100,4),(101,4),(125,4),(135,4),(145,4);
+INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
+(23,7),(24,7),(29,7),(30,7),(31,7),(32,7),(33,7),(34,7),(88,7),(89,7),(109,7),(110,7);
+INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
+(63,9),(64,9),(65,9),(96,9),(97,9),(122,9),(150,9),(151,9);
+INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
+(56,11),(57,11),(66,11),(67,11),(68,11),(106,11),(107,11);
+INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
+(92,8),(93,8),(94,8);
+INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
+(124,10),(144,10);
+INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
+(147,12),(148,12),(149,12);
+INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
+(27,5),(28,5),(50,5),(51,5),(74,14),(75,14),(76,14),(95,14),(104,5),(105,5),(111,5),(112,5);
+
+INSERT IGNORE INTO `tipos_pokemon` (`ID_TIPO`, `NOM_TIPO`) VALUES
+(1, 'AGUA'), (2, 'FUEGO'), (3, 'PLANTA'), (4, 'ELECTRICO'),
+(5, 'TIERRA'), (6, 'BICHO'), (7, 'VENENO'), (8, 'FANTASMA'),
+(9, 'PSIQUICO'), (10, 'HIELO'), (11, 'LUCHA'), (12, 'DRAGON'),
+(13, 'NORMAL'), (14, 'ROCA'), (15, 'VOLADOR'); 
 --
 -- Índices para tablas volcadas
 --
@@ -655,9 +653,3 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
--- Selects:
-SELECT ID_ENTRENADOR,
-	POKEDOLLAR,
-FROM ENTRENADOR
-WHERE NOM_ENTRENADOR` = ?
-AND PASSWORD = ?;
