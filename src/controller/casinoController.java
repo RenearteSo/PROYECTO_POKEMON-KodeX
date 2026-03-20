@@ -162,10 +162,10 @@ public class casinoController implements DatosEntrenador {
     	MediaPlayer mediaPlayer;
     	try {
     		// CAMBIAR FONDO!!!
-            URL mediaUrl = getClass().getResource("/img/Login/fondo_login.mp4");
+            URL mediaUrl = getClass().getResource("/img/Casino/fondo_casino.mp4");
             
             if (mediaUrl == null) {
-                throw new Exception("No se encontró el archivo fondo_login.mp4 en /img/Login/");
+                throw new Exception("No se encontró el archivo fondo_casino.mp4 en /img/Casino/");
             }
             
     		// Esto obliga al vídeo a estirarse al tamaño de la ventana
