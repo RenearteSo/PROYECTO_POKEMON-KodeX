@@ -48,7 +48,7 @@ public class capturaController implements DatosEntrenador{
     private Pokemon pokemonSalvaje;
 
     // Datos de conexión a la base de datos local
-    private final String DB_URL = "jdbc:mysql://127.0.0.1:3306/pokemon?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+    private final String DB_URL = "jdbc:mysql://127.0.0.1:3306/proyecto_pokemon?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
     private final String DB_USER = "root"; 
     private final String DB_PASS = "";     
 
