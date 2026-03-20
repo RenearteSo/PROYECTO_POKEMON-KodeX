@@ -1,11 +1,9 @@
 package controller;
 
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
+import java.util.Optional;
+import java.util.regex.Pattern;
+import dao.CapturaDao;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,208 +11,241 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import model.*;
 
-import model.Entrenador;
-import model.Objeto;
-import model.Pokedex;
-import model.Pokemon;
+// Implementamos la interfaz DatosEntrenador para poder el jugador desde otras pantallas
+public class capturaController implements DatosEntrenador {
 
-public class capturaController implements DatosEntrenador{
-
-    // Vinculamos los elementos del Scene Builder
-    @FXML private ImageView fondoBatalla; 
-    @FXML private ImageView imgEntrenador; 
-    @FXML private ImageView imgPokemon; 
-    @FXML private Label lblNombrePokemon;
-    @FXML private Label lblNivelPokemon;
+	// Elementos de la interfaz FXML
+    @FXML private ImageView fondoBatalla, imgEntrenador, imgPokemon, botonPantalla;
+    @FXML private Label lblNombrePokemon, lblNivelPokemon, lblDialogo;
     @FXML private ProgressBar barraVida;
-    @FXML private Label lblDialogo;
-    @FXML private Button btnCapturar;   
-    @FXML private Button btnHuir;       
+    @FXML private Button btnCapturar, btnHuir;
 
-    // Iconos para el control de la ventana
-    @FXML private ImageView botonPantalla;
+    // Imagenes para el botón de pantalla completa
     private Image imgAgrandar = new Image(getClass().getResourceAsStream("/img/Menu/botonAgrandar.png"));
     private Image imgEncoger = new Image(getClass().getResourceAsStream("/img/Menu/botonMinimizar.png"));
 
-    private Entrenador jugadorActual; 
-    private Pokemon pokemonSalvaje;
+    // Variables
+    private Entrenador jugadorActual; // Guarda los datos del jugador que esta jugando
+    private Pokemon pokemonSalvaje; // Guarda los datos del pokemon que vamos a capturar
+    private CapturaDao dao = new CapturaDao(); // Instancia de nuestra conexion a Base de Datos
 
-    // Datos de conexión a la base de datos local
-    private final String DB_URL = "jdbc:mysql://127.0.0.1:3306/proyecto_pokemon?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-    private final String DB_USER = "root"; 
-    private final String DB_PASS = "";     
-
-    // Recibimos los datos del entrenador desde la pantalla anterior
+    // Este método recibe al jugador desde el Menú Principal, sirve para saber quien esta jugando en ese momento.
+    @Override
     public void setEntrenador(Entrenador entrenador) {
         this.jugadorActual = entrenador;
         
-        if (jugadorActual != null && jugadorActual.getRutaImgFrontal() != null) {
-            try {
-                String rutaEnt = jugadorActual.getRutaImgFrontal();
-                String rutaFinal = rutaEnt.startsWith("/") ? rutaEnt : "/" + rutaEnt;
-                InputStream stream = getClass().getResourceAsStream(rutaFinal);
-                if (stream != null) imgEntrenador.setImage(new Image(stream));
-            } catch (Exception e) {
-                // Si falla la imagen del entrenador, el juego sigue
+        // Ponemos la imagen por defecto del entrenador
+        String rutaImagen = "/img/Entrenador/pokemon_entrenador.png";
+
+        // Si el jugador existe en nuestra Base de Datos y tiene una ruta de imagen de un entrenador la usaremos.
+        if (jugadorActual != null) {
+            String r = jugadorActual.getRutaImgFrontal();
+            if (r != null && !r.trim().isEmpty()) {
+                rutaImagen = r; 
             }
         }
+
+        // Intentamos cargar la imagen en la posición de la pantalla
+        try {
+            InputStream st = getClass().getResourceAsStream(rutaImagen.startsWith("/") ? rutaImagen : "/" + rutaImagen);
+            if (st != null) imgEntrenador.setImage(new Image(st));
+        } catch (Exception e) { System.out.println("Error imagen entrenador"); }
     }
 
+    // Este método se ejecuta automáticamente cuando se abre la pantalla
     @FXML
     public void initialize() {
+    	
+    	// Mensaje que aparece en la caja de texto grande
         lblDialogo.setText("¡Un Pokémon salvaje\napareció!");
-        barraVida.setProgress(1.0); // Empezamos con la vida llena
-        
-        generarPokemonAleatorioBD();
+        cargarPokemonDesdeDao();
 
-        // Configuramos el comportamiento de la ventana al arrancar
+        // El Platform.runLater espera que la ventana se cree para ajustar los tamaños
         Platform.runLater(() -> {
-            Stage stage = (Stage) botonPantalla.getScene().getWindow();
-            
-            // Vinculamos el tamaño del fondo al de la ventana para que sea responsive
-            fondoBatalla.fitWidthProperty().bind(fondoBatalla.getScene().widthProperty());
-            fondoBatalla.fitHeightProperty().bind(fondoBatalla.getScene().heightProperty());
-            
-            // Ajustamos el icono de pantalla según el estado actual
-            botonPantalla.setImage(stage.isFullScreen() ? imgEncoger : imgAgrandar);
-
-            // Por si pulsan ESC para actualizar el icono
-            stage.fullScreenProperty().addListener((obs, oldVal, newVal) -> {
-                botonPantalla.setImage(newVal ? imgEncoger : imgAgrandar);
-            });
+            if (fondoBatalla.getScene() != null) {
+                Scene scene = fondoBatalla.getScene();
+                Stage stage = (Stage) scene.getWindow();
+                
+                // Hacemos que la imagen del fondo se estire al tamaño de la ventana
+                fondoBatalla.fitWidthProperty().bind(scene.widthProperty());
+                fondoBatalla.fitHeightProperty().bind(scene.heightProperty());
+                
+                // Calculamos la posicion del Pokemon para que quede en su lugar siempre ya sea en pantalla pequeña o grande
+                fondoBatalla.fitWidthProperty().addListener((obs, ov, nv) -> imgPokemon.setLayoutX(nv.doubleValue() * 0.65));
+                fondoBatalla.fitHeightProperty().addListener((obs, ov, nv) -> imgPokemon.setLayoutY(nv.doubleValue() * 0.50));
+                
+                // Al pulsar el botón de pantalla completa el icono cambia
+                if (botonPantalla != null) {
+                    botonPantalla.setImage(stage.isFullScreen() ? imgEncoger : imgAgrandar);
+                    stage.fullScreenProperty().addListener((obs, ov, nv) -> botonPantalla.setImage(nv ? imgEncoger : imgAgrandar));
+                }
+            }
         });
     }
 
-    // Buscamos un Pokémon al azar en la BD y cargamos su info y tipo
-    private void generarPokemonAleatorioBD() {
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS)) {
-            
-            // Query para sacar los datos del Pokémon y su tipo principal
-            String query = "SELECT p.NUM_POKEDEX, p.NOM_POKEMON, p.IMG_FRONT, t.NOM_TIPO " +
-                           "FROM pokedex p " +
-                           "LEFT JOIN pokedex_tipo pt ON p.NUM_POKEDEX = pt.NUM_POKEDEX " +
-                           "LEFT JOIN tipos_pokemon t ON pt.ID_TIPO = t.ID_TIPO " +
-                           "ORDER BY RAND() LIMIT 1";
-                           
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                String nombre = rs.getString("NOM_POKEMON");
-                String rutaImgFront = rs.getString("IMG_FRONT"); 
-                String tipo = rs.getString("NOM_TIPO");
-                
-                if (tipo == null || tipo.trim().isEmpty()) tipo = "NORMAL";
-
-                // Creamos la instancia del Pokémon salvaje
-                Pokedex infoPokedex = new Pokedex();
-                infoPokedex.setNumPokedex(rs.getInt("NUM_POKEDEX"));
-                pokemonSalvaje = new Pokemon(infoPokedex, nombre);
-                pokemonSalvaje.setNivel(1);
-
-                lblNombrePokemon.setText(nombre);
-                
-                // Cargamos la imagen desde la carpeta de recursos
-                try {
-                    String nombreArchivo = rutaImgFront.substring(rutaImgFront.lastIndexOf("/") + 1);
-                    String rutaFinal = "/img/Pokemon/Front/" + nombreArchivo;
-                    InputStream stream = getClass().getResourceAsStream(rutaFinal);
-                    if (stream != null) imgPokemon.setImage(new Image(stream));
-                } catch (Exception e) {}
-
-                // Cambiamos el escenario según el tipo de pokemon que haya salido
-                ponerFondoSegunTipo(tipo.trim().toUpperCase());
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            lblDialogo.setText("Error de conexión.");
-        }
-    }
-
-    // Selección lógica del fondo de batalla
-    private void ponerFondoSegunTipo(String tipo) {
-        String rutaFondo = "";
+    // Traemos un Pókemon aleatorio usando DAO y preparamos la pantalla
+    private void cargarPokemonDesdeDao() {
+        Object[] datosBD = dao.generarPokemonSalvaje();
         
-        switch (tipo) {
-            case "AGUA": rutaFondo = "/img/Captura/Imagenes/VISTA_AGUA.jpg"; break;
-            case "BICHO": case "VENENO": rutaFondo = "/img/Captura/Imagenes/VISTA_BICHO-VENENO.jpg"; break;
-            case "FANTASMA": case "PSIQUICO": rutaFondo = "/img/Captura/Imagenes/VISTA_FANTASMAS-PSIQUICO.jpg"; break;
-            case "FUEGO": case "DRAGON": rutaFondo = "/img/Captura/Imagenes/VISTA_FUEGO-DRAGON.jpg"; break;
-            case "HIELO": rutaFondo = "/img/Captura/Imagenes/VISTA_HIELO.jpg"; break;
-            case "LUCHA": rutaFondo = "/img/Captura/Imagenes/VISTA_LUCHA.jpg"; break;
-            case "VOLADOR": case "ELECTRICO": rutaFondo = "/img/Captura/Imagenes/VISTA_VOLADOR-ELECTRICO.jpg"; break;
-            default: rutaFondo = "/img/Captura/Imagenes/VISTA_PLANTA-ROCA-TIERRA-NORMAL.jpg"; break;
+        // Si la base de datos nos devolvió información correctamente.
+        if (datosBD != null && datosBD[0] != null) {
+            pokemonSalvaje = (Pokemon) datosBD[0];
+            
+            // Ponemos los datos del Pókemon en las etiquetas Label de la interfaz.
+            lblNombrePokemon.setText(pokemonSalvaje.getMote());
+            lblNivelPokemon.setText("Lv " + pokemonSalvaje.getNivel());
+            barraVida.setProgress(1.0); // Siempre tiene la vida al máximo
+            
+            // Cargamos la imagen del Pókemon
+            try {
+                String r = pokemonSalvaje.getNumPokedex().getRutaImgFront();
+                String arch = r.substring(r.lastIndexOf("/") + 1);
+                imgPokemon.setImage(new Image(getClass().getResourceAsStream("/img/Pokemon/Front/" + arch)));
+            } catch (Exception e) {}
+            
+            // Cambiamos el fondo de pantalla dependiendo del tipo de Pókemon que sea
+            ponerFondoSegunTipo(((String) datosBD[1]).trim().toUpperCase());
         }
-
-        try {
-            InputStream stream = getClass().getResourceAsStream(rutaFondo);
-            if (stream != null) fondoBatalla.setImage(new Image(stream));
-        } catch (Exception e) {}
     }
 
-    // Lógica al pulsar el botón de lanzar Pokéball
+    // Método que se ejecuta al pulsar el botón CAPTURAR
     @FXML
     public void accionCapturar(ActionEvent event) {
-        lblDialogo.setText("¡Lanzaste una\nPokéball!");
-        
-        Objeto pokeball = new Objeto(); 
-        pokeball.setNomObjeto("Pokéball");
-        
-        if(jugadorActual != null) jugadorActual.getMochila().add(pokeball);
+        if (pokemonSalvaje == null || jugadorActual == null) return;
 
-        // Calculamos si hay éxito en la captura
-        boolean capturado = (jugadorActual != null) 
-            ? jugadorActual.capturarPokemon(pokemonSalvaje, pokeball) 
-            : Math.random() < (2.0/3.0);
+        try {
+        	// Preparamos la Pókeball para lanzarla
+            Objeto pb = new Objeto(); 
+            pb.setNomObjeto("Pokéball");
+            if (jugadorActual.getMochila() == null) return;
+            
+            // Nos tenemos que asegurar de que haya una Pókeball en la mochila del jugador
+            boolean tiene = false;
+            for (Objeto o : jugadorActual.getMochila()) {
+                if (o.getNomObjeto().equalsIgnoreCase("Pokéball")) { tiene = true; break; }
+            }
+            if (!tiene) jugadorActual.getMochila().add(pb);
 
-        if (capturado) {
-            lblDialogo.setText("¡Ya está! ¡" + pokemonSalvaje.getMote() + "\natrapado!");
-            btnCapturar.setDisable(true);
-            btnHuir.setText("VOLVER"); 
-        } else {
-            lblDialogo.setText("¡Oh no! ¡El Pokémon\nse ha escapado!");
-            btnCapturar.setDisable(true);
-            btnHuir.setText("VOLVER");
-        }
+            // Intentamos la captura usando el método de los compañeros.
+            if (jugadorActual.capturarPokemon(pokemonSalvaje, pb)) {
+                boolean guardadoExitoso = false;
+
+                // Seguira pidiendo el nombre hasta que sea válido y lo guarde
+                while (!guardadoExitoso) {
+                	
+                	// Ventana emergente que pide el mote
+                    TextInputDialog tid = new TextInputDialog(pokemonSalvaje.getMote());
+                    tid.setTitle("¡Capturado!");
+                    tid.setHeaderText("¡Has atrapado a " + pokemonSalvaje.getMote() + "!");
+                    tid.setContentText("Introduce un mote (Solo letras):");
+                    
+                    Optional<String> res = tid.showAndWait();
+                    String moteElegido = res.orElse(pokemonSalvaje.getMote());
+
+                    // Comprobamos que el nombre sea Legal sin palabrotas, números ni espacios en blanco.
+                    if (validarMote(moteElegido)) {
+                    	
+                        // Comprueba que el entrenador que esta en ese momento no tenga repetido un mismo mote
+                        if (dao.existeMoteParaEntrenador(jugadorActual.getIdEntrenador(), moteElegido)) {
+                            mostrarAlerta("Mote repetido", "Tú ya usas ese nombre. ¡Elige otro!");
+                        } else {
+                        	// Si todo es correcto, asigna el mote
+                            pokemonSalvaje.setMote(moteElegido);
+                            
+                            // Comprobamos si el equipo ya esta llenó (ya tiene 6 Pokemons) y los envia a la caja
+                            int cantidadEnEquipo = dao.contarPokemonEquipo(jugadorActual.getIdEntrenador());
+                            String ub = (cantidadEnEquipo < 6) ? "EQUIPO" : "CAJA";
+                            
+                            // Guardamos en la base de datos
+                            guardadoExitoso = dao.guardarCapturaEnBD(jugadorActual.getIdEntrenador(), pokemonSalvaje, ub);
+                            
+                            if (guardadoExitoso) {
+                                lblDialogo.setText("¡Atrapado con éxito!\nGuardado en " + ub);
+                                btnCapturar.setDisable(true);
+                                btnHuir.setText("VOLVER");
+                            }
+                        }
+                    } else {
+                        mostrarAlerta("Mote no válido", "¡No se pueden usar palabrotas, números ni espacios en blanco!");
+                    }
+                }
+            } else {
+            	// Si al capturar fallamos
+                lblDialogo.setText("¡Oh no! ¡El Pokémon\nse ha escapado!");
+                btnCapturar.setDisable(true);
+                btnHuir.setText("VOLVER");
+            }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
-    // Volvemos al menú principal manteniendo el modo de pantalla
+    // Validamos que el texto solo sean letras y que no hayan espacios en blanco, números, palabrotas...
+    private boolean validarMote(String mote) {
+    	
+    	// Permitimos letras de la A a la Z con ñ y tíldes incluidas.
+        boolean regexOk = Pattern.matches("^[a-zA-ZñÑáéíóúÁÉÍÓÚ]+$", mote);
+        
+        // Filtro de palabras prohibidas
+        String[] prohibidas = {"tonto", "feo", "caca", "mierda", "imbecil", "puta"}; 
+        for (String p : prohibidas) {
+            if (mote.toLowerCase().contains(p)) return false;
+        }
+        return regexOk;
+    }
+
+    // Método para mostrar mensajes de advertencia si algo sale mal
+    private void mostrarAlerta(String titulo, String contenido) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(contenido);
+        alert.showAndWait();
+    }
+
+    // Seleccionamos la imagen de fondo correcta dependiendo del tipo Pókemon que salga.
+    private void ponerFondoSegunTipo(String tipo) {
+        String rf = switch (tipo) {
+            case "AGUA" -> "/img/Captura/Imagenes/VISTA_AGUA.jpg";
+            case "BICHO", "VENENO" -> "/img/Captura/Imagenes/VISTA_BICHO-VENENO.jpg";
+            case "FUEGO", "DRAGON" -> "/img/Captura/Imagenes/VISTA_FUEGO-DRAGON.jpg";
+            case "HIELO" -> "/img/Captura/Imagenes/VISTA_HIELO.jpg";
+            case "FANTASMA", "PSIQUICO" -> "/img/Captura/Imagenes/VISTA_FANTASMA-PSIQUICO.jpg";
+            case "LUCHA" -> "/img/Captura/Imagenes/VISTA_LUCHA.jpg";
+            case "VOLADOR", "ELECTRICO" -> "/img/Captura/Imagenes/VISTA_VOLADOR-ELECTRICO.jpg";
+            default -> "/img/Captura/Imagenes/VISTA_PLANTA-ROCA-TIERRA-NORMAL.jpg";
+        };
+        try { fondoBatalla.setImage(new Image(getClass().getResourceAsStream(rf))); } catch (Exception e) {}
+    }
+    
+    // Activa o desactiva la pantalla completa al hacer clic en el botón de la esquina.
+    @FXML
+    void gestionarPantalla(MouseEvent event) {
+        Stage stage = (Stage) fondoBatalla.getScene().getWindow();
+        stage.setFullScreen(!stage.isFullScreen());
+    }
+
+    // Si usamos el botón HUIR sale de la pantalla captura y regresa al menú principal
     @FXML
     public void accionHuir(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/menu.fxml"));
             Parent root = loader.load();
             
-            //Caarga los datos de jugador
+            // Pasamos el jugador actual al menú para que no pierda la sesión
             Object controlador = loader.getController();
-            if (controlador instanceof DatosEntrenador) {
+            if (controlador instanceof DatosEntrenador && this.jugadorActual != null) {
                 ((DatosEntrenador) controlador).setEntrenador(this.jugadorActual);
             }
             
+            // Cambiamos la escena
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            
-            boolean enPantallaCompleta = stage.isFullScreen();
             stage.getScene().setRoot(root);
-			stage.setFullScreen(enPantallaCompleta);
-			stage.setFullScreenExitHint("");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Switch manual para alternar pantalla completa
-    @FXML
-    void gestionarPantalla(MouseEvent event) {
-        Stage stage = (Stage) botonPantalla.getScene().getWindow();
-        stage.setFullScreen(!stage.isFullScreen());
+        } catch (Exception e) { e.printStackTrace(); }
     }
 }
