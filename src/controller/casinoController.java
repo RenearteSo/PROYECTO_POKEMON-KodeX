@@ -23,8 +23,9 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.Entrenador;
 
-public class casinoController implements Initializable {
+public class casinoController implements DatosEntrenador {
 
     @FXML
     private ImageView botonPantalla;
@@ -50,9 +51,15 @@ public class casinoController implements Initializable {
     @FXML
     private MediaView videoFondoCasino;
     
+	// Variable para los vídeos
+	private javafx.scene.media.MediaPlayer mediaPlayer;
+    
 	private Image imgAgrandar = new Image(getClass().getResourceAsStream("/img/Menu/botonAgrandar.png"));
 	private Image imgEncoger = new Image(getClass().getResourceAsStream("/img/Menu/botonMinimizar.png"));
+	
+	private javafx.scene.media.MediaPlayer musicaMenu;
 
+	private Entrenador entrenadorLog;
 
 	@FXML
     void animarEntradaBoton(javafx.scene.input.MouseEvent event) {
@@ -97,27 +104,60 @@ public class casinoController implements Initializable {
 			botonPantalla.setImage(imgAgrandar);
 		}
 	}   
-	@FXML
-	 private void volverMenu() {
-	        try {
-	            // cargamos la nueva vista desde el paquete view
-	            FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("../view/menu.fxml"));
-	            Parent root = loader.load(); // cargamos la vista
-	            
-	         // Obtenemos la ventana (Stage) actual desde la escena donde esta el boton entrar.
-	            Stage stage = (javafx.stage.Stage) btnVolver.getScene().getWindow();
-	            
-	            // cambiamos la escena y la mostramos
-	            stage.setScene(new javafx.scene.Scene(root));
-	            stage.show();
-	            
-	        } catch (java.io.IOException e) {
-	            e.printStackTrace();
-	        }
-	    }
+	
+	//Método para recibir datos
+	public void recibirDatos(Entrenador ent) {
+		this.entrenadorLog = ent;
+		//Mostramos y sus pokedólares
+				labelSaldo.setText(Integer.toString(ent.getPokedollar()));
+				
+	}
+	
+	// Creamos método genérico para cambiar de vistas
+	// Se le pasa el nombre del FXML y el botón que tendrá el enveto clickar
+	private void cambiarEscena(String fxml, Button botonReferencia) {
+		try {
+			// Paramos la música antes de cargar nada nuevo
+			if (musicaMenu != null) {
+				musicaMenu.stop();
+				musicaMenu.dispose(); // Liberamos RAM 
+			}
 
-	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
+			// También paramos el vídeo de Rayquaza para que no consuma CPU
+			if (mediaPlayer != null) {
+				mediaPlayer.stop();
+				mediaPlayer.dispose(); //Liberar la memoria
+			}
+
+			// Buscamos el archivo FXML
+			javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("../view/" + fxml));
+			javafx.scene.Parent root = loader.load();
+
+			Object controlador = loader.getController();
+			if(controlador instanceof DatosEntrenador) {
+				((DatosEntrenador) controlador).setEntrenador(this.entrenadorLog);
+			}
+			
+			// Obtenemos el Stage y mantenemos el FullScreen
+			javafx.stage.Stage stage = (javafx.stage.Stage) botonReferencia.getScene().getWindow();
+			boolean enPantallaCompleta = stage.isFullScreen();
+
+			// Lanzamos el escenario
+			// Cambiamos la escena
+			stage.getScene().setRoot(root);
+			stage.setFullScreen(enPantallaCompleta);
+			stage.setFullScreenExitHint("");
+
+			stage.show();
+
+		} catch (java.io.IOException e) {
+			System.err.println("Error al cargar " + fxml + ": " + e.getMessage());
+		}
+	}
+
+
+	@FXML
+	public void initialize() {
     	// VIDEO FONDO//
     	MediaPlayer mediaPlayer;
     	try {
@@ -160,12 +200,24 @@ public class casinoController implements Initializable {
             FadeTransition ftVideo = new FadeTransition(Duration.seconds(2), videoFondoCasino); // fadeTransition
             ftVideo.setToValue(1.0);
             ftVideo.play();
+            
 
         } catch (Exception e) {
             System.err.println("ERROR: " + e.getMessage());
             // Si el video falla, ponemos un fondo para que no se vea vacio
             panelFondoCasino.setStyle("-fx-background-color: #bc2f2f;");
         }
+	}
+	
+	@FXML
+	void volverMenu(ActionEvent event) {
+		// Usamos el método genérico
+		cambiarEscena("menu.fxml", btnVolver);
+	}
+	//Método implementado de la interfaz Datos Entrenador
+	@Override
+	public void setEntrenador(Entrenador e) {
+		recibirDatos(e);
 		
 	}
 }
