@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -7,6 +8,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.media.MediaView?>
 <?import javafx.scene.text.Font?>
@@ -67,7 +69,23 @@
          </image>
       </ImageView>
       <Slider fx:id="sliderVolumen" layoutX="1208.0" layoutY="570.0" max="1.0" onMouseExited="#ocultarSlider" orientation="VERTICAL" value="0.5" visible="false" AnchorPane.bottomAnchor="90.0" AnchorPane.rightAnchor="55.0" />
-      <Label fx:id="etiquetaUsuario" layoutX="1226.0" layoutY="60.0" style="-fx-font-family: &quot;Pokemon GB&quot;; -fx-font-weight: Bold; -fx-font-size: 15; -fx-text-fill: white;" text="Usuario" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="80.0" />
-      <Label fx:id="etiquetaPokeDollar" layoutX="1226.0" layoutY="84.0" style="-fx-font-family: &quot;Pokemon GB&quot;; -fx-font-weight: Bold; -fx-font-size: 15; -fx-text-fill: white;" text="Pokedollar" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="110.0" />
+      <HBox fx:id="cajaAvatarEtiquetas" alignment="CENTER_RIGHT" layoutX="885.0" layoutY="200.0" prefHeight="100.0" prefWidth="300.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="100.0">
+         <children>
+            <ImageView fx:id="imgAvatar" fitHeight="100.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../img/Menu/avatar.png" />
+               </image>
+            </ImageView>
+            <VBox id="cajaEtiquetas" fx:id="cajaEtiquetas" alignment="CENTER" opacity="0.75" spacing="20.0" style="-fx-background-color: #2b2b2b;; -fx-background-radius: 15; -fx-opacity: 0.8; -fx-border-color: #ffffff; -fx-border-radius: 15;">
+               <children>
+                  <Label fx:id="etiquetaUsuario" style="-fx-font-family: &quot;Pokemon GB&quot;; -fx-font-weight: Bold; -fx-font-size: 15; -fx-text-fill: white;" text="Usuario" />
+                  <Label fx:id="etiquetaPokeDollar" style="-fx-font-family: &quot;Pokemon GB&quot;; -fx-font-weight: Bold; -fx-font-size: 15; -fx-text-fill: white;" text="Pokedollar" />
+               </children>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
+            </VBox>
+         </children>
+      </HBox>
    </children>
 </AnchorPane>

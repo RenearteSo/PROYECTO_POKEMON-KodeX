@@ -46,7 +46,6 @@ public class menuController implements DatosEntrenador{
 	//Etiquetas para nombre y pokedollar
 	@FXML
     private Label etiquetaPokeDollar, etiquetaUsuario;
-	
 
 	// Variable para los vídeos
 	private javafx.scene.media.MediaPlayer mediaPlayer;
