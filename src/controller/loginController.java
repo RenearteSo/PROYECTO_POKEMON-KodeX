@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import javax.swing.JOptionPane;
-
 import dao.ConexionDB;
 import dao.EntrenadorCrud;
 import javafx.animation.FadeTransition;
@@ -104,7 +102,6 @@ public class loginController implements Initializable {
 
 		// Esto obliga al vídeo a estirarse al tamaño de la ventana
 		Platform.runLater(() -> {
-			// CAMBIA "idDelVideo" POR EL NOMBRE QUE TENGA TU MEDIAVIEW EN EL CÓDIGO
 			videoFondo.fitWidthProperty().bind(videoFondo.getScene().widthProperty());
 			videoFondo.fitHeightProperty().bind(videoFondo.getScene().heightProperty());
 		});
@@ -260,12 +257,12 @@ public class loginController implements Initializable {
 		if (usuario.getText().trim().isEmpty()) {
 			errorLogin.setText("Error: Inserta un nombre de usuario.");
 			errorLogin.setVisible(true);
-			return; // Detiene el método aquí
+			return; 
 		}
 		if (passwd.getText().trim().isEmpty()) {
 			errorLogin.setText("Error: Inserta una contraseña.");
 			errorLogin.setVisible(true);
-			return; // Detiene el método aquí
+			return;
 		}
 
 		// ANIMACION AL PULSAR ENTRAR
@@ -287,8 +284,13 @@ public class loginController implements Initializable {
 		Connection conexion = conexionObj.getConnection(); // obtenemos esa conexión
 
 		if (conexion != null) { // si la conexion es correcta
-			String sql = "SELECT ID_ENTRENADOR, PASSWORD, POKEDOLLAR FROM ENTRENADOR WHERE NOM_ENTRENADOR = ?"; // Buscamos la contraseña y los pokedólares
+			String sql = "SELECT ID_ENTRENADOR, "
+					+ "PASSWORD, "
+					+ "POKEDOLLAR "
+					+ "FROM ENTRENADOR "
+					+ "WHERE NOM_ENTRENADOR = ?"; // Buscamos la contraseña y los pokedólares
 			// ? para luego reemplazar por el  valor introducido
+			
 			try {
 				PreparedStatement ps = conexion.prepareStatement(sql); // preparamos la consulta
 				ps.setString(1, loginUsuario); // cambiamos el primer ? del prepareStatement
@@ -351,6 +353,7 @@ public class loginController implements Initializable {
 				musicaLogin.stop(); // Corta el sonido de raíz
 				musicaLogin.dispose(); // Libera la memoria
 			}
+			
 			// cargamos la nueva vista desde el paquete view
 			FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("../view/menu.fxml"));
 			Parent root = loader.load(); // cargamos la vista
