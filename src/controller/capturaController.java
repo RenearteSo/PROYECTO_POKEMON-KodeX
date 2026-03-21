@@ -115,13 +115,13 @@ public class capturaController implements DatosEntrenador {
         }
     }
 
-    // Método que se ejecuta al pulsar el botón CAPTURAR
+ // Método que se ejecuta al pulsar el botón CAPTURAR
     @FXML
     public void accionCapturar(ActionEvent event) {
         if (pokemonSalvaje == null || jugadorActual == null) return;
 
         try {
-        	// Preparamos la Pókeball para lanzarla
+            // Preparamos la Pókeball para lanzarla
             Objeto pb = new Objeto(); 
             pb.setNomObjeto("Pokéball");
             if (jugadorActual.getMochila() == null) return;
@@ -139,24 +139,30 @@ public class capturaController implements DatosEntrenador {
 
                 // Seguira pidiendo el nombre hasta que sea válido y lo guarde
                 while (!guardadoExitoso) {
-                	
-                	// Ventana emergente que pide el mote
+                    
+                    // Ventana emergente que pide el mote
                     TextInputDialog tid = new TextInputDialog(pokemonSalvaje.getMote());
                     tid.setTitle("¡Capturado!");
                     tid.setHeaderText("¡Has atrapado a " + pokemonSalvaje.getMote() + "!");
                     tid.setContentText("Introduce un mote (Solo letras):");
                     
                     Optional<String> res = tid.showAndWait();
-                    String moteElegido = res.orElse(pokemonSalvaje.getMote());
+                    
+                    // Si el usuario cierra la ventana o pulsa cancelar, salimos del bucle para crasheos despues
+                    if (!res.isPresent()) {
+                        break;
+                    }
+
+                    String moteElegido = res.get();
 
                     // Comprobamos que el nombre sea Legal sin palabrotas, números ni espacios en blanco.
                     if (validarMote(moteElegido)) {
-                    	
+                        
                         // Comprueba que el entrenador que esta en ese momento no tenga repetido un mismo mote
                         if (dao.existeMoteParaEntrenador(jugadorActual.getIdEntrenador(), moteElegido)) {
                             mostrarAlerta("Mote repetido", "Tú ya usas ese nombre. ¡Elige otro!");
                         } else {
-                        	// Si todo es correcto, asigna el mote
+                            // Si todo es correcto, asigna el mote
                             pokemonSalvaje.setMote(moteElegido);
                             
                             // Comprobamos si el equipo ya esta llenó (ya tiene 6 Pokemons) y los envia a la caja
@@ -177,7 +183,7 @@ public class capturaController implements DatosEntrenador {
                     }
                 }
             } else {
-            	// Si al capturar fallamos
+                // Si al capturar fallamos
                 lblDialogo.setText("¡Oh no! ¡El Pokémon\nse ha escapado!");
                 btnCapturar.setDisable(true);
                 btnHuir.setText("VOLVER");
