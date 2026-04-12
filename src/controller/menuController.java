@@ -19,6 +19,7 @@ import java.io.IOException;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.util.Duration;
+import model.Configuracion;
 import model.Entrenador;
 
 public class menuController implements DatosEntrenador{
@@ -91,6 +92,9 @@ public class menuController implements DatosEntrenador{
 				}
 			});
 		});
+		
+		//Sincronizamos el slider con la configuración global para mantener el volumen entre vistas
+		sliderVolumen.setValue(Configuracion.volumenMusica);
 
 		// Iniciamos la música primero
 		iniciarMusica();
@@ -99,7 +103,7 @@ public class menuController implements DatosEntrenador{
 		// el método
 		sliderVolumen.valueProperty().addListener((obs, oldVal, newVal) -> {
 			double vol = newVal.doubleValue();
-
+			Configuracion.volumenMusica = vol;
 			if (musicaMenu != null) {
 				musicaMenu.setVolume(vol);
 
@@ -171,8 +175,8 @@ public class menuController implements DatosEntrenador{
 			musicaMenu = new javafx.scene.media.MediaPlayer(sonido);
 
 			musicaMenu.setCycleCount(javafx.scene.media.MediaPlayer.INDEFINITE);
-			// El slider controlará ESTA variable musicaMenu
-			musicaMenu.setVolume(sliderVolumen.getValue());
+			// Usamos el valor global del volumen
+			musicaMenu.setVolume(Configuracion.volumenMusica);
 			musicaMenu.play();
 		} catch (Exception e) {
 			System.err.println("Error música: " + e.getMessage());
@@ -350,6 +354,12 @@ public class menuController implements DatosEntrenador{
 	void irCasino(MouseEvent event) {
 		// Usamos el método genérico
 		cambiarEscena("casino.fxml", botonCasino);
+	}
+	
+	@FXML
+	void irCrianza(MouseEvent event) {
+		// Usamos el método genérico
+		cambiarEscena("crianza.fxml", botonCrianza);
 	}
 	
 	//Método implementado de la interfaz Datos Entrenador

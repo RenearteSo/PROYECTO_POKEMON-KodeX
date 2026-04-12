@@ -281,6 +281,12 @@ public class Entrenador {
 			System.out.println("¡Necesitas un macho y una hembra!");
 			return null;
 		}
+		
+		//Comprobamos que sean de la misma especie
+	    if (p1.getNumPokedex().getNumPokedex() != p2.getNumPokedex().getNumPokedex()) {
+	        System.out.println("¡Deben ser de la misma especie para criar!");
+	        return null;
+	    }
 
 		// Comprobamos fertilidad
 		if (p1.getFertilidad() <= 0 || p2.getFertilidad() <= 0) {
