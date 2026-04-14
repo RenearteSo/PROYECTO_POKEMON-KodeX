@@ -1,15 +1,23 @@
 package controller;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.SQLException;
 
+import dao.CasinoDao;
+import dao.ConexionDB;
 import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
+import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -17,11 +25,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.transform.Rotate;
+
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.Entrenador;
 
 public class casinoController implements DatosEntrenador {
+	
+	private model.Casino casinoModel = new model.Casino();
 
     @FXML
     private ImageView botonPantalla;
@@ -47,11 +59,50 @@ public class casinoController implements DatosEntrenador {
     @FXML
     private MediaView videoFondoCasino;
     
+    @FXML
+    private ImageView imgMoneda;
+
+    @FXML
+    private Label labelResultadoJuego;
+    
+    @FXML
+    private Button btnElegirCara;
+
+    @FXML
+    private Button btnElegirCruz;
+
+    @FXML
+    private Button btnCancelar;
+    
+    @FXML 
+    private TextField txtApuestaRuleta;
+    
+    @FXML 
+    private TextField txtNumeroRuleta;
+    
+    @FXML 
+    private Button btnElegirRojo;
+    
+    @FXML 
+    private Button btnElegirNegro;
+    
+    @FXML 
+    private Button btnGirarRuleta;
+    
+    @FXML 
+    private ImageView imgRuleta;
+
+    private String colorRuletaSeleccionado = ""; // COLORRULETA
+    private Image imagenRuleta = new Image(getClass().getResourceAsStream("/img/Casino/ruleta.png")); // CAMBIAR IMAGEN RULETA
+    
 	// Variable para los vídeos
 	private javafx.scene.media.MediaPlayer mediaPlayer;
     
 	private Image imgAgrandar = new Image(getClass().getResourceAsStream("/img/Menu/botonAgrandar.png"));
 	private Image imgEncoger = new Image(getClass().getResourceAsStream("/img/Menu/botonMinimizar.png"));
+	
+	private Image imagenCara = new Image(getClass().getResourceAsStream("/img/Casino/cara.png"));
+    private Image imagenCruz = new Image(getClass().getResourceAsStream("/img/Casino/cruz.png"));
 	
 	private javafx.scene.media.MediaPlayer musicaMenu;
 
@@ -150,14 +201,289 @@ public class casinoController implements DatosEntrenador {
 			System.err.println("Error al cargar " + fxml + ": " + e.getMessage());
 		}
 	}
+	
+	// Metodo para cambiar entre el menú principal y el menu de cara cruz con un boolean de parametro
+	private void alternarMenuCaraCruz(boolean mostrarSubmenu) {
+	    btnCaraCruz.setVisible(!mostrarSubmenu);
+	    btnRuleta.setVisible(!mostrarSubmenu);
+	    btnAdivinar.setVisible(!mostrarSubmenu);
+	    btnVolver.setVisible(!mostrarSubmenu);
 
+
+	    btnElegirCara.setVisible(mostrarSubmenu);
+	    btnElegirCruz.setVisible(mostrarSubmenu);
+	    btnCancelar.setVisible(mostrarSubmenu);
+	}
+
+	
+	@FXML
+	void clickCaraCruz(ActionEvent event) {
+	    if (entrenadorLog == null) return;
+	    
+	    labelResultadoJuego.setText("¿A qué apostamos?");
+	    alternarMenuCaraCruz(true); // cambiamos botones
+	}
+
+	@FXML
+	void clickCancelar(ActionEvent event) {
+	    labelResultadoJuego.setText(""); // limpiamos textos
+	    imgMoneda.setVisible(false);
+	    alternarMenuCaraCruz(false); // Volvemos al menú original
+	    alternarMenuRuleta(false);
+	}
+	
+	private void alternarMenuRuleta(boolean mostrar) {
+	    btnCaraCruz.setVisible(!mostrar);
+	    btnRuleta.setVisible(!mostrar);
+	    btnAdivinar.setVisible(!mostrar);
+	    btnVolver.setVisible(!mostrar);
+
+	    txtApuestaRuleta.setVisible(mostrar);
+	    txtNumeroRuleta.setVisible(mostrar);
+	    btnElegirRojo.setVisible(mostrar);
+	    btnElegirNegro.setVisible(mostrar);
+	    btnGirarRuleta.setVisible(mostrar);
+	    btnCancelar.setVisible(mostrar); // Reutilizamos el botón de cancelar
+	}
+	@FXML
+	void clickCara(ActionEvent event) {
+	    ejecutarJuegoCaraCruz("cara");
+	}
+
+	@FXML
+	void clickCruz(ActionEvent event) {
+	    ejecutarJuegoCaraCruz("cruz");
+	}
+	
+	private void ejecutarJuegoCaraCruz(String eleccionUsuario) {
+    int apuesta = 50; 
+
+    // OCULTAR BOTONES
+    btnElegirCara.setVisible(false);
+    btnElegirCruz.setVisible(false);
+    btnCancelar.setVisible(false);
+    btnCaraCruz.setVisible(false);
+    btnRuleta.setVisible(false);
+    btnAdivinar.setVisible(false);
+    btnVolver.setVisible(false);
+
+    // centramos moneda
+    imgMoneda.setLayoutY(250); 
+    // texto debajo de la moneda
+    labelResultadoJuego.setLayoutY(420); 
+    
+    labelResultadoJuego.setText("Lanzando moneda...");
+    
+    imgMoneda.setVisible(true);
+    imgMoneda.setImage(imagenCara); 
+
+    // ANIMACION
+    RotateTransition rotacion = new RotateTransition(Duration.seconds(1.5), imgMoneda);
+    rotacion.setAxis(Rotate.Y_AXIS);
+    rotacion.setByAngle(1080); // 3 vueltas completas
+    rotacion.setCycleCount(1);
+
+    // LÓGICA AL TERMINAR DE GIRAR
+    rotacion.setOnFinished(e -> {
+        
+        // resultado
+        String resultadoMoneda = casinoModel.jugarCaraCruz(entrenadorLog, eleccionUsuario, apuesta);
+
+        if (resultadoMoneda.equals("sin_dinero")) {
+            labelResultadoJuego.setText("¡No tienes Pokedólares suficientes!");
+        } else {
+            if (resultadoMoneda.equals("cara")) {
+                imgMoneda.setImage(imagenCara);
+            } else {
+                imgMoneda.setImage(imagenCruz);
+            }
+
+            if (eleccionUsuario.equalsIgnoreCase(resultadoMoneda)) {
+                labelResultadoJuego.setText("¡Salió " + resultadoMoneda.toUpperCase() + "! ¡Has ganado!");
+            } else {
+                labelResultadoJuego.setText("Salió " + resultadoMoneda.toUpperCase() + ". Has perdido...");
+            }
+
+            labelSaldo.setText(Integer.toString(entrenadorLog.getPokedollar()));
+        }
+        
+        ConexionDB connection = new ConexionDB();
+        Connection con = null;
+        try {
+            con = connection.getConnection();
+            if (con != null) {
+                dao.CasinoDao.actualizarSaldo(con, entrenadorLog);
+            }
+        } catch (SQLException ex) {
+            System.err.println("Error de base de datos al guardar: " + ex.getMessage());
+        } finally {
+            if (con != null) {
+                try { con.close(); } catch (SQLException e1) { e1.printStackTrace(); }
+            }
+        }
+
+        // --- RETRASO Y RESETEO DE LA PANTALLA ---
+        PauseTransition pausa = new PauseTransition(Duration.seconds(2.5));
+        pausa.setOnFinished(eventoPausa -> {
+            
+            imgMoneda.setVisible(false);      
+            labelResultadoJuego.setText("");  
+            
+            // volvemos al sitio
+            imgMoneda.setLayoutY(100);
+            // Volvemos a subir el texto a su sitio original sobre los botones
+            labelResultadoJuego.setLayoutY(220); 
+            
+            // Volvemos a mostrar los botones del menú principal
+            alternarMenuCaraCruz(false); 
+        });
+        
+        pausa.play(); 
+    });
+
+    rotacion.play(); 
+}
+	
+	@FXML
+	void clickRuleta(ActionEvent event) {
+	    if (entrenadorLog == null) return;
+	    
+	    labelResultadoJuego.setText("Elige número, color y apuesta.");
+	    alternarMenuRuleta(true);
+	}
+	
+	@FXML
+	void clickRojo(ActionEvent event) {
+	    colorRuletaSeleccionado = "rojo";
+	    // PONEMOS ESTILOS PARA CUANDO ESTA SELECCIONADO EL BOTON
+	    btnElegirRojo.setStyle("-fx-background-color: #EF4444; -fx-border-color: #FFD700; -fx-border-width: 4px;"); // Resalta en amarillo
+	    btnElegirNegro.setStyle("-fx-background-color: #374151; -fx-border-color: #ffffff; -fx-border-width: 2px;");
+	}
+
+	@FXML
+	void clickNegro(ActionEvent event) {
+	    colorRuletaSeleccionado = "negro";
+	    // PONEMOS ESTILOS PARA CUANDO ESTA SELECCIONADO EL BOTON
+	    btnElegirNegro.setStyle("-fx-background-color: #374151; -fx-border-color: #FFD700; -fx-border-width: 4px;");
+	    btnElegirRojo.setStyle("-fx-background-color: #EF4444; -fx-border-color: #ffffff; -fx-border-width: 2px;");
+	}
+
+	@FXML
+	void clickGirarRuleta(ActionEvent event) {
+	    // COMPROBAMOS QUE TODOS LOS DATOS ESTEN CORRECTOS
+	    if (txtApuestaRuleta.getText().isEmpty() || txtNumeroRuleta.getText().isEmpty() || colorRuletaSeleccionado.isEmpty()) {
+	        labelResultadoJuego.setText("¡Elige número, color y apuesta!");
+	        return;
+	    }
+
+	    try {
+	        int apuesta = Integer.parseInt(txtApuestaRuleta.getText());
+	        int numero = Integer.parseInt(txtNumeroRuleta.getText());
+
+	        if (numero < 0 || numero > 36) {
+	            labelResultadoJuego.setText("El número debe ser del 0 al 36.");
+	            return;
+	        }
+
+	        // OCULTAMOS 
+	        btnElegirCara.setVisible(false);
+	        btnElegirCruz.setVisible(false);
+	        btnCancelar.setVisible(false);
+	        btnCaraCruz.setVisible(false);
+	        btnRuleta.setVisible(false);
+	        btnAdivinar.setVisible(false);
+	        btnVolver.setVisible(false);
+	        txtApuestaRuleta.setVisible(false);
+	        txtNumeroRuleta.setVisible(false);
+	        btnElegirRojo.setVisible(false);
+	        btnElegirNegro.setVisible(false);
+	        btnGirarRuleta.setVisible(false);
+	        
+
+	        imgRuleta.setLayoutY(150);
+	        labelResultadoJuego.setLayoutY(400); 
+	        labelResultadoJuego.setText("Girando Ruleta...");
+	        
+	        imgRuleta.setVisible(true);
+	        imgRuleta.setImage(imagenRuleta); 
+
+	        // ANIMACIÓN DE LA RULETA
+	        RotateTransition rotacion = new RotateTransition(Duration.seconds(4.0), imgRuleta);
+	        double gradosAleatorios = Math.random() * 360;
+	        rotacion.setByAngle((360 * 5) + gradosAleatorios); 
+	        rotacion.setCycleCount(1);
+	        rotacion.setInterpolator(Interpolator.EASE_OUT); // Efecto de frenado
+
+	        // LÓGICA AL TERMINAR DE GIRAR
+	        rotacion.setOnFinished(e -> {
+	            
+	            String resultado = casinoModel.jugarRuleta(entrenadorLog, numero, colorRuletaSeleccionado, apuesta);
+
+	            if (resultado.equals("sin_dinero")) {
+	                labelResultadoJuego.setText("¡No tienes PokéDólares suficientes!");
+	            } else {
+	                String[] partes = resultado.split("_");
+	                String estado = partes[0];      
+	                String numSalido = partes[1];   
+	                String colorSalido = partes[2]; 
+
+	                String mensajeBase = "Salió el " + numSalido + " " + colorSalido.toUpperCase() + ".\n";
+
+	                if (estado.equals("numero")) {
+	                    labelResultadoJuego.setText(mensajeBase + "¡PLENO! ¡Ganas x10!");
+	                } else if (estado.equals("color")) {
+	                    labelResultadoJuego.setText(mensajeBase + "¡Aciertas el color! Ganas x2");
+	                } else {
+	                    labelResultadoJuego.setText(mensajeBase + "Oh... Has perdido.");
+	                }
+
+	                labelSaldo.setText(Integer.toString(entrenadorLog.getPokedollar()));
+	                
+	                // GUARDAMOS
+	                ConexionDB connection = new ConexionDB();
+	                Connection con = null;
+	                try {
+	                    con = connection.getConnection();
+	                    if (con != null) dao.CasinoDao.actualizarSaldo(con, entrenadorLog);
+	                } catch (SQLException ex) {
+	                    System.err.println("Error BD: " + ex.getMessage());
+	                } finally {
+	                    try { if(con!=null) con.close(); } catch(SQLException ex){}
+	                }
+	            }
+
+	            // 5. RETRASO Y VUELTA A LA NORMALIDAD
+	            PauseTransition pausa = new PauseTransition(Duration.seconds(3.5)); 
+	            pausa.setOnFinished(eventoPausa -> {
+	                imgRuleta.setVisible(false);
+	                labelResultadoJuego.setText("");
+	                labelResultadoJuego.setLayoutY(220); 
+	                
+	                // Reseteamos colores de los botones
+	                colorRuletaSeleccionado = "";
+	                btnElegirRojo.setStyle("-fx-background-color: #EF4444; -fx-border-color: #ffffff; -fx-border-width: 2px;");
+	                btnElegirNegro.setStyle("-fx-background-color: #374151; -fx-border-color: #ffffff; -fx-border-width: 2px;");
+	                
+	                // Volvemos al menu de la ruleta
+	                alternarMenuRuleta(false); 
+	            });
+	            pausa.play();
+	        });
+
+	        // giramos
+	        rotacion.play();
+
+	    } catch (NumberFormatException e) { // excepcion de numeros
+	        labelResultadoJuego.setText("Por favor, introduce solo números.");
+	    }
+	}
+	
 
 	@FXML
 	public void initialize() {
     	// VIDEO FONDO//
     	MediaPlayer mediaPlayer;
     	try {
-    		// CAMBIAR FONDO!!!
             URL mediaUrl = getClass().getResource("/img/Casino/fondo_casino.mp4");
             
             if (mediaUrl == null) {

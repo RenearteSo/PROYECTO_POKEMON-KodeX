@@ -373,7 +373,7 @@ public class Pokemon {
 		// Operador terniario
 		// Condición: Numero que genera Math.random es menor que 0.5? Si es verdadero es
 		// macho, si es falso es hembra.
-		return (Math.random() < 0.5) ? "MACHO" : "HEMBRA";
+		return (Math.random() < 0.5) ? "M" : "H";
 	}
 
 	// Método para la subida de nivel del pokemon

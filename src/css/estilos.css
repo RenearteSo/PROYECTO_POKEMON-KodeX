@@ -1,0 +1,45 @@
+/* Cargamos la fuente personalizada */
+@font-face {
+    font-family: 'PokemonGB'; /* Le damos un nombre fácil de usar */
+    src: url('../fonts/PokemonGb-RAeo.ttf'); /* Ruta de carpeta css hasta la carpeta fonts */
+}
+
+/* Estilo principal del botón del ComboBox */
+.combo-box {
+    -fx-font-family: 'PokemonGB'; /* Usamos el nombre que le dimos arriba */
+    -fx-background-color: #FFF8E7; /* Color crema */
+    -fx-background-radius: 10;
+    -fx-border-color: #8B5A2B; /* Marrón madera */
+    -fx-border-radius: 10;
+    -fx-border-width: 2;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* El texto que sale cuando se ha elegido un Pokémon */
+.combo-box > .list-cell {
+    -fx-text-fill: #4A4A4A; /* Gris oscuro para que se lea bien */
+}
+
+/* El fondo de la lista que se despliega hacia abajo */
+.combo-box-popup > .list-view {
+    -fx-background-color: #FFF8E7;
+    -fx-border-color: #8B5A2B;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+}
+
+/* Cada Pokémon individual en la lista desplegada */
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-font-family: 'PokemonGB';
+    -fx-background-color: transparent;
+    -fx-text-fill: #4A4A4A;
+    -fx-padding: 8 10 8 10;
+    -fx-font-size: 14px;
+}
+
+/* Cuando se pasa el ratón por encima de un Pokémon en la lista */
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
+    -fx-background-color: #FFD8A8; /* Naranja suave */
+    -fx-cursor: hand;
+}

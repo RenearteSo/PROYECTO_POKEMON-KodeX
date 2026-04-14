@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" stylesheets="@../css/estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CrianzaController">
+   <children>
+      <ImageView fx:id="fondoCrianza" fitHeight="800.0" fitWidth="1280.0" layoutX="495.0" layoutY="314.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <image>
+            <Image url="@../img/Crianza/Crianza.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="etiquetaDinero" alignment="CENTER" layoutX="1185.0" layoutY="52.0" prefHeight="60.0" style="-fx-background-color: #2b2b2b; -fx-background-radius: 15; -fx-opacity: 0.8; -fx-border-color: #ffffff; -fx-border-radius: 15; -fx-font-family: &quot;Pokemon GB&quot;; -fx-font-weight: Bold; -fx-font-size: 15; -fx-text-fill: white;" text="Pokedollares" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="80.0" />
+      <HBox alignment="CENTER" layoutX="187.0" layoutY="291.0" prefHeight="500.0" prefWidth="964.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="140.0" AnchorPane.rightAnchor="129.0">
+         <children>
+            <VBox fx:id="cajaMacho" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="300.0">
+               <children>
+                  <ImageView fx:id="imgMacho" fitHeight="350.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </ImageView>
+                  <ComboBox fx:id="desplegableMacho" prefWidth="200.0" style="-fx-background-color: #FFF8E7; -fx-background-radius: 15; -fx-border-color: #D4C3A3; -fx-border-radius: 15; -fx-border-width: 2;">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ComboBox>
+               </children>
+            </VBox>
+            <VBox fx:id="cajaHuevo" alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="600.0" spacing="20.0">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <children>
+                  <Label fx:id="etiquetaMensaje" alignment="CENTER" style="-fx-background-color: #2b2b2b; -fx-background-radius: 15; -fx-opacity: 0.8; -fx-border-color: #ffffff; -fx-border-radius: 15; -fx-font-family: &quot;Pokemon GB&quot;; -fx-font-weight: Bold; -fx-font-size: 15; -fx-text-fill: white;" text="Mensaje" wrapText="true">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </Label>
+                  <ImageView fx:id="imgHuevo" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                     <VBox.margin>
+                        <Insets bottom="40.0" />
+                     </VBox.margin>
+                  </ImageView>
+                  <Button fx:id="botonCriar" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#accionCriar" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Poner a criar (200$)">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                  <Button fx:id="botonAbrirHuevo" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#accionAbrirHuevo" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-background-radius: 15;" text="¡Abrir huevo!">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="300.0">
+               <children>
+                  <ImageView fx:id="imgHembra" fitHeight="350.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </ImageView>
+                  <ComboBox fx:id="desplegableHembra" prefWidth="200.0" style="-fx-background-color: #FFF8E7; -fx-background-radius: 15; -fx-border-color: #D4C3A3; -fx-border-radius: 15; -fx-border-width: 2;">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ComboBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <Button fx:id="botonVolver" contentDisplay="CENTER" layoutX="1156.0" layoutY="726.0" mnemonicParsing="false" onAction="#accionVolver" prefHeight="70.0" prefWidth="120.0" style="-fx-background-color: rgba(0,0,0,1.9); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-background-radius: 15; -fx-border-color: #ffffff; -fx-border-radius: 15;" text="Volver" AnchorPane.bottomAnchor="19.0" AnchorPane.rightAnchor="15.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
+      <ImageView fx:id="botonPantalla" fitHeight="40.0" fitWidth="40.0" layoutX="1210.0" layoutY="27.0" onMouseClicked="#gestionarPantalla" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" />
+   </children>
+</AnchorPane>
