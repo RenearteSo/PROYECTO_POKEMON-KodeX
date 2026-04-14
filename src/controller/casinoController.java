@@ -204,7 +204,7 @@ public class casinoController implements DatosEntrenador {
 
 			// Lanzamos el escenario
 			// Cambiamos la escena
-			stage.getScene().setRoot(root);
+			stage.getScene().setRoot(root); 
 			stage.setFullScreen(enPantallaCompleta);
 			stage.setFullScreenExitHint("");
 
@@ -282,12 +282,13 @@ public class casinoController implements DatosEntrenador {
     btnAdivinar.setVisible(false);
     btnVolver.setVisible(false);
 
-    // centramos moneda
-    imgMoneda.setLayoutY(250); 
+
     // texto debajo de la moneda
-    labelResultadoJuego.setLayoutY(420); 
-    
-    labelResultadoJuego.setText("Lanzando moneda...");
+    double centroY = panelFondoCasino.getHeight() / 2;
+    // centramos la moneda
+    imgMoneda.setLayoutY(centroY - 100); 
+    // centramos el texto
+    labelResultadoJuego.setLayoutY(centroY + 80);
     
     imgMoneda.setVisible(true);
     imgMoneda.setImage(imagenCara); 
@@ -416,7 +417,7 @@ public class casinoController implements DatosEntrenador {
 	        
 
 	        imgRuleta.setLayoutY(150);
-	        labelResultadoJuego.setLayoutY(400); 
+	        labelResultadoJuego.setLayoutY(350);
 	        labelResultadoJuego.setText("Girando Ruleta...");
 	        
 	        imgRuleta.setVisible(true);
