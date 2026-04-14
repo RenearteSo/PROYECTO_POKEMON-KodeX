@@ -267,7 +267,12 @@ public class menuController implements DatosEntrenador{
 		botonEquipo.setScaleY(1.0);
 		cambiarVideoConEfecto("VIDEO INICIO.mp4");
 	}
-
+	
+	@FXML
+	void irEquipo(MouseEvent event) {
+	    cambiarEscena("equipo.fxml", botonEquipo);
+	}
+	
 	// Método para los botones de agrandar y minimizar según en la pantalla que
 	// estemos
 	@FXML
