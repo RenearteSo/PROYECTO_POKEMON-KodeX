@@ -87,13 +87,14 @@ public class capturaController implements DatosEntrenador {
 				fondoBatalla.fitHeightProperty().bind(scene.heightProperty());
 
 				// Vinculamos la posición del Pokémon a un porcentaje exacto de la ventana
-				// CAMBIADO: Usamos translateX/Y en lugar de layoutX/Y para evitar que el AnchorPane explote
-				imgPokemon.translateXProperty().bind(scene.widthProperty().multiply(0.62)); 
+				// CAMBIADO: Usamos translateX/Y en lugar de layoutX/Y para evitar que el
+				// AnchorPane explote
+				imgPokemon.translateXProperty().bind(scene.widthProperty().multiply(0.62));
 				imgPokemon.translateYProperty().bind(scene.heightProperty().multiply(0.38));
-				
-				//Vinculamos la posición del entrenador
+
+				// Vinculamos la posición del entrenador
 				// CAMBIADO: Usamos translateX/Y en lugar de layoutX/Y
-				imgEntrenador.translateXProperty().bind(scene.widthProperty().multiply(0.18)); 
+				imgEntrenador.translateXProperty().bind(scene.widthProperty().multiply(0.18));
 				imgEntrenador.translateYProperty().bind(scene.heightProperty().multiply(0.55));
 
 				// Al pulsar el botón de pantalla completa el icono cambia
@@ -137,16 +138,16 @@ public class capturaController implements DatosEntrenador {
 	public void accionCapturar(ActionEvent event) {
 		if (pokemonSalvaje == null || jugadorActual == null)
 			return;
-		
-		//BUSCAR OTRO, recargamos la pantalla y salimos del método
-	    if (btnCapturar.getText().equals("BUSCAR OTRO")) {
-	        cargarPokemonDesdeDao(); // Trae un nuevo pokemon
-	        btnCapturar.setText("CAPTURAR"); // Restauramos el texto
-	        btnHuir.setText("HUIR"); // Restauramos el texto
-	        lblDialogo.setText("¡Un Pokémon salvaje\napareció!");
-	        return; 
-	    }
-		
+
+		// BUSCAR OTRO, recargamos la pantalla y salimos del método
+		if (btnCapturar.getText().equals("BUSCAR OTRO")) {
+			cargarPokemonDesdeDao(); // Trae un nuevo pokemon
+			btnCapturar.setText("CAPTURAR"); // Restauramos el texto
+			btnHuir.setText("HUIR"); // Restauramos el texto
+			lblDialogo.setText("¡Un Pokémon salvaje\napareció!");
+			return;
+		}
+
 		try {
 			// Preparamos la Pókeball para lanzarla
 			Objeto pb = new Objeto();
@@ -215,11 +216,10 @@ public class capturaController implements DatosEntrenador {
 
 							if (guardadoExitoso) {
 								lblDialogo.setText("¡Atrapado con éxito!\nGuardado en " + ub);
-								
-								//Transformamos el botón para buscar otro
-								
-	                            btnCapturar.setText("BUSCAR OTRO"); 
-	                            btnHuir.setText("VOLVER");
+
+								// Transformamos el botón para buscar otro
+								btnCapturar.setText("BUSCAR OTRO");
+								btnHuir.setText("VOLVER");
 							}
 						}
 					} else {
@@ -230,9 +230,9 @@ public class capturaController implements DatosEntrenador {
 			} else {
 				// Si al capturar fallamos
 				lblDialogo.setText("¡Oh no! ¡El Pokémon\nse ha escapado!");
-				//Transformamos el botón para buscar otro en vez de deshabilitarlo
-	            btnCapturar.setText("BUSCAR OTRO"); 
-	            btnHuir.setText("VOLVER");
+				// Transformamos el botón para buscar otro en vez de deshabilitarlo
+				btnCapturar.setText("BUSCAR OTRO");
+				btnHuir.setText("VOLVER");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -271,6 +271,9 @@ public class capturaController implements DatosEntrenador {
 	// Seleccionamos la imagen de fondo correcta dependiendo del tipo Pókemon que
 	// salga.
 	private void ponerFondoSegunTipo(String tipo) {
+		System.out.println("--- DEBUG FONDO ---");
+		System.out.println("Tipo recibido de la BD: [" + tipo + "]");
+
 		String rf = switch (tipo) {
 		case "AGUA" -> "/img/Captura/Imagenes/VISTA_AGUA.jpg";
 		case "BICHO", "VENENO" -> "/img/Captura/Imagenes/VISTA_BICHO-VENENO.jpg";
@@ -281,9 +284,24 @@ public class capturaController implements DatosEntrenador {
 		case "VOLADOR", "ELECTRICO" -> "/img/Captura/Imagenes/VISTA_VOLADOR-ELECTRICO.jpg";
 		default -> "/img/Captura/Imagenes/VISTA_PLANTA-ROCA-TIERRA-NORMAL.jpg";
 		};
+
+		System.out.println("Ruta de imagen a cargar: " + rf);
+
 		try {
-			fondoBatalla.setImage(new Image(getClass().getResourceAsStream(rf)));
+			InputStream is = getClass().getResourceAsStream(rf);
+
+			if (is == null) {
+				System.err.println("¡ALERTA ROJA! Java no encuentra la imagen.");
+				System.err.println(
+						"Revisa en tus carpetas de Eclipse si la ruta y las mayúsculas coinciden EXACTAMENTE con: "
+								+ rf);
+			} else {
+				fondoBatalla.setImage(new Image(is));
+				System.out.println("¡Fondo cambiado con éxito!");
+			}
 		} catch (Exception e) {
+			System.err.println("Error grave al cambiar el fondo:");
+			e.printStackTrace();
 		}
 	}
 
