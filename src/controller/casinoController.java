@@ -95,6 +95,19 @@ public class casinoController implements DatosEntrenador {
     private String colorRuletaSeleccionado = ""; // COLORRULETA
     private Image imagenRuleta = new Image(getClass().getResourceAsStream("/img/Casino/ruleta.png")); // CAMBIAR IMAGEN RULETA
     
+    @FXML 
+    private TextField txtNumeroAdivinar;
+    
+    @FXML 
+    private Label labelIntentos;
+    
+    @FXML 
+    private Button btnProbarSuerte;
+    
+
+    private int numeroSecreto;
+    private int intentosConsumidos;
+    
 	// Variable para los vídeos
 	private javafx.scene.media.MediaPlayer mediaPlayer;
     
@@ -230,8 +243,10 @@ public class casinoController implements DatosEntrenador {
 	    imgMoneda.setVisible(false);
 	    alternarMenuCaraCruz(false); // Volvemos al menú original
 	    alternarMenuRuleta(false);
+	    alternarMenuAdivinar(false);
 	}
 	
+	// Metodo para cambiar entre el menú principal y el menu de ruleta con un boolean de parametro
 	private void alternarMenuRuleta(boolean mostrar) {
 	    btnCaraCruz.setVisible(!mostrar);
 	    btnRuleta.setVisible(!mostrar);
@@ -478,6 +493,129 @@ public class casinoController implements DatosEntrenador {
 	    }
 	}
 	
+	// Metodo para cambiar entre el menú principal y el menu de cara cruz con un boolean de parametro
+    private void alternarMenuAdivinar(boolean mostrar) {
+        btnCaraCruz.setVisible(!mostrar);
+        btnRuleta.setVisible(!mostrar);
+        btnAdivinar.setVisible(!mostrar);
+        btnVolver.setVisible(!mostrar);
+
+        txtNumeroAdivinar.setVisible(mostrar);
+        labelIntentos.setVisible(mostrar);
+        btnProbarSuerte.setVisible(mostrar);
+        btnCancelar.setVisible(mostrar);
+    }
+
+    @FXML
+    void clickAdivinar(ActionEvent event) {
+        if (entrenadorLog == null) return;
+        
+        // valores iniciales
+        numeroSecreto = (int) (Math.random() * 20) + 1; // numero entre 1 y 20
+        intentosConsumidos = 0;
+        
+        labelResultadoJuego.setText("He pensado un número del 1 al 20...");
+        labelIntentos.setText("Intentos: 5");
+        txtNumeroAdivinar.clear();
+        
+        alternarMenuAdivinar(true);
+    }
+
+ @FXML
+    void clickProbarSuerte(ActionEvent event) {
+        if (txtNumeroAdivinar.getText().isEmpty()) return;
+
+        try {
+            int intentoUsuario = Integer.parseInt(txtNumeroAdivinar.getText());
+            intentosConsumidos++;
+            int restantes = 5 - intentosConsumidos;
+            labelIntentos.setText("Intentos: " + restantes);
+
+            if (intentoUsuario == numeroSecreto) {
+                // PREMIOS
+                int premio = 0;
+                switch (intentosConsumidos) {
+                    case 1: premio = 1000; break;
+                    case 2: premio = 750;  break;
+                    case 3: premio = 500;  break;
+                    case 4: premio = 250;  break;
+                    default: premio = 0;   break; // 5º intento o más
+                }
+
+                entrenadorLog.setPokedollar(entrenadorLog.getPokedollar() + premio);
+                
+                // fin interfaz
+                txtNumeroAdivinar.setVisible(false);
+                btnProbarSuerte.setVisible(false);
+                labelIntentos.setVisible(false);
+                btnCancelar.setVisible(false);
+                
+                labelResultadoJuego.setLayoutY(300);
+                if (premio > 0) {
+                    labelResultadoJuego.setText("¡ACERTASTE! Intento: " + intentosConsumidos + "\n¡Has ganado " + premio + " PokéDollars!");
+                } else {
+                    labelResultadoJuego.setText("¡Lo lograste en el último suspiro!\nPero no quedan premios.");
+                }
+                
+                labelSaldo.setText(Integer.toString(entrenadorLog.getPokedollar()));
+
+                // GUARDAR 
+                ConexionDB connection = new ConexionDB();
+                Connection con = null;
+                try {
+                    con = connection.getConnection();
+                    if (con != null) dao.CasinoDao.actualizarSaldo(con, entrenadorLog);
+                } catch (SQLException ex) {
+                    System.err.println("Error BBDD: " + ex.getMessage());
+                } finally {
+                    try { if(con != null) con.close(); } catch(SQLException ex){}
+                }
+
+                finalizarJuegoAdivinar();
+
+            } else if (intentosConsumidos >= 5) {
+                // no quedan intentos
+                txtNumeroAdivinar.setVisible(false);
+                btnProbarSuerte.setVisible(false);
+                labelIntentos.setVisible(false);
+                btnCancelar.setVisible(false);
+
+                labelResultadoJuego.setLayoutY(300);
+                labelResultadoJuego.setText("¡Se agotaron las Pokéballs!\nEl número era: " + numeroSecreto);
+                
+                finalizarJuegoAdivinar();
+
+            } else {
+                // pistas
+                if (intentoUsuario < numeroSecreto) {
+                    labelResultadoJuego.setText("¡Más ALTO!");
+                } else {
+                    labelResultadoJuego.setText("¡Más BAJO!");
+                }
+                
+                // vibracion al fallar
+                TranslateTransition tt = new TranslateTransition(Duration.millis(50), txtNumeroAdivinar);
+                tt.setByX(10);
+                tt.setCycleCount(4);
+                tt.setAutoReverse(true);
+                tt.play();
+            }
+
+        } catch (NumberFormatException e) {
+            labelResultadoJuego.setText("Introduce un número.");
+        }
+    }
+
+    private void finalizarJuegoAdivinar() {
+        PauseTransition pausa = new PauseTransition(Duration.seconds(3.5));
+        pausa.setOnFinished(e -> {
+            labelResultadoJuego.setText("");
+            labelResultadoJuego.setLayoutY(220); // posición original
+            alternarMenuAdivinar(false);
+        });
+        pausa.play();
+    }
+    
 
 	@FXML
 	public void initialize() {
