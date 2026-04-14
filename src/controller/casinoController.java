@@ -17,6 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -117,7 +118,18 @@ public class casinoController implements DatosEntrenador {
 	private Image imagenCara = new Image(getClass().getResourceAsStream("/img/Casino/cara.png"));
     private Image imagenCruz = new Image(getClass().getResourceAsStream("/img/Casino/cruz.png"));
 	
-	private javafx.scene.media.MediaPlayer musicaMenu;
+	// Variable global para la música, fuera de los métodos
+	private MediaPlayer musicaCasino;
+	private MediaPlayer sfxRuleta; // ¡Nueva variable global para evitar que el sonido se corte!
+
+	// Inicializamos las variables para el sonido
+	@FXML
+	private ImageView botonSonido;
+	@FXML
+	private Slider sliderVolumen;
+	private Image imgVolMax = new Image(getClass().getResourceAsStream("/img/Menu/volumenMax.png"));
+	private Image imgVolMin = new Image(getClass().getResourceAsStream("/img/Menu/volumenMin.png"));
+	private Image imgVolMute = new Image(getClass().getResourceAsStream("/img/Menu/sinVolumen.png"));
 
 	private Entrenador entrenadorLog;
 
@@ -178,9 +190,13 @@ public class casinoController implements DatosEntrenador {
 	private void cambiarEscena(String fxml, Button botonReferencia) {
 		try {
 			// Paramos la música antes de cargar nada nuevo
-			if (musicaMenu != null) {
-				musicaMenu.stop();
-				musicaMenu.dispose(); // Liberamos RAM 
+			if (musicaCasino != null) {
+				musicaCasino.stop();
+				musicaCasino.dispose(); // Liberamos RAM 
+			}
+			if (sfxRuleta != null) {
+			    sfxRuleta.stop();
+			    sfxRuleta.dispose();
 			}
 
 			// También paramos el vídeo de Rayquaza para que no consuma CPU
@@ -415,18 +431,35 @@ public class casinoController implements DatosEntrenador {
 	        btnElegirNegro.setVisible(false);
 	        btnGirarRuleta.setVisible(false);
 	        
-
-	        imgRuleta.setLayoutY(150);
-	        labelResultadoJuego.setLayoutY(350);
+            // CENTRAMOS LA RULETA Y EL TEXTO EXACTAMENTE IGUAL QUE LA MONEDA
+            double centroY = panelFondoCasino.getHeight() / 2;
+	        imgRuleta.setLayoutY(centroY - 100);
+	        labelResultadoJuego.setLayoutY(centroY + 80);
 	        labelResultadoJuego.setText("Girando Ruleta...");
 	        
 	        imgRuleta.setVisible(true);
 	        imgRuleta.setImage(imagenRuleta); 
 
-	        // ANIMACIÓN DE LA RULETA
-	        RotateTransition rotacion = new RotateTransition(Duration.seconds(4.0), imgRuleta);
+            // PAUSAMOS LA MÚSICA DE FONDO
+            if (musicaCasino != null) {
+                musicaCasino.pause();
+            }
+
+            // REPRODUCIMOS EL SONIDO DE LA RULETA 
+	        try {
+	        	String rutaSfx = getClass().getResource("/audio/Casino/ruleta_sonido.mp3").toExternalForm();
+	            sfxRuleta = new MediaPlayer(new Media(rutaSfx));
+	            // Usamos el valor actual del slider para que tenga el mismo volumen que la música
+	            sfxRuleta.setVolume(sliderVolumen.getValue()); 
+	            sfxRuleta.play();
+	        } catch (Exception ex) {
+	            System.err.println("Error sonido ruleta: " + ex.getMessage());
+	        }
+
+	        // ANIMACIÓN DE LA RULETA (AHORA 6 SEGUNDOS)
+	        RotateTransition rotacion = new RotateTransition(Duration.seconds(6.0), imgRuleta);
 	        double gradosAleatorios = Math.random() * 360;
-	        rotacion.setByAngle((360 * 5) + gradosAleatorios); 
+	        rotacion.setByAngle((360 * 8) + gradosAleatorios); // Damos más vueltas para que cuadre con 6 segs
 	        rotacion.setCycleCount(1);
 	        rotacion.setInterpolator(Interpolator.EASE_OUT); // Efecto de frenado
 
@@ -482,6 +515,11 @@ public class casinoController implements DatosEntrenador {
 	                
 	                // Volvemos al menu de la ruleta
 	                alternarMenuRuleta(false); 
+
+                    // REANUDAMOS LA MÚSICA DE FONDO
+                    if (musicaCasino != null) {
+                        musicaCasino.play();
+                    }
 	            });
 	            pausa.play();
 	        });
@@ -512,7 +550,7 @@ public class casinoController implements DatosEntrenador {
         if (entrenadorLog == null) return;
         
         // valores iniciales
-        numeroSecreto = (int) (Math.random() * 20) + 1; // numero entre 1 y 20
+        numeroSecreto = casinoModel.generarNumeroSecreto(); // numero entre 1 y 20
         intentosConsumidos = 0;
         
         labelResultadoJuego.setText("He pensado un número del 1 al 20...");
@@ -532,18 +570,11 @@ public class casinoController implements DatosEntrenador {
             int restantes = 5 - intentosConsumidos;
             labelIntentos.setText("Intentos: " + restantes);
 
-            if (intentoUsuario == numeroSecreto) {
-                // PREMIOS
-                int premio = 0;
-                switch (intentosConsumidos) {
-                    case 1: premio = 1000; break;
-                    case 2: premio = 750;  break;
-                    case 3: premio = 500;  break;
-                    case 4: premio = 250;  break;
-                    default: premio = 0;   break; // 5º intento o más
-                }
+            String resultadoAdivinar = casinoModel.comprobarAdivinar(entrenadorLog, numeroSecreto, intentoUsuario, intentosConsumidos);
 
-                entrenadorLog.setPokedollar(entrenadorLog.getPokedollar() + premio);
+            if (resultadoAdivinar.startsWith("acierto_")) {
+                // PREMIOS
+                int premio = Integer.parseInt(resultadoAdivinar.split("_")[1]);
                 
                 // fin interfaz
                 txtNumeroAdivinar.setVisible(false);
@@ -574,7 +605,7 @@ public class casinoController implements DatosEntrenador {
 
                 finalizarJuegoAdivinar();
 
-            } else if (intentosConsumidos >= 5) {
+            } else if (resultadoAdivinar.equals("agotado")) {
                 // no quedan intentos
                 txtNumeroAdivinar.setVisible(false);
                 btnProbarSuerte.setVisible(false);
@@ -588,7 +619,7 @@ public class casinoController implements DatosEntrenador {
 
             } else {
                 // pistas
-                if (intentoUsuario < numeroSecreto) {
+                if (resultadoAdivinar.equals("mayor")) {
                     labelResultadoJuego.setText("¡Más ALTO!");
                 } else {
                     labelResultadoJuego.setText("¡Más BAJO!");
@@ -621,7 +652,6 @@ public class casinoController implements DatosEntrenador {
 	@FXML
 	public void initialize() {
     	// VIDEO FONDO//
-    	MediaPlayer mediaPlayer;
     	try {
             URL mediaUrl = getClass().getResource("/img/Casino/fondo_casino.mp4");
             
@@ -640,34 +670,65 @@ public class casinoController implements DatosEntrenador {
             Media media = new Media(mediaUrl.toExternalForm());
             mediaPlayer = new MediaPlayer(media);
             videoFondoCasino.setMediaPlayer(mediaPlayer);
-            // lo mandamos al fondo
-            videoFondoCasino.toBack();
             
             // arreglamos resolucion
             videoFondoCasino.setPreserveRatio(false);
-            videoFondoCasino.fitWidthProperty().bind(panelFondoCasino.widthProperty());
-            videoFondoCasino.fitHeightProperty().bind(panelFondoCasino.heightProperty());
             videoFondoCasino.setSmooth(true);
+
+            // lo mandamos al fondo
+            videoFondoCasino.toBack();
 
             // reproducimos en mute y infinito
             mediaPlayer.setMute(true);
             mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            mediaPlayer.play();
+            
+            // IMPORTANTE: Solo iniciamos cuando el media player esté listo para evitar bugs
+            mediaPlayer.setOnReady(() -> {
+                mediaPlayer.play();
+                
+                // --- ANIMACIÓN DE ENTRADA VIDEO ---
+                videoFondoCasino.setOpacity(0);
+                FadeTransition ftVideo = new FadeTransition(Duration.seconds(2), videoFondoCasino); // fadeTransition
+                ftVideo.setToValue(1.0);
+                ftVideo.play();
+            });
 
         //    System.out.println("Video funciona.");
-
-            // --- ANIMACIÓN DE ENTRADA VIDEO ---
-            videoFondoCasino.setOpacity(0);
-            FadeTransition ftVideo = new FadeTransition(Duration.seconds(2), videoFondoCasino); // fadeTransition
-            ftVideo.setToValue(1.0);
-            ftVideo.play();
-            
 
         } catch (Exception e) {
             System.err.println("ERROR: " + e.getMessage());
             // Si el video falla, ponemos un fondo para que no se vea vacio
             panelFondoCasino.setStyle("-fx-background-color: #bc2f2f;");
         }
+
+		// Iniciamos la música primero
+		iniciarMusica();
+		
+		sliderVolumen.setVisible(false);
+
+		// Vinculamos el volumen del MediaPlayer al valor del Slider luego de instanciar
+		// el método
+		sliderVolumen.valueProperty().addListener((obs, oldVal, newVal) -> {
+			double vol = newVal.doubleValue();
+
+			if (musicaCasino != null) {
+				musicaCasino.setVolume(vol);
+			}
+            if (sfxRuleta != null) {
+                sfxRuleta.setVolume(vol); // Así si bajas la música también baja el efecto mientras suena
+            }
+
+            // Cambiamos el icono según el nivel
+            if (vol == 0) {
+                botonSonido.setImage(imgVolMute);
+            } else if (vol < 0.5) {
+                botonSonido.setImage(imgVolMin);
+            } else {
+                botonSonido.setImage(imgVolMax);
+            }
+		});
+		// Esto fuerza al slider a moverse al arrancar para que el icono se actualice
+		sliderVolumen.setValue(sliderVolumen.getValue());
 	}
 	
 	@FXML
@@ -680,5 +741,38 @@ public class casinoController implements DatosEntrenador {
 	public void setEntrenador(Entrenador e) {
 		recibirDatos(e);
 		
+	}
+
+	// Método para poner la música
+	private void iniciarMusica() {
+		try {
+			String ruta = getClass().getResource("/audio/musica/musicaCasino.mp3").toExternalForm();
+			javafx.scene.media.Media sonido = new javafx.scene.media.Media(ruta);
+			musicaCasino = new javafx.scene.media.MediaPlayer(sonido);
+
+			musicaCasino.setCycleCount(javafx.scene.media.MediaPlayer.INDEFINITE);
+			// El slider controlará ESTA variable musicaCasino
+			musicaCasino.setVolume(sliderVolumen.getValue());
+			musicaCasino.play();
+		} catch (Exception e) {
+			System.err.println("Error música: " + e.getMessage());
+		}
+	}
+
+	// Método para mostrar el slider del volumen
+	@FXML
+	private void mostrarBarraVolumen(MouseEvent event) {
+		// Si la barra está invisible, la muestra. Si está visible, la esconde.
+		if (event.getClickCount() == 2) { // Si hace doble clic, mutea
+			sliderVolumen.setValue(0);
+		} else {
+			sliderVolumen.setVisible(!sliderVolumen.isVisible());
+		}
+	}
+
+	// Método para ocultar la barra del slider
+	@FXML
+	private void ocultarSlider(MouseEvent event) {
+		sliderVolumen.setVisible(false);
 	}
 }

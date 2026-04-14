@@ -73,15 +73,19 @@ public class Casino {
 
             e.setPokedollar(e.getPokedollar() + premio);
             // mensaje de acierto con el premio y el dinero total
-            return "";
+            return "acierto_" + premio;
         } else {
             if (numIntentoActual >= 5) {
                 // A partir del quinto intento no gana nada
                 // mostramos mensaje de fin de juego y el número aleatorio.
-                return "";
+                return "agotado";
             }
             // "Sigue intentándolo, turnos restantes: X"
-            return "";
+            if (intentoUsuario < numSecreto) {
+                return "mayor";
+            } else {
+                return "menor";
+            }
         }
     }
     
