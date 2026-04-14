@@ -77,34 +77,48 @@ public class capturaController implements DatosEntrenador {
 		cargarPokemonDesdeDao();
 
 		// El Platform.runLater espera que la ventana se cree para ajustar los tamaños
-		Platform.runLater(() -> {
-			if (fondoBatalla.getScene() != null) {
-				Scene scene = fondoBatalla.getScene();
-				Stage stage = (Stage) scene.getWindow();
+				Platform.runLater(() -> {
+					if (fondoBatalla.getScene() != null) {
+						Scene scene = fondoBatalla.getScene();
+						Stage stage = (Stage) scene.getWindow();
 
-				// Hacemos que la imagen del fondo se estire al tamaño de la ventana
-				fondoBatalla.fitWidthProperty().bind(scene.widthProperty());
-				fondoBatalla.fitHeightProperty().bind(scene.heightProperty());
+						//Hacemos que la imagen del fondo se estire al tamaño de la ventana
+						fondoBatalla.fitWidthProperty().bind(scene.widthProperty());
+						fondoBatalla.fitHeightProperty().bind(scene.heightProperty());
 
-				// Vinculamos la posición del Pokémon a un porcentaje exacto de la ventana
-				// CAMBIADO: Usamos translateX/Y en lugar de layoutX/Y para evitar que el
-				// AnchorPane explote
-				imgPokemon.translateXProperty().bind(scene.widthProperty().multiply(0.62));
-				imgPokemon.translateYProperty().bind(scene.heightProperty().multiply(0.38));
+						//Cuando cambie el ancho de la ventana centramos los personajes
+						scene.widthProperty().addListener((obs, oldVal, newVal) -> {
+							double ancho = newVal.doubleValue();
+							// Entrenador
+							imgEntrenador.setLayoutX((ancho * 0.28) - (imgEntrenador.getFitWidth() / 2));
+							// Pokémon
+							imgPokemon.setLayoutX((ancho * 0.60) - (imgPokemon.getFitWidth() / 2));
+						});
 
-				// Vinculamos la posición del entrenador
-				// CAMBIADO: Usamos translateX/Y en lugar de layoutX/Y
-				imgEntrenador.translateXProperty().bind(scene.widthProperty().multiply(0.18));
-				imgEntrenador.translateYProperty().bind(scene.heightProperty().multiply(0.55));
+						//Cuando cambie el alto de la ventana, apoyamos los pies en la hierba
+						scene.heightProperty().addListener((obs, oldVal, newVal) -> {
+							double alto = newVal.doubleValue();
+							// Entrenador
+							imgEntrenador.setLayoutY((alto * 0.78) - imgEntrenador.getFitHeight());
+							// Pokémon
+							imgPokemon.setLayoutY((alto * 0.55) - imgPokemon.getFitHeight());
+						});
 
-				// Al pulsar el botón de pantalla completa el icono cambia
-				if (botonPantalla != null) {
-					botonPantalla.setImage(stage.isFullScreen() ? imgEncoger : imgAgrandar);
-					stage.fullScreenProperty()
-							.addListener((obs, ov, nv) -> botonPantalla.setImage(nv ? imgEncoger : imgAgrandar));
-				}
-			}
-		});
+						//Forzamos un primer cálculo para que no salgan en la esquina al abrir
+						double wInicial = scene.getWidth();
+						double hInicial = scene.getHeight();
+						imgEntrenador.setLayoutX((wInicial * 0.28) - (imgEntrenador.getFitWidth() / 2));
+						imgPokemon.setLayoutX((wInicial * 0.60) - (imgPokemon.getFitWidth() / 2));
+						imgEntrenador.setLayoutY((hInicial * 0.78) - imgEntrenador.getFitHeight());
+						imgPokemon.setLayoutY((hInicial * 0.55) - imgPokemon.getFitHeight());
+
+						//Al pulsar el botón de pantalla completa el icono cambia
+						if (botonPantalla != null) {
+							botonPantalla.setImage(stage.isFullScreen() ? imgEncoger : imgAgrandar);
+							stage.fullScreenProperty().addListener((obs, ov, nv) -> botonPantalla.setImage(nv ? imgEncoger : imgAgrandar));
+						}
+					}
+				});
 	}
 
 	// Traemos un Pókemon aleatorio usando DAO y preparamos la pantalla

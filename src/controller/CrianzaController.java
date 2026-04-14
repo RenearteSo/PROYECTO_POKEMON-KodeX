@@ -44,6 +44,9 @@ public class CrianzaController implements DatosEntrenador {
 	// Variables
 	private Entrenador entrenadorActual;
 	private Pokemon huevoObtenido;
+	// Guardará todas las hembras y machos del jugador sin filtrar
+	private LinkedList<Pokemon> todasLasHembras = new LinkedList<>();
+	private LinkedList<Pokemon> todosLosMachos = new LinkedList<>();
 
 	public void initialize() {
 		// Ocultamos el botón de abrir huevo y la imagen al principio.
@@ -52,8 +55,10 @@ public class CrianzaController implements DatosEntrenador {
 		etiquetaMensaje.setText("Selecciona un padre y una madre.");
 
 		javafx.application.Platform.runLater(() -> {
-			fondoCrianza.fitWidthProperty().bind(fondoCrianza.getScene().widthProperty());
-			fondoCrianza.fitHeightProperty().bind(fondoCrianza.getScene().heightProperty());
+			if (fondoCrianza.getScene() != null) {
+				fondoCrianza.fitWidthProperty().bind(fondoCrianza.getScene().widthProperty());
+				fondoCrianza.fitHeightProperty().bind(fondoCrianza.getScene().heightProperty());
+			}
 		});
 
 		// Iniciamos la música
@@ -78,15 +83,63 @@ public class CrianzaController implements DatosEntrenador {
 		desplegableMacho.setConverter(conversor);
 		desplegableHembra.setConverter(conversor);
 
-		// 3. Listeners para cambiar la foto automáticamente al elegir en el desplegable
+		// Listener del macho
 		desplegableMacho.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-			if (newVal != null)
+			if (newVal != null) {
 				cargarImagenPokemon(newVal, imgMacho);
+
+				// Comprobamos qué hembra hay seleccionada ahora mismo
+				Pokemon hembraActual = desplegableHembra.getValue();
+
+				// Si no hay hembra, o la hembra es de otra especie, entonces filtramos las
+				// hembras
+				if (hembraActual == null
+						|| hembraActual.getNumPokedex().getNumPokedex() != newVal.getNumPokedex().getNumPokedex()) {
+					desplegableHembra.getItems().clear();
+					imgHembra.setImage(null);
+
+					for (Pokemon hembra : todasLasHembras) {
+						if (hembra.getNumPokedex().getNumPokedex() == newVal.getNumPokedex().getNumPokedex()) {
+							desplegableHembra.getItems().add(hembra);
+						}
+					}
+
+					if (desplegableHembra.getItems().isEmpty()) {
+						etiquetaMensaje.setText("No tienes ninguna hembra compatible para este Pokémon.");
+					} else {
+						etiquetaMensaje.setText("Selecciona una pareja compatible.");
+					}
+				}
+			}
 		});
 
+		// Listener de la hembra
 		desplegableHembra.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-			if (newVal != null)
+			if (newVal != null) {
 				cargarImagenPokemon(newVal, imgHembra);
+
+				// Comprobamos qué macho hay seleccionado ahora mismo
+				Pokemon machoActual = desplegableMacho.getValue();
+
+				// Si no hay macho, o el macho es de otra especie, entonces filtramos los machos
+				if (machoActual == null
+						|| machoActual.getNumPokedex().getNumPokedex() != newVal.getNumPokedex().getNumPokedex()) {
+					desplegableMacho.getItems().clear();
+					imgMacho.setImage(null);
+
+					for (Pokemon macho : todosLosMachos) {
+						if (macho.getNumPokedex().getNumPokedex() == newVal.getNumPokedex().getNumPokedex()) {
+							desplegableMacho.getItems().add(macho);
+						}
+					}
+
+					if (desplegableMacho.getItems().isEmpty()) {
+						etiquetaMensaje.setText("No tienes ningún macho compatible para este Pokémon.");
+					} else {
+						etiquetaMensaje.setText("Selecciona una pareja compatible.");
+					}
+				}
+			}
 		});
 
 		// Forzamos que empiece con el icono de encoger
@@ -106,14 +159,23 @@ public class CrianzaController implements DatosEntrenador {
 	// Método para llenar los ComboBox filtrando por sexos
 	private void cargarDesplegables() {
 		try {
-			// Llamamos a la clase que controla la base de datos de esta vista
 			CrianzaDao dao = new CrianzaDao();
 			LinkedList<Pokemon> listaPokemon = dao.ObtenerEquipoEntrenador(entrenadorActual.getIdEntrenador());
 
+			// Limpiamos todo por si acaso
+			desplegableMacho.getItems().clear();
+			desplegableHembra.getItems().clear();
+			todasLasHembras.clear();
+			todosLosMachos.clear();
+
 			for (Pokemon p : listaPokemon) {
 				if (p.getSexo().equalsIgnoreCase("M")) {
+					todosLosMachos.add(p);
 					desplegableMacho.getItems().add(p);
 				} else if (p.getSexo().equalsIgnoreCase("H")) {
+					// Guardamos las hembras en nuestro almacén global
+					todasLasHembras.add(p);
+					// Y también las mostramos al principio
 					desplegableHembra.getItems().add(p);
 				}
 			}
@@ -136,27 +198,27 @@ public class CrianzaController implements DatosEntrenador {
 			return;
 		}
 		// Comprobamos que se hayan seleccionado los dos
-	    if (padre == null || madre == null) {
-	        etiquetaMensaje.setText("Falta seleccionar a uno de los padres.");
-	        return;
-	    }   
-	    //Comprobamos si son la misma especie
-	    if (padre.getNumPokedex().getNumPokedex() != madre.getNumPokedex().getNumPokedex()) {
-	        etiquetaMensaje.setText("¡Deben ser de la misma especie para criar!");
-	        return; // Cortamos la ejecución aquí
-	    }
+		if (padre == null || madre == null) {
+			etiquetaMensaje.setText("Falta seleccionar a uno de los padres.");
+			return;
+		}
+		// Comprobamos si son la misma especie
+		if (padre.getNumPokedex().getNumPokedex() != madre.getNumPokedex().getNumPokedex()) {
+			etiquetaMensaje.setText("¡Deben ser de la misma especie para criar!");
+			return; // Cortamos la ejecución aquí
+		}
 
-	    //Comprobamos la fertilidad
-	    if (padre.getFertilidad() <= 0 || madre.getFertilidad() <= 0) {
-	        etiquetaMensaje.setText("¡Uno de los padres ya no es fértil!");
-	        return;
-	    }
+		// Comprobamos la fertilidad
+		if (padre.getFertilidad() <= 0 || madre.getFertilidad() <= 0) {
+			etiquetaMensaje.setText("¡Uno de los padres ya no es fértil!");
+			return;
+		}
 
-	    // 4. Comprobamos el dinero (asumimos que cuesta 200)
-	    if (entrenadorActual.getPokedollar() < 200) {
-	        etiquetaMensaje.setText("¡No tienes dinero suficiente (200$)!");
-	        return;
-	    }
+		// 4. Comprobamos el dinero (asumimos que cuesta 200)
+		if (entrenadorActual.getPokedollar() < 200) {
+			etiquetaMensaje.setText("¡No tienes dinero suficiente (200$)!");
+			return;
+		}
 		// Llamamos al método que creamos en la clase Entrenador (Cobra 200$ y creal al
 		// hijo)
 		this.huevoObtenido = entrenadorActual.ponerACriar(padre, madre);
@@ -178,7 +240,7 @@ public class CrianzaController implements DatosEntrenador {
 
 		} else {
 			// Por si acaso falla por algún otro motivo extraño
-	        etiquetaMensaje.setText("Error desconocido al intentar criar.");
+			etiquetaMensaje.setText("Error desconocido al intentar criar.");
 
 		}
 	}
@@ -255,12 +317,12 @@ public class CrianzaController implements DatosEntrenador {
 	// Método genérico para cambiar de vistas
 	private void cambiarEscena(String fxml, Button botonReferencia) {
 		try {
-			//Paramos la música antes de salir de la guardería
-	        if (musicaCrianza != null) {
-	        	musicaCrianza.stop();
-	        	musicaCrianza.dispose(); // Liberamos memoria
-	        }
-			
+			// Paramos la música antes de salir de la guardería
+			if (musicaCrianza != null) {
+				musicaCrianza.stop();
+				musicaCrianza.dispose(); // Liberamos memoria
+			}
+
 			// Buscamos el archivo FXML
 			javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/view/" + fxml));
 			javafx.scene.Parent root = loader.load();

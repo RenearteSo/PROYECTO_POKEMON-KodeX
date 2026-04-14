@@ -26,34 +26,9 @@
          </cursor>
       </ImageView>
 
-      <ImageView fx:id="imgEntrenador" fitHeight="210.0" fitWidth="217.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="imgEntrenador" fitHeight="350.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
 
-      <ImageView fx:id="imgPokemon" fitHeight="249.0" fitWidth="244.0" pickOnBounds="true" preserveRatio="true" />
-
-      <HBox alignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="130.0" mouseTransparent="true">
-         <children>
-            <Pane prefHeight="118.0" prefWidth="337.0" style="-fx-background-color: #F8F8F8; -fx-border-color: #505050; -fx-border-width: 8; -fx-background-radius: 10; -fx-border-radius: 10;">
-               <children>
-                  <Pane layoutX="44.0" layoutY="53.0" prefHeight="38.0" prefWidth="272.0" style="-fx-background-color: #6E6D6D; -fx-background-radius: 8;">
-                     <children>
-                        <ProgressBar fx:id="barraVida" layoutX="71.0" layoutY="9.0" prefHeight="23.0" prefWidth="196.0" progress="1.0" style="-fx-background-color: green;" />
-                        <Label layoutX="19.0" layoutY="-1.0" prefHeight="37.0" prefWidth="39.0" text="HP" textFill="#fbff00">
-                           <font>
-                              <Font name="Pokemon GB" size="15.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </Pane>
-                  <Label fx:id="lblNivelPokemon" layoutX="216.0" layoutY="-5.0" prefHeight="67.0" prefWidth="123.0" style="-fx-font-family: &quot;Pokemon GB&quot;; -fx-font-size: 15px; -fx-text-fill: #333333;" text="Lv 1" />
-                  <Label fx:id="lblNombrePokemon" layoutX="31.0" layoutY="9.0" prefHeight="44.0" prefWidth="194.0" style="-fx-font-family: &quot;Pokemon GB&quot;; -fx-font-size: 15px; -fx-text-fill: #333333;" text="NOMBRE">
-                     <font>
-                        <Font size="13.0" />
-                     </font>
-                  </Label>
-               </children>
-            </Pane>
-         </children>
-      </HBox>
+      <ImageView fx:id="imgPokemon" fitHeight="350.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
 
       <HBox alignment="CENTER" prefHeight="200.0" spacing="20.0" style="-fx-background-color: #285068; -fx-border-color: #D86040; -fx-border-width: 10; -fx-border-radius: 8; -fx-background-radius: 8;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <padding>
@@ -91,5 +66,25 @@
             </HBox>
          </children>
       </HBox>
+      <Pane layoutX="246.0" layoutY="105.0" prefHeight="118.0" prefWidth="337.0" style="-fx-background-color: #F8F8F8; -fx-border-color: #505050; -fx-border-width: 8; -fx-background-radius: 10; -fx-border-radius: 10;" AnchorPane.leftAnchor="250.0" AnchorPane.topAnchor="100.0">
+         <children>
+            <Pane layoutX="44.0" layoutY="53.0" prefHeight="38.0" prefWidth="272.0" style="-fx-background-color: #6E6D6D; -fx-background-radius: 8;">
+               <children>
+                  <ProgressBar fx:id="barraVida" layoutX="71.0" layoutY="9.0" prefHeight="23.0" prefWidth="196.0" progress="1.0" style="-fx-background-color: green;" />
+                  <Label layoutX="19.0" layoutY="-1.0" prefHeight="37.0" prefWidth="39.0" text="HP" textFill="#fbff00">
+                     <font>
+                        <Font name="Pokemon GB" size="15.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Label fx:id="lblNivelPokemon" layoutX="216.0" layoutY="-5.0" prefHeight="67.0" prefWidth="123.0" style="-fx-font-family: &quot;Pokemon GB&quot;; -fx-font-size: 15px; -fx-text-fill: #333333;" text="Lv 1" />
+            <Label fx:id="lblNombrePokemon" layoutX="31.0" layoutY="9.0" prefHeight="44.0" prefWidth="194.0" style="-fx-font-family: &quot;Pokemon GB&quot;; -fx-font-size: 15px; -fx-text-fill: #333333;" text="NOMBRE">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
    </children>
 </AnchorPane>
