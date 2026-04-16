@@ -64,24 +64,14 @@ public class CrianzaController implements DatosEntrenador {
 		// Iniciamos la música
 		iniciarMusica();
 
-		// Modificamos los ComboBox para que muentre los pokemons de la lista como
-		// queremos.
-		StringConverter<Pokemon> conversor = new StringConverter<Pokemon>() {
-			@Override
-			public String toString(Pokemon p) {
-				if (p == null)
-					return null;
-				return p.getMote() + " (Nv. " + p.getNivel() + ")";
-			}
+		// Aplicamos la fábrica a la lista desplegable, cuando abrimos el desplegable
+		desplegableMacho.setCellFactory(crearCeldaPokemon());
+		desplegableHembra.setCellFactory(crearCeldaPokemon());
 
-			@Override
-			public Pokemon fromString(String string) {
-				return null;
-			}
-		};
-		// Llamamos a las listas
-		desplegableMacho.setConverter(conversor);
-		desplegableHembra.setConverter(conversor);
+		// Aplicamos la fábrica al botón" principal, cuando está cerrado y ya hemos
+		// elegido
+		desplegableMacho.setButtonCell(crearCeldaPokemon().call(null));
+		desplegableHembra.setButtonCell(crearCeldaPokemon().call(null));
 
 		// Listener del macho
 		desplegableMacho.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
@@ -435,6 +425,46 @@ public class CrianzaController implements DatosEntrenador {
 		} catch (Exception e) {
 			System.err.println("Error música: " + e.getMessage());
 		}
+	}
+
+	// Método para dibujar las filas del desplegable con foto y texto
+	private javafx.util.Callback<javafx.scene.control.ListView<Pokemon>, javafx.scene.control.ListCell<Pokemon>> crearCeldaPokemon() {
+		return param -> new javafx.scene.control.ListCell<Pokemon>() {
+			@Override
+			protected void updateItem(Pokemon p, boolean empty) {
+				super.updateItem(p, empty);
+
+				if (empty || p == null) {
+					setText(null);
+					setGraphic(null);
+				} else {
+					// Ponemos el texto
+					setText(p.getMote() + " (Nv. " + p.getNivel() + ")");
+
+					// Preparamos el icono
+					ImageView icono = new ImageView();
+					icono.setFitHeight(30); // Tamaño miniatura
+					icono.setFitWidth(30);
+					icono.setPreserveRatio(true);
+
+					// Buscamos la foto
+					try {
+						String rutaDB = p.getNumPokedex().getRutaImgFront();
+						String nombreArchivo = rutaDB.substring(rutaDB.lastIndexOf("/") + 1);
+						String rutaFinal = "/img/Pokemon/Front/" + nombreArchivo;
+						InputStream stream = getClass().getResourceAsStream(rutaFinal);
+						if (stream != null) {
+							icono.setImage(new Image(stream));
+						}
+					} catch (Exception e) {
+						// Si falla la imagen, se queda solo con el texto
+					}
+
+					// Se lo metemos a la celda
+					setGraphic(icono);
+				}
+			}
+		};
 	}
 
 }
