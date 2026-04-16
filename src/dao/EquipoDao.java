@@ -8,10 +8,8 @@ import model.Pokedex;
 
 public class EquipoDao {
     
-    //Base de Datos
-    private final String URL = "jdbc:mysql://127.0.0.1:3306/proyecto_pokemon?useSSL=false&serverTimezone=UTC";
-    private final String USER = "root";
-    private final String PASS = "";
+    // Instanciamos la clase de conexión
+    private ConexionDB conexion = new ConexionDB();
 
     public EquipoDao() {
     }
@@ -24,7 +22,8 @@ public class EquipoDao {
                      "FROM pokemon p JOIN pokedex px ON p.NUM_POKEDEX = px.NUM_POKEDEX " +
                      "WHERE p.ID_ENTRENADOR = ? AND p.UBICACION = ?";
                      
-        try (Connection c = DriverManager.getConnection(URL, USER, PASS);
+        // Abrimos la conexión llamando a tu clase ConexionDB
+        try (Connection c = conexion.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
              
             ps.setInt(1, idEntrenador);
@@ -70,7 +69,8 @@ public class EquipoDao {
     public boolean moverPokemon(int idPokemon, String nuevaUbicacion) {
         String sql = "UPDATE pokemon SET UBICACION = ? WHERE ID_POKEMON = ?";
         
-        try (Connection c = DriverManager.getConnection(URL, USER, PASS);
+        // Abrimos la conexión llamando a tu clase ConexionDB
+        try (Connection c = conexion.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
              
             ps.setString(1, nuevaUbicacion);

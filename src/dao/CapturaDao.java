@@ -7,11 +7,9 @@ import model.Pokemon;
 // CLASE DAO de Captura
 // Se conecta con la Base de Datos para sacar los Pókemon al azar y guardar los que el entrenador logre capturar.
 public class CapturaDao {
-	
-	// Credenciales de la Base de Datos
-    private final String URL = "jdbc:mysql://127.0.0.1:3306/proyecto_pokemon?useSSL=false&serverTimezone=UTC";
-    private final String USER = "root";
-    private final String PASS = "";
+
+    // Instanciamos la clase de conexión
+    private ConexionDB conexion = new ConexionDB();
 
     // Método 1: Generar un Pókemon
     // Va a la tabla pokedex, elige uno al azar y crea las estadísticas de nivel 1,
@@ -20,10 +18,10 @@ public class CapturaDao {
         Pokemon p = null; 
         String tipo = "NORMAL"; // Tipo por defecto por si llega a fallar algo
         
-        // Abrimos la conexión con la Base de Datos
-        try (Connection c = DriverManager.getConnection(URL, USER, PASS)) {
-        	
-        	// Coge el número, nombre, imagen y tipo de la Pokedex y el ORDER BY RANDO() LIMIT 1  devuelve solo un Pókemon.
+        // Abrimos la conexión llamando a tu clase ConexionDB
+        try (Connection c = conexion.getConnection()) {
+            
+            // Coge el número, nombre, imagen y tipo de la Pokedex y el ORDER BY RAND() LIMIT 1  devuelve solo un Pókemon.
             String q = "SELECT p.NUM_POKEDEX, p.NOM_POKEMON, p.IMG_FRONT, t.NOM_TIPO " +
                        "FROM pokedex p " +
                        "LEFT JOIN pokedex_tipo pt ON p.NUM_POKEDEX = pt.NUM_POKEDEX " +
@@ -34,7 +32,7 @@ public class CapturaDao {
             
             // Si la consulta encuentra un resultado
             if (rs.next()) {
-            	// Preparamos los datos básicos de la Pokedex
+                // Preparamos los datos básicos de la Pokedex
                 Pokedex dex = new Pokedex();
                 dex.setNumPokedex(rs.getInt("NUM_POKEDEX"));
                 dex.setRutaImgFront(rs.getString("IMG_FRONT"));
@@ -71,11 +69,14 @@ public class CapturaDao {
     // Si el Entrenador actual ya tiene un Pókemon guardado cone el mismo mote evita poner el mismo nombre,
     // pero permite que otro Entrenador en otra cuenta pueda usar ese mote.
     public boolean existeMoteParaEntrenador(int idEntrenador, String mote) {
-    	
-    	// Cuenta cuantos Pokemons tienen ese Entrenador y mote
+        
+        // Cuenta cuantos Pokemons tienen ese Entrenador y mote
         String sql = "SELECT COUNT(*) FROM pokemon WHERE ID_ENTRENADOR = ? AND MOTE = ?";
-        try (Connection c = DriverManager.getConnection(URL, USER, PASS);
+        
+        // Usamos conexion.getConnection()
+        try (Connection c = conexion.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
+             
             ps.setInt(1, idEntrenador);
             ps.setString(2, mote);
             ResultSet rs = ps.executeQuery();
@@ -94,8 +95,11 @@ public class CapturaDao {
     // Cuenta cuantos Pókemons tiene el jugador actualmente en su EQUIUPO, si son mas de 6 los manda directo a CAJA.
     public int contarPokemonEquipo(int idEntrenador) {
         String sql = "SELECT COUNT(*) FROM pokemon WHERE ID_ENTRENADOR = ? AND UBICACION = 'EQUIPO'";
-        try (Connection c = DriverManager.getConnection(URL, USER, PASS);
+        
+        // Usamos conexion.getConnection()
+        try (Connection c = conexion.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
+             
             ps.setInt(1, idEntrenador);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -115,10 +119,11 @@ public class CapturaDao {
                      "EXPERIENCIA, SEXO, ESTADO, UBICACION) " +
                      "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; // 17 datos
         
-        try (Connection c = DriverManager.getConnection(URL, USER, PASS);
+        // Usamos conexion.getConnection()
+        try (Connection c = conexion.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             
-        	// Rellenbamos las interrogaciones una por una con los datos del Pókemon
+            // Rellenamos las interrogaciones una por una con los datos del Pókemon
             ps.setInt(1, idEnt);
             ps.setInt(2, p.getNumPokedex().getNumPokedex());
             ps.setNull(3, java.sql.Types.INTEGER); // El id_objeto es nulo ya que no lleva objeto en ese momento
@@ -143,6 +148,7 @@ public class CapturaDao {
             // Ejecutamos la inserción, si afecta a más de 0 filas, esta correcto.
             return ps.executeUpdate() > 0;
         } catch (Exception e) {  // Si sucede un error lo imprime en la consola
+            e.printStackTrace();
             return false; 
         }
     }
