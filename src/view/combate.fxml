@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="panelPrincipal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.combateController">
+   <children>
+      <ImageView fx:id="fondoBatalla" fitHeight="800.0" fitWidth="1280.0" preserveRatio="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <ImageView fx:id="imgPokemonRival" fitHeight="350.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="imgPokemonJugador" fitHeight="350.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+      <Pane prefHeight="130.0" prefWidth="380.0" style="-fx-background-color: #F8F8F8; -fx-border-color: #505050; -fx-border-width: 8; -fx-background-radius: 10; -fx-border-radius: 10;" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="80.0">
+         <children>
+            <Pane layoutX="44.0" layoutY="45.0" prefHeight="55.0" prefWidth="290.0" style="-fx-background-color: #6E6D6D; -fx-background-radius: 8;">
+               <children>
+                  <ProgressBar fx:id="barraVidaRival" layoutX="80.0" layoutY="8.0" prefHeight="18.0" prefWidth="190.0" progress="1.0" style="-fx-accent: #ff3333; -fx-control-inner-background: #e0e0e0;" />
+                  <ProgressBar fx:id="barraEstaminaRival" layoutX="80.0" layoutY="28.0" prefHeight="18.0" prefWidth="190.0" progress="1.0" style="-fx-accent: #FFA500; -fx-control-inner-background: #e0e0e0;" />
+                  <Label layoutX="20.0" layoutY="8.0" text="HP" textFill="#fbff00">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="20.0" layoutY="28.0" text="EST" textFill="#4da6ff">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Label fx:id="lblNivelRival" layoutX="230.0" layoutY="-5.0" prefHeight="60.0" prefWidth="123.0" style="-fx-font-family: 'Pokemon GB'; -fx-font-size: 15px; -fx-text-fill: #333333;" text="Lv 1" />
+            <Label fx:id="lblNombreRival" layoutX="31.0" layoutY="9.0" prefHeight="44.0" prefWidth="194.0" style="-fx-font-family: 'Pokemon GB'; -fx-font-size: 15px; -fx-text-fill: #333333;" text="NOMBRE" />
+            <Label fx:id="lblKORival" layoutX="44.0" layoutY="105.0" style="-fx-font-family: 'Pokemon GB'; -fx-font-size: 11px; -fx-text-fill: #333333;" text="Bajas Enemigas: 0/6" />
+            <Button fx:id="btnSonidoRival" layoutX="325.0" layoutY="10.0" mnemonicParsing="false" onAction="#accionSonidoRival" style="-fx-background-color: transparent; -fx-cursor: hand;" text="🎵">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+         </children>
+      </Pane>
+      <Pane prefHeight="130.0" prefWidth="380.0" style="-fx-background-color: #F8F8F8; -fx-border-color: #505050; -fx-border-width: 8; -fx-background-radius: 10; -fx-border-radius: 10;" AnchorPane.bottomAnchor="250.0" AnchorPane.rightAnchor="80.0">
+         <children>
+            <Pane layoutX="44.0" layoutY="45.0" prefHeight="55.0" prefWidth="290.0" style="-fx-background-color: #6E6D6D; -fx-background-radius: 8;">
+               <children>
+                  <ProgressBar fx:id="barraVidaJugador" layoutX="80.0" layoutY="8.0" prefHeight="18.0" prefWidth="190.0" progress="1.0" style="-fx-accent: #32CD32; -fx-control-inner-background: #e0e0e0;" />
+                  <ProgressBar fx:id="barraEstaminaJugador" layoutX="80.0" layoutY="28.0" prefHeight="18.0" prefWidth="190.0" progress="1.0" style="-fx-accent: #FFA500; -fx-control-inner-background: #e0e0e0;" />
+                  <Label layoutX="20.0" layoutY="8.0" text="HP" textFill="#fbff00">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="20.0" layoutY="28.0" text="EST" textFill="#4da6ff">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Label fx:id="lblNivelJugador" layoutX="230.0" layoutY="-5.0" prefHeight="60.0" prefWidth="123.0" style="-fx-font-family: 'Pokemon GB'; -fx-font-size: 15px; -fx-text-fill: #333333;" text="Lv 1" />
+            <Label fx:id="lblNombreJugador" layoutX="31.0" layoutY="9.0" prefHeight="44.0" prefWidth="194.0" style="-fx-font-family: 'Pokemon GB'; -fx-font-size: 15px; -fx-text-fill: #333333;" text="NOMBRE" />
+            <Label fx:id="lblKOJugador" layoutX="44.0" layoutY="105.0" style="-fx-font-family: 'Pokemon GB'; -fx-font-size: 11px; -fx-text-fill: #333333;" text="Tus Bajas: 0/6" />
+            <Button fx:id="btnSonidoJugador" layoutX="325.0" layoutY="10.0" mnemonicParsing="false" onAction="#accionSonidoJugador" style="-fx-background-color: transparent; -fx-cursor: hand;" text="🎵">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+         </children>
+      </Pane>
+      <HBox alignment="CENTER" prefHeight="230.0" spacing="20.0" style="-fx-background-color: #285068; -fx-border-color: #D86040; -fx-border-width: 10; -fx-border-radius: 8; -fx-background-radius: 8;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <padding>
+            <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
+         </padding>
+         <children>
+            <TextArea fx:id="txtLog" editable="false" focusTraversable="false" style="-fx-control-inner-background: #F7F7F7; -fx-font-family: 'Pokemon GB'; -fx-font-size: 12px; -fx-border-color: #969696; -fx-border-width: 5; -fx-border-radius: 5;" wrapText="true" HBox.hgrow="ALWAYS" />
+            <VBox minWidth="550.0" spacing="10.0" HBox.hgrow="NEVER">
+               <children>
+                  <HBox spacing="10.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="btnAtaque1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#accionAtaque1" style="-fx-background-color: #FFA1A1; -fx-border-radius: 8; -fx-border-color: #FF6363; -fx-border-width: 3; -fx-font-family: 'Pokemon GB'; -fx-font-size: 12px; -fx-cursor: hand;" text="ATQ 1" textAlignment="CENTER" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnAtaque2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#accionAtaque2" style="-fx-background-color: #FFA1A1; -fx-border-radius: 8; -fx-border-color: #FF6363; -fx-border-width: 3; -fx-font-family: 'Pokemon GB'; -fx-font-size: 12px; -fx-cursor: hand;" text="ATQ 2" textAlignment="CENTER" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="btnAtaque3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#accionAtaque3" style="-fx-background-color: #FFA1A1; -fx-border-radius: 8; -fx-border-color: #FF6363; -fx-border-width: 3; -fx-font-family: 'Pokemon GB'; -fx-font-size: 12px; -fx-cursor: hand;" text="ATQ 3" textAlignment="CENTER" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnAtaque4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#accionAtaque4" style="-fx-background-color: #FFA1A1; -fx-border-radius: 8; -fx-border-color: #FF6363; -fx-border-width: 3; -fx-font-family: 'Pokemon GB'; -fx-font-size: 12px; -fx-cursor: hand;" text="ATQ 4" textAlignment="CENTER" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="btnDescansar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#accionDescansar" style="-fx-background-color: #A0E8AF; -fx-border-radius: 8; -fx-border-color: #228B22; -fx-border-width: 3; -fx-font-family: 'Pokemon GB'; -fx-font-size: 12px; -fx-cursor: hand;" text="DESCANSAR" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnEquipo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#accionEquipo" style="-fx-background-color: #87CEFA; -fx-border-radius: 8; -fx-border-color: #4169E1; -fx-border-width: 3; -fx-font-family: 'Pokemon GB'; -fx-font-size: 12px; -fx-cursor: hand;" text="EQUIPO" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnHuir" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#accionHuir" style="-fx-background-color: #DDA0DD; -fx-border-radius: 8; -fx-border-color: #8A2BE2; -fx-border-width: 3; -fx-font-family: 'Pokemon GB'; -fx-font-size: 12px; -fx-cursor: hand;" text="HUIR" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <ImageView fx:id="botonPantalla" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#gestionarPantalla" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
+   </children>
+</AnchorPane>
