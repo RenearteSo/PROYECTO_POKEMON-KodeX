@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.media.MediaView?>
+<?import javafx.scene.paint.Color?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" stylesheets="@../css/estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.EntrenamientoController">
+   <children>
+      <MediaView fx:id="fondoVideo" fitHeight="800.0" fitWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <HBox prefHeight="800.0" prefWidth="1280.0" style="-fx-background-color: transparent;;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ScrollPane fitToWidth="true" prefHeight="800.0" prefWidth="709.0" style="-fx-background-color: transparent; -fx-background: transparent;" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+               <content>
+                  <TilePane fx:id="panelCuadricula" hgap="10.0" prefHeight="792.0" prefWidth="685.0" style="-fx-background-color: transparent;;" vgap="10.0" />
+               </content>
+            </ScrollPane>
+            <VBox alignment="CENTER" prefHeight="800.0" prefWidth="644.0" spacing="25.0" style="-fx-background-color: rgba(0, 0, 0, 0.75); -fx-background-radius: 15; -fx-border-color: #505050; -fx-border-width: 3; -fx-border-radius: 15; -fx-padding: 25;" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label fx:id="etiquetaNombre" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-family: &quot;Pokemon GB&quot;; -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;" text="Label" />
+                  <ImageView fx:id="imagenPokemon" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true" />
+                  <ComboBox fx:id="desplegableEntrenamiento" prefHeight="29.0" prefWidth="196.0" promptText="Selecciona entrenamiento" stylesheets="@../css/estilos.css">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ComboBox>
+                  <Button fx:id="botonEntrenar" mnemonicParsing="false" onAction="#accionEntrenar" style="-fx-background-color: rgba(0, 0, 0, 0.7);; -fx-text-fill: white; -fx-font-family: &quot;Pokemon GB&quot;;; -fx-font-size: 15px; -fx-background-radius: 15; -fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 15;" text="Entrenar">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <Label fx:id="etiquetaMensaje" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-family: &quot;Pokemon GB&quot;; -fx-font-size: 15; -fx-font-weight: bold; -fx-text-fill: white;" text="Label" />
+                  <GridPane hgap="5.0" prefHeight="148.0" prefWidth="608.0" style="-fx-background-color: rgba(255, 255, 255, 0.6);; -fx-background-radius: 10; -fx-border-color: #D3D3D3;; -fx-border-width: 2; -fx-border-radius: 10; -fx-padding: 10;" vgap="5.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="226.0" minWidth="10.0" prefWidth="226.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="194.0" minWidth="10.0" prefWidth="173.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="74.0" prefWidth="310.0" style="-fx-font-family: &quot;Pokemon GB&quot;; -fx-font-weight: bold;" text="Ataque" />
+                        <Label alignment="CENTER" prefHeight="54.0" prefWidth="328.0" style="-fx-font-family: &quot;Pokemon GB&quot;;" text="Defensa" GridPane.rowIndex="1" />
+                        <Label alignment="CENTER" prefHeight="99.0" prefWidth="406.0" style="-fx-font-family: &quot;Pokemon GB&quot;;" text="Vitalidad" GridPane.rowIndex="2" />
+                        <Label fx:id="etiquetaAtaque" alignment="CENTER_RIGHT" prefHeight="145.0" prefWidth="377.0" text="0" GridPane.columnIndex="1" />
+                        <Label fx:id="etiquetaDefensa" alignment="CENTER_RIGHT" prefHeight="72.0" prefWidth="354.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="etiquetaVitalidad" alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="80.0" prefWidth="312.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label alignment="CENTER" prefHeight="55.0" prefWidth="382.0" style="-fx-font-family: &quot;Pokemon GB&quot;;" text="Ataque especial" GridPane.rowIndex="3" />
+                        <Label fx:id="etiquetaAtaqueEsp" alignment="CENTER_RIGHT" prefHeight="90.0" prefWidth="322.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label alignment="CENTER" prefHeight="101.0" prefWidth="370.0" style="-fx-font-family: &quot;Pokemon GB&quot;;" text="Defensa especial" GridPane.rowIndex="4" />
+                        <Label fx:id="etiquetaDefensaEsp" alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="112.0" prefWidth="363.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label alignment="CENTER" prefHeight="59.0" prefWidth="380.0" style="-fx-font-family: &quot;Pokemon GB&quot;;" text="Velocidad" GridPane.rowIndex="5" />
+                        <Label fx:id="etiquetaVelocidad" alignment="CENTER_RIGHT" prefHeight="98.0" prefWidth="370.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label fx:id="preAtaque" prefHeight="37.0" prefWidth="126.0" text="0" GridPane.columnIndex="2" />
+                        <Label fx:id="preDefensa" prefHeight="40.0" prefWidth="125.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label fx:id="preVitalidad" prefHeight="48.0" prefWidth="140.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label fx:id="preAtaqueEsp" prefHeight="44.0" prefWidth="139.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Label fx:id="preDefensaEsp" prefHeight="40.0" prefWidth="122.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                        <Label fx:id="preVelocidad" prefHeight="49.0" prefWidth="143.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                     </children>
+                  </GridPane>
+                  <Button fx:id="botonVolver" mnemonicParsing="false" onAction="#accionVolver" style="-fx-background-color: rgba(0, 0, 0, 0.7); -fx-text-fill: white; -fx-font-family: &quot;Pokemon GB&quot;; -fx-font-size: 12; -fx-background-radius: 15; -fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 15;" text="Volver">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="10.0">
+         <children>
+            <Label fx:id="etiquetaPokedollares" alignment="CENTER" contentDisplay="CENTER" style="-fx-background-color: #2b2b2b; -fx-background-radius: 15; -fx-text-fill: white; -fx-font-family: &quot;Pokemon GB&quot;; -fx-opacity: 0.8; -fx-border-color: white; -fx-border-radius: 15; -fx-border-width: 1; -fx-font-size: 15;" text="Pokedóllares">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </Label>
+            <ImageView fx:id="botonPantalla" fitHeight="39.0" fitWidth="52.0" onMouseClicked="#gestionarPantalla" pickOnBounds="true" preserveRatio="true" style="-fx-effect: #FFFFFF;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <effect>
+                  <DropShadow spread="0.5">
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </DropShadow>
+               </effect>
+            </ImageView>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

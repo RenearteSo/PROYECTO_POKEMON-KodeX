@@ -423,46 +423,47 @@ public class Pokemon {
 		hijo.setAtaqueEspecial((padre.getAtaqueEspecial() + madre.getAtaqueEspecial()) / 2);
 		// Defensa Especial
 		hijo.setDefensaEspecial((padre.getDefensaEspecial() + madre.getDefensaEspecial()) / 2);
-		
-		
+
 		// Nivel al que nace el hijo
 		hijo.setNivel(1);
-		hijo.setEstamina(100); //Nace descansado
-		hijo.setExp(0); //Nace sin exp.
-		hijo.setFertilidad(5); //Nacse con el máximo de fertilidad
-		
+		hijo.setEstamina(100); // Nace descansado
+		hijo.setExp(0); // Nace sin exp.
+		hijo.setFertilidad(5); // Nacse con el máximo de fertilidad
+
 		return hijo;
 	}
 
 	// Creamos el método atacar a otro pokemon
 	// Le pasamos como argumentos un pokemon al que atacar y un movimiento.
 	public void atacar(Pokemon pokemonEnemigo, Movimiento movElegido) {
-		
+
 		// --- CAMBIO: Hemos quitado el if(!puedeMoverse()) que había aquí ---
 
 		int coste = movElegido.calcularCosteEstamina(); // Llamamos al método gestCosteEstamina de la clase movimiento
-			
+
 		if (this.estamina >= coste) {
 			this.estamina -= coste; // Restamos el coste de la estamina del movimiento a nuestras estamina actual.
 
-			// Si por ejemplo el pokemon está quemado, el ataque físico se reduce a la mitad.
+			// Si por ejemplo el pokemon está quemado, el ataque físico se reduce a la
+			// mitad.
 			int ataqueReal = this.ataqueObjetoAplicado();
 			if (this.estadoActual == Estado.QUEMADO && movElegido.getClaseMovimiento().equals("ataque")) {
 				ataqueReal = ataqueReal / 2;
 			}
 
-			// Generamos la lógica del daño y se la aplicamos al pokemon rival restándole su defensa
+			// Generamos la lógica del daño y se la aplicamos al pokemon rival restándole su
+			// defensa
 			int danio = (ataqueReal + movElegido.getPotencia()) - pokemonEnemigo.defensaObjetoAplicado();
 			if (danio < 0) {
 				danio = 0; // Condición para evitar daños negativos
 			}
 
 			// Metemos en el método atacar la comprobación de ventaja y desventaja
-			double efectividad = 1.0; 
+			double efectividad = 1.0;
 
 			// Obtenemos el Tipo del Movimiento que se usa.
 			TipoPokemon tipoAtaque = movElegido.getTipoPokemon();
-				
+
 			// Obtenemos los tipos del enemigo.
 			TipoPokemon tipoDefensor1 = pokemonEnemigo.getTipoPokemon().get(0);
 			TipoPokemon tipoDefensor2 = null;
@@ -483,8 +484,8 @@ public class Pokemon {
 			// Si es un ataque de hacer daño (y no de estado)
 			if (movElegido.getClaseMovimiento().equalsIgnoreCase("ataque")) {
 				int danioFinal = (int) (danio * efectividad);
-				pokemonEnemigo.setVitalidad(pokemonEnemigo.getVitalidad() - danioFinal); 
-					
+				pokemonEnemigo.setVitalidad(pokemonEnemigo.getVitalidad() - danioFinal);
+
 				// Mensajes clásicos de efectividad
 				if (efectividad >= 2.0) {
 					System.out.println("¡Es súper eficaz!");
@@ -495,40 +496,50 @@ public class Pokemon {
 
 			// --- NUEVO: LÓGICA DE ESTADOS E INMUNIDADES (Ej: Fuego no se quema) ---
 			if (movElegido.getClaseMovimiento().equalsIgnoreCase("estado") && movElegido.getEstado() != null) {
-					
+
 				if (pokemonEnemigo.getEstadoActual() == Estado.SALUDABLE) {
-						
+
 					boolean esInmune = false;
-						
+
 					// Recorremos los tipos del enemigo para ver si es inmune al estado
 					for (TipoPokemon tipo : pokemonEnemigo.getTipoPokemon()) {
-						if (movElegido.getEstado() == Estado.QUEMADO && tipo == TipoPokemon.FUEGO) esInmune = true;
-						if (movElegido.getEstado() == Estado.CONGELADO && tipo == TipoPokemon.HIELO) esInmune = true;
-						if (movElegido.getEstado() == Estado.HELADO && tipo == TipoPokemon.HIELO) esInmune = true;
-						if (movElegido.getEstado() == Estado.DRENADORAS && tipo == TipoPokemon.PLANTA) esInmune = true;
-						if (movElegido.getEstado() == Estado.PARALIZADO && tipo == TipoPokemon.ELECTRICO) esInmune = true; 
-						if ((movElegido.getEstado() == Estado.ENVENENADO || movElegido.getEstado() == Estado.GRAVEMENTE_ENVENENADO) && tipo == TipoPokemon.VENENO) esInmune = true;
+						if (movElegido.getEstado() == Estado.QUEMADO && tipo == TipoPokemon.FUEGO)
+							esInmune = true;
+						if (movElegido.getEstado() == Estado.CONGELADO && tipo == TipoPokemon.HIELO)
+							esInmune = true;
+						if (movElegido.getEstado() == Estado.HELADO && tipo == TipoPokemon.HIELO)
+							esInmune = true;
+						if (movElegido.getEstado() == Estado.DRENADORAS && tipo == TipoPokemon.PLANTA)
+							esInmune = true;
+						if (movElegido.getEstado() == Estado.PARALIZADO && tipo == TipoPokemon.ELECTRICO)
+							esInmune = true;
+						if ((movElegido.getEstado() == Estado.ENVENENADO
+								|| movElegido.getEstado() == Estado.GRAVEMENTE_ENVENENADO)
+								&& tipo == TipoPokemon.VENENO)
+							esInmune = true;
 					}
 
 					// Si NO es inmune, le pegamos la enfermedad
 					if (!esInmune) {
 						pokemonEnemigo.setEstadoActual(movElegido.getEstado());
-						System.out.println("¡" + pokemonEnemigo.getMote() + " ahora está " + movElegido.getEstado() + "!");
-							
+						System.out.println(
+								"¡" + pokemonEnemigo.getMote() + " ahora está " + movElegido.getEstado() + "!");
+
 						if (movElegido.getEstado() == Estado.DORMIDO) {
 							pokemonEnemigo.setTurnosEstado((int) (Math.random() * 3) + 1);
 						}
 					} else {
-						System.out.println("¡No afectó a " + pokemonEnemigo.getMote() + " porque su tipo lo hace inmune!");
+						System.out.println(
+								"¡No afectó a " + pokemonEnemigo.getMote() + " porque su tipo lo hace inmune!");
 					}
 				}
 			}
 
-			} else {
-				this.descansar();
-				System.out.println(this.mote + " está demasiado cansado y tiene que descansar.");
-			}
+		} else {
+			this.descansar();
+			System.out.println(this.mote + " está demasiado cansado y tiene que descansar.");
 		}
+	}
 
 	// Creamos el método descansar para recuperar la estamina perdida que gastamos
 	// en combate o haceindo algún movimiento
@@ -569,6 +580,92 @@ public class Pokemon {
 
 		// Devolvemos el viejo para que luego el MAIN lo gestione.
 		return movOlvidado;
+	}
+
+	// Método que sabe qué bebé sale de cada evolución
+	public static int obtenerIdBebe(int idMadre) {
+		return switch (idMadre) {
+		// Iniciales
+		case 2, 3 -> 1; // Ivysaur, Venusaur -> Bulbasaur
+		case 5, 6 -> 4; // Charmeleon, Charizard -> Charmander
+		case 8, 9 -> 7; // Wartortle, Blastoise -> Squirtle
+
+		// Bichos de bosque
+		case 11, 12 -> 10; // Metapod, Butterfree -> Caterpie
+		case 14, 15 -> 13; // Kakuna, Beedrill -> Weedle
+
+		// Pájaros y ratones
+		case 17, 18 -> 16; // Pidgeotto, Pidgeot -> Pidgey
+		case 20 -> 19; // Raticate -> Rattata
+		case 22 -> 21; // Fearow -> Spearow
+		case 24 -> 23; // Arbok -> Ekans
+		case 26 -> 25; // Raichu -> Pikachu
+		case 28 -> 27; // Sandslash -> Sandshrew
+
+		// Nidoran y Montaña
+		case 30, 31 -> 29; // Nidorina, Nidoqueen -> Nidoran ♀
+		case 33, 34 -> 32; // Nidorino, Nidoking -> Nidoran ♂
+		case 36 -> 35; // Clefable -> Clefairy
+		case 38 -> 37; // Ninetales -> Vulpix
+		case 40 -> 39; // Wigglytuff -> Jigglypuff
+		case 42 -> 41; // Golbat -> Zubat
+
+		// Plantas y setas
+		case 44, 45 -> 43; // Gloom, Vileplume -> Oddish
+		case 47 -> 46; // Parasect -> Paras
+		case 49 -> 48; // Venomoth -> Venonat
+
+		// Cuevas y ciudad
+		case 51 -> 50; // Dugtrio -> Diglett
+		case 53 -> 52; // Persian -> Meowth
+		case 55 -> 54; // Golduck -> Psyduck
+		case 57 -> 56; // Primeape -> Mankey
+		case 59 -> 58; // Arcanine -> Growlithe
+
+		// Agua y psíquicos
+		case 61, 62 -> 60; // Poliwhirl, Poliwrath -> Poliwag
+		case 64, 65 -> 63; // Kadabra, Alakazam -> Abra
+		case 67, 68 -> 66; // Machoke, Machamp -> Machop
+		case 70, 71 -> 69; // Weepinbell, Victreebel -> Bellsprout
+		case 73 -> 72; // Tentacruel -> Tentacool
+
+		// Rocas y fuego
+		case 75, 76 -> 74; // Graveler, Golem -> Geodude
+		case 78 -> 77; // Rapidash -> Ponyta
+		case 80 -> 79; // Slowbro -> Slowpoke
+		case 82 -> 81; // Magneton -> Magnemite
+
+		// Varios
+		case 85 -> 84; // Dodrio -> Doduo
+		case 87 -> 86; // Dewgong -> Seel
+		case 89 -> 88; // Muk -> Grimer
+		case 91 -> 90; // Cloyster -> Shellder
+		case 93, 94 -> 92; // Haunter, Gengar -> Gastly
+
+		// Drowzee a Rhyhorn
+		case 97 -> 96; // Hypno -> Drowzee
+		case 99 -> 98; // Kingler -> Krabby
+		case 101 -> 100; // Electrode -> Voltorb
+		case 103 -> 102; // Exeggutor -> Exeggcute
+		case 105 -> 104; // Marowak -> Cubone
+		case 110 -> 109; // Weezing -> Koffing
+		case 112 -> 111; // Rhydon -> Rhyhorn
+
+		// Agua late-game
+		case 117 -> 116; // Seadra -> Horsea
+		case 119 -> 118; // Seaking -> Goldeen
+		case 121 -> 120; // Starmie -> Staryu
+		case 130 -> 129; // Gyarados -> Magikarp
+
+		// Eevee y Fósiles
+		case 134, 135, 136 -> 133; // Vaporeon, Jolteon, Flareon -> Eevee
+		case 139 -> 138; // Omastar -> Omanyte
+		case 141 -> 140; // Kabutops -> Kabuto
+		case 148, 149 -> 147; // Dragonair, Dragonite -> Dratini
+
+		// Pokémon base, legendarios o sin evolución
+		default -> idMadre; // Devuelven su propio ID
+		};
 	}
 
 	// Método toString

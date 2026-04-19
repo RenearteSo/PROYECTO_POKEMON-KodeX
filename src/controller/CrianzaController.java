@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import model.Configuracion;
 import model.Entrenador;
+import model.Pokedex;
 import model.Pokemon;
 
 public class CrianzaController implements DatosEntrenador {
@@ -53,7 +54,8 @@ public class CrianzaController implements DatosEntrenador {
 		botonAbrirHuevo.setVisible(false);
 		imgHuevo.setVisible(false);
 		etiquetaMensaje.setText("Selecciona un padre y una madre.");
-
+		
+		//Código para que el fondo se adapte a la pantalla completa y minimizada
 		javafx.application.Platform.runLater(() -> {
 			if (fondoCrianza.getScene() != null) {
 				fondoCrianza.fitWidthProperty().bind(fondoCrianza.getScene().widthProperty());
@@ -238,6 +240,23 @@ public class CrianzaController implements DatosEntrenador {
 	// MEvento para abrir el huevo pokemon y que aparezca nuestro nuevo pokemon
 	@FXML
 	void accionAbrirHuevo(ActionEvent event) {
+		CrianzaDao dao = new CrianzaDao(); // Lo creamos aquí arriba para usarlo en todo el método
+
+		try {
+			// El bebé con id corregido
+			int idReal = huevoObtenido.getNumPokedex().getNumPokedex();
+
+			// Le pedimos al DAO la info real 
+			Pokedex infoReal = dao.obtenerInfoPokedex(idReal);
+
+			// Se lo ponemos a nuestro huevo
+			huevoObtenido.setNumPokedex(infoReal);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Error obteniendo la Pokédex del bebé real.");
+		}
+
 		// Variable para comprobar el mote
 		boolean moteValido = false;
 		// Bucle para pedir el mote hasta que sea correcto
@@ -285,8 +304,7 @@ public class CrianzaController implements DatosEntrenador {
 		}
 
 		try {
-			// Llamamos a la clase que controla la base de datos de esta vista
-			CrianzaDao dao = new CrianzaDao();
+
 			// Lo guardamos de verdad en la base de datos
 			dao.guardarNacimiento(entrenadorActual, desplegableMacho.getValue(), desplegableHembra.getValue(),
 					huevoObtenido);
@@ -349,9 +367,13 @@ public class CrianzaController implements DatosEntrenador {
 	private void cargarImagenPokemon(Pokemon p, ImageView visor) {
 		try {
 			String rutaDB = p.getNumPokedex().getRutaImgFront();
+
+			// Cambiamos el texto .png por .gif
+			rutaDB = rutaDB.replace(".png", ".gif");
+
 			// Cogemos solamente el nombre del archivo
 			String nombreArchivo = rutaDB.substring(rutaDB.lastIndexOf("/") + 1);
-			String rutaFinal = "/img/Pokemon/Front/" + nombreArchivo;
+			String rutaFinal = "/img/Pokemon/gif/Front/" + nombreArchivo;
 
 			InputStream stream = getClass().getResourceAsStream(rutaFinal);
 			if (stream != null) {

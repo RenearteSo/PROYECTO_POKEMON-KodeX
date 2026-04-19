@@ -17,14 +17,11 @@ public class CrianzaDao {
 	public LinkedList<Pokemon> ObtenerEquipoEntrenador(int idEntrenador) throws SQLException {
 		LinkedList<Pokemon> equipo = new LinkedList<>();
 
-		String sql = "SELECT P.*, PX.NOM_POKEMON, PX.NUM_POKEDEX, PX.IMG_FRONT " + 
-                     "FROM POKEMON P " + 
-                     "INNER JOIN POKEDEX PX ON P.NUM_POKEDEX = PX.NUM_POKEDEX " + 
-                     "WHERE p.ID_ENTRENADOR = ?";
+		String sql = "SELECT P.*, PX.NOM_POKEMON, PX.NUM_POKEDEX, PX.IMG_FRONT " + "FROM POKEMON P "
+				+ "INNER JOIN POKEDEX PX ON P.NUM_POKEDEX = PX.NUM_POKEDEX " + "WHERE p.ID_ENTRENADOR = ?";
 
 		// Usamos el método reutilizable
-		try (Connection con = conexionDB.getConnection(); 
-             PreparedStatement pstmt = con.prepareStatement(sql)) {
+		try (Connection con = conexionDB.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql)) {
 
 			pstmt.setInt(1, idEntrenador);
 			ResultSet rs = pstmt.executeQuery();
@@ -58,16 +55,17 @@ public class CrianzaDao {
 	public void guardarNacimiento(Entrenador e, Pokemon p1, Pokemon p2, Pokemon hijo) throws SQLException {
 		// Obtenemos la conexión de nuestra clase DAO
 		Connection con = conexionDB.getConnection();
-		
-		if (con == null) throw new SQLException("No se pudo establecer conexión con la base de datos.");
+
+		if (con == null)
+			throw new SQLException("No se pudo establecer conexión con la base de datos.");
 
 		try {
 			con.setAutoCommit(false); // Empezamos la transacción
 
 			// Insertamos al hijo
-			String sqlHijo = "INSERT INTO POKEMON (ID_ENTRENADOR, NUM_POKEDEX, MOTE, NIVEL, VITALIDAD, ATAQUE, DEFENSA, VELOCIDAD, ATAQUE_ESPECIAL, DEFENSA_ESPECIAL, FERTILIDAD, SEXO, ESTADO, EXPERIENCIA, ESTAMINA) " +
-                             "VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, 5, ?, 'SALUDABLE', 0, 100)";
-			
+			String sqlHijo = "INSERT INTO POKEMON (ID_ENTRENADOR, NUM_POKEDEX, MOTE, NIVEL, VITALIDAD, ATAQUE, DEFENSA, VELOCIDAD, ATAQUE_ESPECIAL, DEFENSA_ESPECIAL, FERTILIDAD, SEXO, ESTADO, EXPERIENCIA, ESTAMINA) "
+					+ "VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, 5, ?, 'SALUDABLE', 0, 100)";
+
 			try (PreparedStatement psH = con.prepareStatement(sqlHijo)) {
 				psH.setInt(1, e.getIdEntrenador());
 				psH.setInt(2, hijo.getNumPokedex().getNumPokedex());
@@ -105,7 +103,27 @@ public class CrianzaDao {
 			con.rollback(); // Si algo falla, deshacemos todo para no perder dinero
 			throw ex;
 		} finally {
-			con.close(); // Cerramos la conexión manualmente 
+			con.close(); // Cerramos la conexión manualmente
 		}
+	}
+
+	// Método que sirve para buscar cómo se llama y qué foto tiene el bebé recién
+	// nacido
+	public Pokedex obtenerInfoPokedex(int idEspecie) throws SQLException {
+		Pokedex info = new Pokedex();
+		String sql = "SELECT NOM_POKEMON, IMG_FRONT FROM POKEDEX WHERE NUM_POKEDEX = ?";
+
+		try (Connection con = conexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+			ps.setInt(1, idEspecie); // Le pasamos el ID del bebé
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next()) {
+				info.setNumPokedex(idEspecie);
+				info.setNomPokemon(rs.getString("NOM_POKEMON"));
+				info.setRutaImgFront(rs.getString("IMG_FRONT"));
+			}
+		}
+		return info;
 	}
 }

@@ -30,7 +30,7 @@
                   <Font size="35.0" />
                </font>
             </Button>
-            <Button fx:id="botonEntrenamiento" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarEntrenamiento" onMouseExited="#salirEntrenamiento" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-text-fill: white; -fx-font-family: &quot;Pokemon GB&quot;; -fx-font-size: 20px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Entrenamiento">
+            <Button fx:id="botonEntrenamiento" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#irEntrenamiento" onMouseEntered="#entrarEntrenamiento" onMouseExited="#salirEntrenamiento" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-text-fill: white; -fx-font-family: &quot;Pokemon GB&quot;; -fx-font-size: 20px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Entrenamiento">
                <font>
                   <Font size="35.0" />
                </font>

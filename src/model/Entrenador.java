@@ -76,9 +76,9 @@ public class Entrenador {
 
 		// Comprobamos igual con los LinkdeList
 		if (e.equipoSecundario != null) {
-			// Aqui usamos la misma lógica, creamos una nueva lista con los datos 
+			// Aqui usamos la misma lógica, creamos una nueva lista con los datos
 			// que ya teníamos para evitar que las modificaciones alteren los demás pokemons
-			this.equipoSecundario = new LinkedList<Pokemon>(e.equipoSecundario); 
+			this.equipoSecundario = new LinkedList<Pokemon>(e.equipoSecundario);
 		} else {
 			this.equipoSecundario = new LinkedList<Pokemon>();
 		}
@@ -91,7 +91,7 @@ public class Entrenador {
 		}
 	}
 
-	//Creamos constructor específico para el Login controller
+	// Creamos constructor específico para el Login controller
 	public Entrenador(int idBD, String loginUsuario, String loginContrasenia, int dineroDB) {
 		this.idEntrenador = idBD;
 		this.nombreEntrenador = loginUsuario;
@@ -100,7 +100,8 @@ public class Entrenador {
 		this.nivelEntrenador = 1;
 		this.password = loginContrasenia;
 		this.rutaImgFrontal = "";
-		// Inicializamos las colecciones para evitar NullPointerException al capturar o abrir mochila
+		// Inicializamos las colecciones para evitar NullPointerException al capturar o
+		// abrir mochila
 		this.equipoPrincipal = new Pokemon[6];
 		this.equipoSecundario = new LinkedList<Pokemon>();
 		this.mochila = new LinkedList<Objeto>();
@@ -281,12 +282,12 @@ public class Entrenador {
 			System.out.println("¡Necesitas un macho y una hembra!");
 			return null;
 		}
-		
-		//Comprobamos que sean de la misma especie
-	    if (p1.getNumPokedex().getNumPokedex() != p2.getNumPokedex().getNumPokedex()) {
-	        System.out.println("¡Deben ser de la misma especie para criar!");
-	        return null;
-	    }
+
+		// Comprobamos que sean de la misma especie
+		if (p1.getNumPokedex().getNumPokedex() != p2.getNumPokedex().getNumPokedex()) {
+			System.out.println("¡Deben ser de la misma especie para criar!");
+			return null;
+		}
 
 		// Comprobamos fertilidad
 		if (p1.getFertilidad() <= 0 || p2.getFertilidad() <= 0) {
@@ -313,6 +314,13 @@ public class Entrenador {
 		// Llamamos al método de Pókemon que creamos antes.
 		Pokemon bebe = Pokemon.engendrarHijo(p1, p2);
 
+		// Usamos método para saber el ID real (Si la madre es 3, devuelve 1)
+		int idBebeReal = Pokemon.obtenerIdBebe(p1.getNumPokedex().getNumPokedex());
+
+		// Creamos un molde de Pokedex nueva y limpia solo para el bebé
+		model.Pokedex pokedexBebe = new model.Pokedex();
+		pokedexBebe.setNumPokedex(idBebeReal); // Le ponemos el ID 1
+		bebe.setNumPokedex(pokedexBebe); // Se la asignamos al bebé
 		// Asignamos el ID del entrenador al bebé
 		bebe.setIdEntrenador(this.idEntrenador);
 
@@ -320,7 +328,8 @@ public class Entrenador {
 	}
 
 	// Creamos un método para guardar el pokemon cuando lo capturamos.
-	// Devuelve String ("EQUIPO" o "CAJA") para saber dónde se guardó y mandarlo a la base de datos.
+	// Devuelve String ("EQUIPO" o "CAJA") para saber dónde se guardó y mandarlo a
+	// la base de datos.
 	public String guardarPokemon(Pokemon nuevoPokemon) {
 		nuevoPokemon.setIdEntrenador(this.idEntrenador);
 
@@ -336,7 +345,7 @@ public class Entrenador {
 		// En caso de que no hubiera hueco lo guardamos en el equipo secundario.
 		this.equipoSecundario.add(nuevoPokemon);
 		System.out.println("Equipo lleno. " + nuevoPokemon.getMote() + " ha sido enviado a la caja.");
-		
+
 		return "CAJA";
 	}
 

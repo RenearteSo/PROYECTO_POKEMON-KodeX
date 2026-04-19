@@ -2,7 +2,7 @@ package model;
 
 public enum Entrenamiento {
 	PESADO(20){
-		// 1. ENTRENAMIENTO PESADO (Coste x20)
+		// ENTRENAMIENTO PESADO (Coste x20)
 	    // Sube: Defensa, Def. Especial y Vitalidad (+5)
 		@Override
 		public void aplicarMejora(Pokemon p) {
@@ -13,7 +13,7 @@ public enum Entrenamiento {
 		}
 	},
 	FURIOSO(30){
-		// 1. ENTRENAMIENTO FURIOSO (Coste x30)
+		// ENTRENAMIENTO FURIOSO (Coste x30)
 	    // Sube: Ataque, Atq. Especial y Velocidad (+5)
 		@Override
 		public void aplicarMejora(Pokemon p) {
@@ -24,7 +24,7 @@ public enum Entrenamiento {
 		}
 	},
 	FUNCIONAL(40){
-		// 1. ENTRENAMIENTO FURIOSO (Coste x30)
+		// ENTRENAMIENTO FURIOSO (Coste x30)
 	    // Sube: Velocidad, Ataque, Defensa y Velocidad (+5)
 		@Override
 		public void aplicarMejora(Pokemon p) {
@@ -35,7 +35,7 @@ public enum Entrenamiento {
 			System.out.println("¡Entrenamiento Pesado completado! (+5 Vel, +5 Atk, +5 Def, +5 Vit)");
 		}
 	},
-	// 4. ENTRENAMIENTO ONÍRICO (Coste x40)
+	// ENTRENAMIENTO ONÍRICO (Coste x40)
     // Sube: Velocidad, Atq. Especial, Def. Especial y Vitalidad (+5)
     ONIRICO(40) {
         @Override

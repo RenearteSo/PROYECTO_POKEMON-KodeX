@@ -18,17 +18,17 @@
             <Image url="@../img/Crianza/Crianza.png" />
          </image>
       </ImageView>
-      <Label fx:id="etiquetaDinero" alignment="CENTER" layoutX="1185.0" layoutY="52.0" prefHeight="60.0" style="-fx-background-color: #2b2b2b; -fx-background-radius: 15; -fx-opacity: 0.8; -fx-border-color: #ffffff; -fx-border-radius: 15; -fx-font-family: &quot;Pokemon GB&quot;; -fx-font-weight: Bold; -fx-font-size: 15; -fx-text-fill: white;" text="Pokedollares" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="70.0" />
-      <HBox alignment="CENTER" layoutX="187.0" layoutY="291.0" prefHeight="700.0" prefWidth="1000.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="140.0" AnchorPane.rightAnchor="129.0">
+      <Label fx:id="etiquetaDinero" alignment="CENTER" layoutX="549.0" layoutY="30.0" style="-fx-background-color: #2b2b2b; -fx-background-radius: 15; -fx-opacity: 0.8; -fx-border-color: #ffffff; -fx-border-radius: 15; -fx-font-family: &quot;Pokemon GB&quot;; -fx-font-weight: Bold; -fx-font-size: 15; -fx-text-fill: white;" text="Pokedollares" wrapText="true" AnchorPane.leftAnchor="549.0" AnchorPane.rightAnchor="549.0" AnchorPane.topAnchor="30.0" />
+      <HBox alignment="CENTER" fillHeight="false" layoutX="187.0" layoutY="291.0" prefHeight="700.0" prefWidth="1100.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="140.0" AnchorPane.rightAnchor="140.0">
          <children>
-            <VBox fx:id="cajaMacho" alignment="TOP_CENTER" prefHeight="300.0" prefWidth="300.0" spacing="20.0">
+            <VBox fx:id="cajaMacho" alignment="TOP_CENTER" prefWidth="300.0" spacing="20.0" style="-fx-background-color: rgba(255, 255, 255, 0.7);; -fx-background-radius: 15; -fx-border-color: #505050;; -fx-border-width: 3; -fx-border-radius: 15;">
                <children>
-                  <ImageView fx:id="imgMacho" fitHeight="400.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imgMacho" fitHeight="360.0" fitWidth="260.0" pickOnBounds="true" preserveRatio="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </ImageView>
-                  <ComboBox fx:id="desplegableMacho" prefWidth="300.0" style="-fx-background-color: #FFF8E7; -fx-background-radius: 15; -fx-border-color: #D4C3A3; -fx-border-radius: 15; -fx-border-width: 2;">
+                  <ComboBox fx:id="desplegableMacho" prefWidth="280.0" style="-fx-background-color: #FFF8E7; -fx-background-radius: 15; -fx-border-color: #D4C3A3; -fx-border-radius: 15; -fx-border-width: 2;">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -37,6 +37,9 @@
                      </cursor>
                   </ComboBox>
                </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
             </VBox>
             <VBox fx:id="cajaHuevo" alignment="BOTTOM_CENTER" prefHeight="300.0" prefWidth="600.0" spacing="20.0">
                <opaqueInsets>
@@ -53,11 +56,11 @@
                         <Insets bottom="40.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Button fx:id="botonCriar" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#accionCriar" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Poner a criar (200$)">
+                  <Button fx:id="botonCriar" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#accionCriar" style="-fx-background-color: rgba(0,0,0,0.5); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Poner a criar (200$)">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></Button>
-                  <Button fx:id="botonAbrirHuevo" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#accionAbrirHuevo" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-background-radius: 15;" text="¡Abrir huevo!">
+                  <Button fx:id="botonAbrirHuevo" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#accionAbrirHuevo" style="-fx-background-color: rgba(0,0,0,0.5); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-background-radius: 15;" text="¡Abrir huevo!">
                      <VBox.margin>
                         <Insets bottom="10.0" />
                      </VBox.margin>
@@ -66,15 +69,18 @@
                      </cursor>
                   </Button>
                </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
             </VBox>
-            <VBox prefHeight="300.0" prefWidth="300.0" spacing="20.0">
+            <VBox alignment="TOP_CENTER" prefWidth="300.0" spacing="20.0" style="-fx-background-color: rgba(255, 255, 255, 0.7);; -fx-background-radius: 15; -fx-border-color: #505050;; -fx-border-width: 3; -fx-border-radius: 15;">
                <children>
-                  <ImageView fx:id="imgHembra" fitHeight="400.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imgHembra" fitHeight="360.0" fitWidth="260.0" pickOnBounds="true" preserveRatio="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </ImageView>
-                  <ComboBox fx:id="desplegableHembra" prefWidth="300.0" style="-fx-background-color: #FFF8E7; -fx-background-radius: 15; -fx-border-color: #D4C3A3; -fx-border-radius: 15; -fx-border-width: 2;">
+                  <ComboBox fx:id="desplegableHembra" prefWidth="280.0" style="-fx-background-color: #FFF8E7; -fx-background-radius: 15; -fx-border-color: #D4C3A3; -fx-border-radius: 15; -fx-border-width: 2;">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -83,6 +89,9 @@
                      </cursor>
                   </ComboBox>
                </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
             </VBox>
          </children>
       </HBox>
@@ -90,6 +99,6 @@
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></Button>
-      <ImageView fx:id="botonPantalla" fitHeight="40.0" fitWidth="40.0" layoutX="1210.0" layoutY="27.0" onMouseClicked="#gestionarPantalla" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" />
+      <ImageView fx:id="botonPantalla" fitHeight="40.0" fitWidth="40.0" layoutX="1217.0" layoutY="30.0" onMouseClicked="#gestionarPantalla" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="30.0" />
    </children>
 </AnchorPane>
