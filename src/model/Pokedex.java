@@ -90,6 +90,22 @@ public class Pokedex {
 	
 	// MÉTODOS 
 	
+	public LinkedList<TipoPokemon> getTipos() {
+		return tipos;
+	}
+
+	public void setTipos(LinkedList<TipoPokemon> tipos) {
+		this.tipos = tipos;
+	}
+
+	public ArrayList<Movimiento> getListaMovimientosPosibles() {
+		return listaMovimientosPosibles;
+	}
+
+	public void setListaMovimientosPosibles(ArrayList<Movimiento> listaMovimientosPosibles) {
+		this.listaMovimientosPosibles = listaMovimientosPosibles;
+	}
+
 	// Busca el movimiento que corresponde aprender al nivel actual, uno nuevo cada 3 niveles
 	public Movimiento obtenerMovimientoPorNivel(int nivel) {
 		for (Movimiento m : listaMovimientosPosibles) {

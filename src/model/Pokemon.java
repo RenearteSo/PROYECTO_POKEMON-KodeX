@@ -404,6 +404,36 @@ public class Pokemon {
 		return subidaNivel;
 	}
 
+	// Método que comprueba si el pokemon ha alcanzado el nivel para evolucionar
+	// Devuelve el ID de la nueva especie, o -1 si no le toca evolucionar
+	public int comprobarEvolucion() {
+		int[] datosEvo = obtenerDatosEvolucion();
+
+		// Si tiene una evolución programada y su nivel actual es mayor o igual al
+		// requerido evolucionará
+		if (datosEvo != null && this.nivel >= datosEvo[1]) {
+			return datosEvo[0]; // Devolvemos el ID del nuevo Pokémon
+		}
+
+		return -1; // No evoluciona aún
+	}
+
+	// Método para mutar al pokemon a su nueva forma
+	public void evolucionar(Pokedex nuevaEspecie) {
+		this.numPokedex = nuevaEspecie; // Cambiamos su especie
+
+		// Plus de estadísticas extra por evolucionar
+		this.vitalidad += 15;
+		this.ataque += 10;
+		this.defensa += 10;
+		this.ataqueEspecial += 10;
+		this.defensaEspecial += 10;
+		this.velocidad += 10;
+
+		// Curamos al pokemonn
+		this.estamina = 100;
+	}
+
 	// Creamos método para concebir a un pokemon.
 	public static Pokemon engendrarHijo(Pokemon padre, Pokemon madre) {
 		// Hereda la especie de la madre (regla clásica de Pokémon)
@@ -654,6 +684,88 @@ public class Pokemon {
 
 		// Pokémon base, legendarios o sin evolución
 		default -> idMadre; // Devuelven su propio ID
+		};
+	}
+
+	// Método que define a qué ID evoluciona cada pokemon y a qué nivel.
+	// Si no evoluciona, devuelve null.
+	public int[] obtenerDatosEvolucion() {
+		// Obtenemos el ID de la especie actual
+		int miIdEspecie = this.numPokedex.getNumPokedex();
+
+		// Creamos un array para luego que la posición 0 sea el ID al que evolucionará y
+		// la posición 1 sea el nivel requerido para dicha evolución
+		return switch (miIdEspecie) {
+		// Iniciales Planta
+		case 1 -> new int[] { 2, 16 }; // Bulbasaur (1) -> Ivysaur (2) al Nv 16
+		case 2 -> new int[] { 3, 32 }; // Ivysaur (2) -> Venusaur (3) al Nv 32
+
+		// Iniciales Fuego
+		case 4 -> new int[] { 5, 16 }; // Charmander (4) -> Charmeleon (5) al Nv 16
+		case 5 -> new int[] { 6, 36 }; // Charmeleon (5) -> Charizard (6) al Nv 36
+
+		// Iniciales Agua
+		case 7 -> new int[] { 8, 16 }; // Squirtle (7) -> Wartortle (8) al Nv 16
+		case 8 -> new int[] { 9, 36 }; // Wartortle (8) -> Blastoise (9) al Nv 36
+
+		// Ejemplo de pájaros
+		case 16 -> new int[] { 17, 18 }; // Pidgey (16) -> Pidgeotto (17) al Nv 18
+		case 17 -> new int[] { 18, 36 }; // Pidgeotto (17) -> Pidgeot (18) al Nv 36
+
+		case 19 -> new int[] { 20, 20 }; // Rattata -> Raticate
+		case 21 -> new int[] { 22, 20 }; // Spearow -> Fearow
+		case 23 -> new int[] { 24, 22 }; // Ekans -> Arbok
+		case 27 -> new int[] { 28, 22 }; // Sandshrew -> Sandslash
+
+		// Nidoran y Cuevas
+		case 29 -> new int[] { 30, 16 }; // Nidoran ♀ -> Nidorina (Nidoqueen es por piedra)
+		case 32 -> new int[] { 33, 16 }; // Nidoran ♂ -> Nidorino (Nidoking es por piedra)
+		case 41 -> new int[] { 42, 22 }; // Zubat -> Golbat
+		case 46 -> new int[] { 47, 24 }; // Paras -> Parasect
+		case 50 -> new int[] { 51, 26 }; // Diglett -> Dugtrio
+		case 52 -> new int[] { 53, 28 }; // Meowth -> Persian
+
+		// Plantas, Psíquicos y Luchadores
+		case 43 -> new int[] { 44, 21 }; // Oddish -> Gloom (Vileplume es por piedra)
+		case 48 -> new int[] { 49, 31 }; // Venonat -> Venomoth
+		case 54 -> new int[] { 55, 33 }; // Psyduck -> Golduck
+		case 56 -> new int[] { 57, 28 }; // Mankey -> Primeape
+		case 60 -> new int[] { 61, 25 }; // Poliwag -> Poliwhirl (Poliwrath es por piedra)
+		case 63 -> new int[] { 64, 16 }; // Abra -> Kadabra (Alakazam es por intercambio)
+		case 66 -> new int[] { 67, 28 }; // Machop -> Machoke (Machamp es por intercambio)
+		case 69 -> new int[] { 70, 21 }; // Bellsprout -> Weepinbell (Victreebel es por piedra)
+		case 72 -> new int[] { 73, 30 }; // Tentacool -> Tentacruel
+
+		// Rocas y Fuego
+		case 74 -> new int[] { 75, 25 }; // Geodude -> Graveler (Golem es por intercambio)
+		case 77 -> new int[] { 78, 40 }; // Ponyta -> Rapidash
+		case 79 -> new int[] { 80, 37 }; // Slowpoke -> Slowbro
+		case 81 -> new int[] { 82, 30 }; // Magnemite -> Magneton
+
+		// Variados Mid-Game
+		case 84 -> new int[] { 85, 31 }; // Doduo -> Dodrio
+		case 86 -> new int[] { 87, 34 }; // Seel -> Dewgong
+		case 88 -> new int[] { 89, 38 }; // Grimer -> Muk
+		case 92 -> new int[] { 93, 25 }; // Gastly -> Haunter (Gengar es por intercambio)
+		case 96 -> new int[] { 97, 26 }; // Drowzee -> Hypno
+		case 98 -> new int[] { 99, 28 }; // Krabby -> Kingler
+		case 100 -> new int[] { 101, 30 }; // Voltorb -> Electrode
+		case 104 -> new int[] { 105, 28 }; // Cubone -> Marowak
+		case 109 -> new int[] { 110, 35 }; // Koffing -> Weezing
+		case 111 -> new int[] { 112, 42 }; // Rhyhorn -> Rhydon
+
+		// Agua Late-Game y Fósiles
+		case 116 -> new int[] { 117, 32 }; // Horsea -> Seadra
+		case 118 -> new int[] { 119, 33 }; // Goldeen -> Seaking
+		case 129 -> new int[] { 130, 20 }; // Magikarp -> Gyarados
+		case 138 -> new int[] { 139, 40 }; // Omanyte -> Omastar
+		case 140 -> new int[] { 141, 40 }; // Kabuto -> Kabutops
+
+		// Dragones
+		case 147 -> new int[] { 148, 30 }; // Dratini -> Dragonair
+		case 148 -> new int[] { 149, 55 }; // Dragonair -> Dragonite
+
+		default -> null; // Si no tiene evolución por nivel
 		};
 	}
 

@@ -413,6 +413,173 @@ CREATE TABLE `turno_combate` (
   `ACCION_RIVAL` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- Estructura de la tabla para la nueva tabla 'pokedex-movimiento'
+
+CREATE TABLE `pokedex_movimiento` (
+  `NUM_POKEDEX` int(4) NOT NULL,
+  `ID_MOVIMIENTOS` int(2) NOT NULL,
+  PRIMARY KEY (`NUM_POKEDEX`,`ID_MOVIMIENTOS`),
+  CONSTRAINT `FK_POKEDEX_MOV` FOREIGN KEY (`NUM_POKEDEX`) REFERENCES `pokedex` (`NUM_POKEDEX`),
+  CONSTRAINT `FK_MOVIMIENTO_POK` FOREIGN KEY (`ID_MOVIMIENTOS`) REFERENCES `movimientos` (`ID_MOVIMIENTOS`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- NORMAL (13)
+INSERT INTO `movimientos` (`ID_MOVIMIENTOS`, `ID_TIPO`, `CLASE_MOVIMIENTO`, `NOM_MOVIMIENTO`, `NIVEL_APRENDIZAJE`, `COSTE_ESTAMINA`, `POTENCIA`, `DECRIP_MOVIMIENTO`, `PP`, `NUM_TURNOS`) VALUES
+(1, 13, 'ATAQUE', 'Placaje', 1, 5, 40, 'Embiste con todo el cuerpo.', 35, 0),
+(2, 13, 'ATAQUE', 'Arañazo', 1, 5, 40, 'Araña con garras afiladas.', 35, 0),
+(3, 13, 'ATAQUE', 'Ataque Rápido', 10, 8, 40, 'Ataque que siempre golpea primero.', 30, 0),
+(4, 13, 'ESTADO', 'Canto', 15, 12, 0, 'Canta una nana que duerme al rival.', 15, 3),
+(5, 13, 'ATAQUE', 'Hiperrayo', 50, 30, 150, 'Ataque brutal. Requiere descanso.', 5, 0),
+(6, 13, 'MEJORA', 'Recuperación', 35, 20, 0, 'Restaura vitalidad y estamina.', 10, 0);
+
+-- FUEGO (2)
+INSERT INTO `movimientos` (`ID_MOVIMIENTOS`, `ID_TIPO`, `CLASE_MOVIMIENTO`, `NOM_MOVIMIENTO`, `NIVEL_APRENDIZAJE`, `COSTE_ESTAMINA`, `POTENCIA`, `DECRIP_MOVIMIENTO`, `PP`, `NUM_TURNOS`) VALUES
+(7, 2, 'ATAQUE', 'Ascuas', 7, 10, 40, 'Lanza pequeñas llamas.', 25, 0),
+(8, 2, 'ATAQUE', 'Giro Fuego', 24, 15, 35, 'Atrapa al rival en un vórtice de fuego.', 15, 0),
+(9, 2, 'ATAQUE', 'Lanzallamas', 34, 20, 90, 'Potente chorro de fuego abrasador.', 15, 0),
+(10, 2, 'ATAQUE', 'Llamarada', 50, 25, 110, 'Fuego intenso que lo calcina todo.', 5, 0);
+
+-- AGUA (1)
+INSERT INTO `movimientos` (`ID_MOVIMIENTOS`, `ID_TIPO`, `CLASE_MOVIMIENTO`, `NOM_MOVIMIENTO`, `NIVEL_APRENDIZAJE`, `COSTE_ESTAMINA`, `POTENCIA`, `DECRIP_MOVIMIENTO`, `PP`, `NUM_TURNOS`) VALUES
+(11, 1, 'ATAQUE', 'Pistola Agua', 7, 10, 40, 'Dispara agua con fuerza.', 25, 0),
+(12, 1, 'ATAQUE', 'Rayo Burbuja', 20, 15, 65, 'Dispara burbujas a gran velocidad.', 20, 0),
+(13, 1, 'ATAQUE', 'Surf', 35, 20, 90, 'Crea una ola gigante y la lanza.', 15, 0),
+(14, 1, 'ATAQUE', 'Hidrobomba', 50, 25, 110, 'Dispara una ráfaga de agua a presión.', 5, 0);
+
+-- PLANTA (3)
+INSERT INTO `movimientos` (`ID_MOVIMIENTOS`, `ID_TIPO`, `CLASE_MOVIMIENTO`, `NOM_MOVIMIENTO`, `NIVEL_APRENDIZAJE`, `COSTE_ESTAMINA`, `POTENCIA`, `DECRIP_MOVIMIENTO`, `PP`, `NUM_TURNOS`) VALUES
+(15, 3, 'ATAQUE', 'Látigo Cepa', 7, 10, 45, 'Golpea con finas enredaderas.', 25, 0),
+(16, 3, 'ESTADO', 'Drenadoras', 12, 15, 0, 'Planta semillas que roban salud.', 10, 4),
+(17, 3, 'ATAQUE', 'Hoja Afilada', 22, 15, 55, 'Lanza hojas extremadamente cortantes.', 25, 0),
+(18, 3, 'ATAQUE', 'Rayo Solar', 45, 30, 120, 'Absorbe luz y dispara un rayo brutal.', 10, 0);
+
+-- ELÉCTRICO (4)
+INSERT INTO `movimientos` (`ID_MOVIMIENTOS`, `ID_TIPO`, `CLASE_MOVIMIENTO`, `NOM_MOVIMIENTO`, `NIVEL_APRENDIZAJE`, `COSTE_ESTAMINA`, `POTENCIA`, `DECRIP_MOVIMIENTO`, `PP`, `NUM_TURNOS`) VALUES
+(19, 4, 'ATAQUE', 'Impactrueno', 7, 10, 40, 'Ataque eléctrico de bajo voltaje.', 30, 0),
+(20, 4, 'ESTADO', 'Onda Trueno', 15, 12, 0, 'Paraliza al rival con electricidad.', 20, 0),
+(21, 4, 'ATAQUE', 'Rayo', 30, 20, 90, 'Fuerte descarga eléctrica.', 15, 0),
+(22, 4, 'ATAQUE', 'Trueno', 50, 25, 110, 'Cae un rayo masivo sobre el rival.', 10, 0);
+
+-- VOLADOR (15)
+INSERT INTO `movimientos` (`ID_MOVIMIENTOS`, `ID_TIPO`, `CLASE_MOVIMIENTO`, `NOM_MOVIMIENTO`, `NIVEL_APRENDIZAJE`, `COSTE_ESTAMINA`, `POTENCIA`, `DECRIP_MOVIMIENTO`, `PP`, `NUM_TURNOS`) VALUES
+(23, 15, 'ATAQUE', 'Picotazo', 1, 5, 35, 'Pica al objetivo.', 35, 0),
+(24, 15, 'ATAQUE', 'Tornado', 15, 12, 40, 'Genera un pequeño torbellino.', 35, 0),
+(25, 15, 'ATAQUE', 'Ataque Ala', 25, 15, 60, 'Golpea extendiendo las alas.', 35, 0),
+(26, 15, 'ATAQUE', 'Vuelo', 40, 20, 90, 'Se eleva y cae en picado.', 15, 0);
+
+-- TIERRA (5) Y ROCA (14)
+INSERT INTO `movimientos` (`ID_MOVIMIENTOS`, `ID_TIPO`, `CLASE_MOVIMIENTO`, `NOM_MOVIMIENTO`, `NIVEL_APRENDIZAJE`, `COSTE_ESTAMINA`, `POTENCIA`, `DECRIP_MOVIMIENTO`, `PP`, `NUM_TURNOS`) VALUES
+(27, 5, 'ESTADO', 'Ataque Arena', 8, 8, 0, 'Arroja arena para cegar al rival.', 15, 0),
+(28, 5, 'ATAQUE', 'Excavar', 25, 15, 80, 'Se entierra y ataca desde abajo.', 10, 0),
+(29, 5, 'ATAQUE', 'Terremoto', 45, 25, 100, 'Fuerte sacudida sísmica.', 10, 0),
+(30, 14, 'ATAQUE', 'Lanzarrocas', 12, 12, 50, 'Lanza piedras al objetivo.', 15, 0),
+(31, 14, 'ATAQUE', 'Avalancha', 35, 20, 75, 'Derrumba rocas sobre el enemigo.', 10, 0);
+
+-- PSÍQUICO (9) Y VENENO (7)
+INSERT INTO `movimientos` (`ID_MOVIMIENTOS`, `ID_TIPO`, `CLASE_MOVIMIENTO`, `NOM_MOVIMIENTO`, `NIVEL_APRENDIZAJE`, `COSTE_ESTAMINA`, `POTENCIA`, `DECRIP_MOVIMIENTO`, `PP`, `NUM_TURNOS`) VALUES
+(32, 9, 'ATAQUE', 'Confusión', 10, 10, 50, 'Ataque telequinético débil.', 25, 0),
+(33, 9, 'ESTADO', 'Hipnosis', 20, 15, 0, 'Duerme al rival por sugestión.', 20, 3),
+(34, 9, 'ATAQUE', 'Psíquico', 40, 25, 90, 'Poderosa fuerza mental.', 10, 0),
+(35, 7, 'ATAQUE', 'Picotazo Venenoso', 7, 8, 15, 'Pica con un aguijón tóxico.', 35, 0),
+(36, 7, 'ATAQUE', 'Ácido', 20, 12, 40, 'Rocía ácido corrosivo.', 30, 0),
+(37, 7, 'ESTADO', 'Tóxico', 35, 18, 0, 'Envenena gravemente al rival.', 10, 5);
+
+-- LUCHA (11), HIELO (10), BICHO (6), FANTASMA (8) Y DRAGÓN (12)
+INSERT INTO `movimientos` (`ID_MOVIMIENTOS`, `ID_TIPO`, `CLASE_MOVIMIENTO`, `NOM_MOVIMIENTO`, `NIVEL_APRENDIZAJE`, `COSTE_ESTAMINA`, `POTENCIA`, `DECRIP_MOVIMIENTO`, `PP`, `NUM_TURNOS`) VALUES
+(38, 11, 'ATAQUE', 'Golpe Kárate', 15, 12, 50, 'Un golpe seco y cortante.', 25, 0),
+(39, 11, 'ATAQUE', 'Sumisión', 35, 20, 80, 'Llave de lucha libre temeraria.', 20, 0),
+(40, 10, 'ATAQUE', 'Rayo Hielo', 30, 20, 90, 'Rayo de energía helada.', 10, 0),
+(41, 10, 'ATAQUE', 'Ventisca', 50, 25, 110, 'Tormenta de nieve brutal.', 5, 0),
+(42, 6, 'ATAQUE', 'Chupavidas', 12, 10, 20, 'Absorbe salud del rival.', 15, 0),
+(43, 8, 'ESTADO', 'Rayo Confuso', 20, 15, 0, 'Luz siniestra que confunde.', 10, 3),
+(44, 8, 'ATAQUE', 'Bola Sombra', 35, 20, 80, 'Masa de sombras arrojadiza.', 15, 0),
+(45, 12, 'ATAQUE', 'Furia Dragón', 30, 20, 40, 'Llama mística de dragón.', 10, 0);
+
+--  TU EQUIPO Y SUS EVOLUCIONES DIRECTAS: Pokemons y los movimientos que pueden aprender
+INSERT IGNORE INTO `pokedex_movimiento` (`NUM_POKEDEX`, `ID_MOVIMIENTOS`) VALUES
+-- Pidgey, Pidgeotto, Pidgeot (Ataque Rápido, Picotazo, Tornado, Vuelo)
+(16, 3), (16, 23), (16, 24), (17, 3), (17, 23), (17, 24), (17, 26), (18, 3), (18, 23), (18, 24), (18, 26),
+-- Zubat, Golbat (Chupavidas, Picotazo, Rayo Confuso, Ataque Ala)
+(41, 42), (41, 23), (41, 43), (42, 42), (42, 25), (42, 43), (42, 37),
+-- Slowpoke, Slowbro (Pistola Agua, Confusión, Surf, Psíquico)
+(79, 11), (79, 32), (79, 13), (80, 11), (80, 32), (80, 13), (80, 34),
+-- Lapras (Canto, Pistola Agua, Rayo Hielo, Surf)
+(131, 4), (131, 11), (131, 40), (131, 13),
+-- Eevee (Placaje, Arañazo, Ataque Rápido)
+(133, 1), (133, 2), (133, 3),
+-- Dratini, Dragonair, Dragonite (Onda Trueno, Tornado, Furia Dragón, Hiperrayo)
+(147, 20), (147, 24), (147, 45), (148, 20), (148, 24), (148, 45), (149, 20), (149, 26), (149, 45), (149, 5);
+
+-- LOS INICIALES Y SUS LÍNEAS
+INSERT IGNORE INTO `pokedex_movimiento` (`NUM_POKEDEX`, `ID_MOVIMIENTOS`) VALUES
+-- Bulbasaur, Ivysaur, Venusaur
+(1, 1), (1, 15), (1, 16), (2, 1), (2, 15), (2, 17), (3, 1), (3, 17), (3, 18), (3, 5),
+-- Charmander, Charmeleon, Charizard
+(4, 2), (4, 7), (4, 8), (5, 2), (5, 7), (5, 9), (6, 2), (6, 9), (6, 10), (6, 26),
+-- Squirtle, Wartortle, Blastoise
+(7, 1), (7, 11), (7, 12), (8, 1), (8, 11), (8, 12), (9, 1), (9, 13), (9, 14), (9, 5);
+
+-- EL RESTO DE LA PRIMERA GENERACIÓN 
+INSERT IGNORE INTO `pokedex_movimiento` (`NUM_POKEDEX`, `ID_MOVIMIENTOS`) VALUES
+-- Bichos iniciales: Caterpie, Metapod, Butterfree / Weedle, Kakuna, Beedrill
+(10, 1), (10, 42), (11, 1), (12, 32), (12, 24), (13, 35), (13, 42), (14, 35), (15, 35), (15, 24),
+-- Roedores y pájaros: Rattata, Raticate / Spearow, Fearow
+(19, 1), (19, 3), (20, 1), (20, 3), (20, 5), (21, 23), (21, 25), (22, 23), (22, 26),
+-- Serpientes: Ekans, Arbok
+(23, 35), (23, 36), (23, 28), (24, 35), (24, 36), (24, 28), (24, 37),
+-- Eléctricos: Pikachu, Raichu
+(25, 3), (25, 19), (25, 20), (25, 21), (26, 3), (26, 20), (26, 21), (26, 22),
+-- Tierra: Sandshrew, Sandslash / Diglett, Dugtrio
+(27, 2), (27, 27), (27, 28), (28, 2), (28, 28), (28, 29), (50, 2), (50, 27), (50, 28), (51, 28), (51, 29),
+-- Nidorans (Hembra y Macho) y evoluciones
+(29, 1), (29, 35), (30, 1), (30, 36), (31, 36), (31, 29), (32, 1), (32, 35), (33, 1), (33, 36), (34, 36), (34, 29),
+-- Hadas/Normales: Clefairy, Clefable, Vulpix, Ninetales, Jigglypuff, Wigglytuff
+(35, 4), (35, 1), (36, 4), (36, 5), (37, 7), (37, 8), (38, 9), (38, 10), (39, 4), (39, 1), (40, 4), (40, 5),
+-- Plantas: Oddish, Gloom, Vileplume / Paras, Parasect / Venonat, Venomoth / Bellsprout, Weepinbell, Victreebel
+(43, 36), (43, 16), (44, 36), (44, 18), (45, 37), (45, 18), (46, 42), (46, 16), (47, 42), (47, 18), 
+(48, 1), (48, 32), (49, 32), (49, 34), (69, 15), (69, 36), (70, 17), (70, 36), (71, 17), (71, 18),
+-- Gatos, patos y monos: Meowth, Persian / Psyduck, Golduck / Mankey, Primeape
+(52, 2), (52, 42), (53, 2), (53, 3), (54, 2), (54, 11), (54, 32), (55, 11), (55, 34), (55, 13), 
+(56, 2), (56, 38), (57, 38), (57, 39),
+-- Perros y Renacuajos: Growlithe, Arcanine / Poliwag, Poliwhirl, Poliwrath
+(58, 7), (58, 8), (58, 3), (59, 9), (59, 10), (59, 5), (60, 11), (60, 12), (61, 11), (61, 13), (62, 13), (62, 39),
+-- Abra, Kadabra, Alakazam (Magia pura)
+(63, 32), (63, 20), (64, 32), (64, 33), (64, 34), (65, 33), (65, 34), (65, 6),
+-- Machop, Machoke, Machamp
+(66, 38), (66, 28), (67, 38), (67, 39), (68, 38), (68, 39), (68, 29),
+-- Tentacool, Tentacruel
+(72, 12), (72, 36), (73, 13), (73, 37), (73, 40),
+-- Rocas: Geodude, Graveler, Golem / Onix / Rhyhorn, Rhydon
+(74, 1), (74, 30), (75, 30), (75, 29), (76, 30), (76, 31), (76, 29), (95, 1), (95, 30), (95, 29), 
+(111, 28), (111, 30), (112, 29), (112, 31),
+-- Fuego y Magnéticos: Ponyta, Rapidash / Magnemite, Magneton
+(77, 7), (77, 8), (78, 9), (78, 10), (81, 1), (81, 19), (81, 20), (82, 19), (82, 21), (82, 22),
+-- Aves Variadas: Farfetch'd, Doduo, Dodrio
+(83, 23), (83, 25), (84, 23), (84, 3), (85, 23), (85, 3), (85, 26),
+-- Agua Hielo: Seel, Dewgong / Shellder, Cloyster
+(86, 1), (86, 12), (87, 13), (87, 40), (90, 1), (90, 12), (91, 13), (91, 40), (91, 41),
+-- Tóxicos: Grimer, Muk / Koffing, Weezing
+(88, 1), (88, 36), (89, 36), (89, 37), (109, 1), (109, 36), (110, 36), (110, 37),
+-- Fantasmas y Psíquicos: Gastly, Haunter, Gengar / Drowzee, Hypno
+(92, 43), (92, 33), (93, 43), (93, 44), (94, 43), (94, 44), (94, 34), (96, 32), (96, 33), (97, 32), (97, 33), (97, 34),
+-- Agua: Krabby, Kingler / Horsea, Seadra / Goldeen, Seaking / Staryu, Starmie / Magikarp, Gyarados
+(98, 12), (98, 28), (99, 13), (99, 5), (116, 11), (116, 12), (117, 13), (117, 14), (118, 23), (118, 12), (119, 23), (119, 13),
+(120, 1), (120, 12), (120, 6), (121, 13), (121, 14), (121, 40), (129, 1), (130, 13), (130, 14), (130, 5), (130, 45),
+-- Raros: Voltorb, Electrode / Exeggcute, Exeggutor / Cubone, Marowak / Lickitung / Chansey / Tangela / Kangaskhan
+(100, 1), (100, 19), (101, 20), (101, 21), (102, 16), (102, 32), (103, 18), (103, 34), (104, 28), (104, 30), (105, 29), (105, 31),
+(108, 1), (108, 3), (113, 1), (113, 6), (113, 4), (114, 15), (114, 16), (115, 1), (115, 5),
+-- Luchadores y Finales: Hitmonlee, Hitmonchan / Mr. Mime / Scyther / Jynx / Electabuzz / Magmar / Pinsir / Tauros
+(106, 38), (106, 39), (107, 38), (107, 40), (122, 32), (122, 34), (123, 3), (123, 25), (124, 40), (124, 34), 
+(125, 21), (125, 22), (126, 9), (126, 10), (127, 38), (127, 28), (128, 1), (128, 29), (128, 5),
+-- Evoluciones Eevee: Vaporeon, Jolteon, Flareon
+(134, 11), (134, 13), (134, 14), (135, 19), (135, 20), (135, 21), (136, 7), (136, 8), (136, 9),
+-- Fósiles y Raros: Porygon / Omanyte, Omastar / Kabuto, Kabutops / Aerodactyl / Snorlax / Ditto
+(137, 1), (137, 20), (137, 6), (138, 11), (138, 30), (139, 13), (139, 31), (140, 2), (140, 11), (141, 28), (141, 13), 
+(142, 25), (142, 26), (142, 5), (143, 1), (143, 5), (143, 6), (132, 1),
+-- Aves Legendarias y Mewtwo/Mew
+(144, 26), (144, 40), (144, 41), (145, 26), (145, 21), (145, 22), (146, 26), (146, 9), (146, 10),
+(150, 34), (150, 6), (150, 5), (150, 44), (151, 34), (151, 6), (151, 14), (151, 10);
+
 INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
 (1,3),(2,3),(3,3),(43,3),(44,3),(45,3),(69,3),(70,3),(71,3),(102,3),(103,3),(114,3);
 INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 

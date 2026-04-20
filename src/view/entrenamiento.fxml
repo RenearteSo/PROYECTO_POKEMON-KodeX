@@ -20,14 +20,33 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" stylesheets="@../css/estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.EntrenamientoController">
    <children>
-      <MediaView fx:id="fondoVideo" fitHeight="800.0" fitWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <MediaView fx:id="fondoVideo" fitHeight="800.0" fitWidth="1280.0" preserveRatio="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <HBox prefHeight="800.0" prefWidth="1280.0" style="-fx-background-color: transparent;;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ScrollPane fitToWidth="true" prefHeight="800.0" prefWidth="709.0" style="-fx-background-color: transparent; -fx-background: transparent;" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
-               <content>
-                  <TilePane fx:id="panelCuadricula" hgap="10.0" prefHeight="792.0" prefWidth="685.0" style="-fx-background-color: transparent;;" vgap="10.0" />
-               </content>
-            </ScrollPane>
+            <VBox alignment="CENTER" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label fx:id="equipo" style="-fx-font-family: 'Pokemon GB'; -fx-font-size: 15px; -fx-text-fill: white; -fx-background-color: rgba(0, 0, 0, 0.6); -fx-padding: 8 15 8 15; -fx-background-radius: 20;" text="Equipo Principal">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <ScrollPane prefHeight="400.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-background: transparent;">
+                     <content>
+                        <TilePane fx:id="panelEquipo" hgap="10.0" prefHeight="163.0" prefWidth="675.0" style="-fx-background-color: transparent;" vgap="10.0" />
+                     </content>
+                  </ScrollPane>
+                  <Label fx:id="etiquetaCajaPC" style="-fx-font-family: 'Pokemon GB'; -fx-font-size: 15; -fx-text-fill: white; -fx-background-color: rgba(0, 0, 0, 0.6); -fx-padding: 8 15 8 15; -fx-background-radius: 20;" text="Caja PC">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <ScrollPane fitToWidth="true" prefHeight="800.0" prefWidth="709.0" style="-fx-background-color: transparent; -fx-background: transparent;">
+                     <content>
+                        <TilePane fx:id="panelCuadricula" hgap="10.0" prefHeight="566.0" prefWidth="657.0" style="-fx-background-color: transparent;;" vgap="10.0" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </VBox>
             <VBox alignment="CENTER" prefHeight="800.0" prefWidth="644.0" spacing="25.0" style="-fx-background-color: rgba(0, 0, 0, 0.75); -fx-background-radius: 15; -fx-border-color: #505050; -fx-border-width: 3; -fx-border-radius: 15; -fx-padding: 25;" HBox.hgrow="ALWAYS">
                <children>
                   <Label fx:id="etiquetaNombre" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-family: &quot;Pokemon GB&quot;; -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;" text="Label" />

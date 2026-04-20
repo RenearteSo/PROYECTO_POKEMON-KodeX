@@ -107,7 +107,7 @@ public class Entrenador {
 		this.mochila = new LinkedList<Objeto>();
 	}
 
-	// --- Getters and setters Entrenador ---
+	// Getters and setters Entrenador 
 
 	public int getIdEntrenador() {
 		return idEntrenador;
@@ -189,7 +189,7 @@ public class Entrenador {
 		this.mochila = mochila;
 	}
 
-	// --- Métodos de la lógica del Entrenador ---
+	//  Métodos de la lógica del Entrenador 
 
 	// Método para mover un pokemon del equipo principal al secundario.
 	public boolean moverPokemon(int indice) {

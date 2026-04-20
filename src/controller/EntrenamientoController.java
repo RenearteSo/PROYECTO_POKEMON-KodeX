@@ -24,6 +24,7 @@ import javafx.util.Duration;
 import model.Configuracion;
 import model.Entrenador;
 import model.Entrenamiento;
+import model.Pokedex;
 import model.Pokemon;
 
 public class EntrenamientoController implements DatosEntrenador {
@@ -42,6 +43,8 @@ public class EntrenamientoController implements DatosEntrenador {
 	private ImageView imagenPokemon;
 	@FXML
 	private TilePane panelCuadricula;
+	@FXML
+	private TilePane panelEquipo;
 
 	private Entrenador entrenadorActual;
 	private Pokemon pokemonSeleccionado;
@@ -150,7 +153,12 @@ public class EntrenamientoController implements DatosEntrenador {
 
 	// Método para generar los pokemons que tenemos guardados en la base de datos
 	private void cargarCuadriculaPokemon() {
+		panelEquipo.getChildren().clear(); // Limpiamos el equipo
+		panelCuadricula.getChildren().clear(); // Limpiamos la caja
+		// Obtenemos todos nuestros pokemons
 		LinkedList<Pokemon> misPokemons = dao.obtenerTodosLosPokemon(entrenadorActual.getIdEntrenador());
+		int contador = 0; // Para saber cuántos metemos en el equipo
+
 		for (Pokemon p : misPokemons) {
 			VBox tarjeta = new VBox();
 			// Damos estilo a la cuadrícula y a los contenedores de ella
@@ -180,8 +188,14 @@ public class EntrenamientoController implements DatosEntrenador {
 				limpiarPrevias();
 				etiquetaMensaje.setText("");
 			});
+			// Lógica para separar las dos cuadrículas
+			if (contador < 6) {
+				panelEquipo.getChildren().add(tarjeta);
+			} else {
+				panelCuadricula.getChildren().add(tarjeta);
+			}
+			contador++;
 
-			panelCuadricula.getChildren().add(tarjeta);
 		}
 	}
 
@@ -207,22 +221,66 @@ public class EntrenamientoController implements DatosEntrenador {
 		}
 		// Entrenamos y guardamos en la base de datos las nuevas stats
 		entrenadorActual.entrenarPokemon(pokemonSeleccionado, entreno);
+
+		// Damos extra de experiencia por haber completado el entrenamiento
+		pokemonSeleccionado.setExp(pokemonSeleccionado.getExp() + 25);
+
+		// Comprobamos si puede subir de nivel
+		boolean subioNivel = pokemonSeleccionado.subirNivel();
+		boolean evoluciono = false;
+
+		// Comprobamos si ese nuevo nivel provoca evolución
+		if (subioNivel) {
+			int idNuevaEvolucion = pokemonSeleccionado.comprobarEvolucion(); // Devuelve la ID o -1
+
+			if (idNuevaEvolucion != -1) {
+				// Vamos a la BD a buscar cómo es este nuevo pokemon
+				Pokedex nuevaPokedex = dao.obtenerPokedexPorId(idNuevaEvolucion);
+
+				if (nuevaPokedex != null) {
+					// Evoluciona al nuevo pokemon
+					pokemonSeleccionado.evolucionar(nuevaPokedex);
+					evoluciono = true;
+				}
+			}
+		}
 		boolean guardadoOk = dao.guardarEntrenamiento(entrenadorActual, pokemonSeleccionado);
 
+		// Cambiamos los textos y fotos según lo que haya pasado
 		if (guardadoOk) {
-			// Damos estilo al mensaje
-			etiquetaMensaje.setText("¡" + pokemonSeleccionado.getMote() + " ha mejorado!");
-			etiquetaMensaje.setStyle("-fx-text-fill: #FFD700; -fx-font-family: 'Pokemon GB'; -fx-font-size: 11px;");
 
-			// Mostramos en pantalla
+			if (evoluciono) {
+				etiquetaMensaje.setText("¡Hala! ¡" + pokemonSeleccionado.getMote() + " ha evolucionado!");
+				etiquetaMensaje.setStyle("-fx-text-fill: #00FFFF; -fx-font-family: 'Pokemon GB'; -fx-font-size: 11px;");
+
+				// Cambiar la foto principal por la del nuevo Pokémon
+				cargarImagenPokemon(pokemonSeleccionado, imagenPokemon);
+
+			} else if (subioNivel) {
+				etiquetaMensaje.setText("¡" + pokemonSeleccionado.getMote() + " subió al Nivel "
+						+ pokemonSeleccionado.getNivel() + "!");
+				etiquetaMensaje.setStyle("-fx-text-fill: #FFD700; -fx-font-family: 'Pokemon GB'; -fx-font-size: 11px;");
+
+			} else {
+				etiquetaMensaje.setText("¡" + pokemonSeleccionado.getMote() + " ha mejorado sus stats!");
+				etiquetaMensaje.setStyle("-fx-text-fill: white; -fx-font-family: 'Pokemon GB'; -fx-font-size: 11px;");
+			}
+
+			// Refrescamos los números de las stats
 			mostrarStatsEnPantalla(pokemonSeleccionado);
 			limpiarPrevias();
 			desplegableEntrenamiento.getSelectionModel().clearSelection();
 			animarPokemon();
 
-			etiquetaPokedollares.setText("Pokédollars: " + entrenadorActual.getPokedollar()); // Actualiza el dinero
+			// Refrescamos el dinero
+			etiquetaPokedollares.setText("Pokédollars: " + entrenadorActual.getPokedollar());
+
+			// Recargamos la lista de la izquierda para que se actualicen los niveles y
+			// miniatura si evolucionó
+			cargarCuadriculaPokemon();
+
 		} else {
-			etiquetaMensaje.setText("Error en la Base de Datos.");
+			etiquetaMensaje.setText("Error en la Base de Datos...");
 			etiquetaMensaje.setStyle("-fx-text-fill: red;");
 		}
 	}
@@ -376,5 +434,6 @@ public class EntrenamientoController implements DatosEntrenador {
 			botonPantalla.setImage(imgAgrandar);
 		}
 	}
+	
 
 }

@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import model.Entrenador;
 import model.Pokedex;
 import model.Pokemon;
+import model.TipoPokemon;
 
 public class EntrenamientoDao {
 
@@ -58,6 +59,37 @@ public class EntrenamientoDao {
 		}
 		return lista;
 	}
+	
+	// Método para obtener la lista de tipos de una especie concreta
+		public LinkedList<TipoPokemon> obtenerTiposDePokedex(int numPokedex) {
+			LinkedList<TipoPokemon> listaTipos = new LinkedList<>();
+			
+			// Unimos la tabla pokedex_tipo con la tabla de nombres tipos_pokemon
+			String sql = "SELECT t.NOM_TIPO FROM tipos_pokemon t "
+					   + "INNER JOIN pokedex_tipo pt ON t.ID_TIPO = pt.ID_TIPO "
+					   + "WHERE pt.NUM_POKEDEX = ?";
+
+			try (Connection con = conexionDB.getConnection(); 
+				 PreparedStatement ps = con.prepareStatement(sql)) {
+				
+				ps.setInt(1, numPokedex);
+				ResultSet rs = ps.executeQuery();
+
+				while (rs.next()) {
+					// Leemos el nombre del tipo en la base de datos 
+					String nombreTipoBD = rs.getString("NOM_TIPO");
+					
+					// Lo convertimos al Enum TipoPokemon de Java y lo añadimos a la lista
+					listaTipos.add(TipoPokemon.valueOf(nombreTipoBD)); 
+				}
+			} catch (SQLException e) {
+				System.out.println("Error al obtener los tipos: " + e.getMessage());
+			} catch (IllegalArgumentException e) {
+				System.out.println("El tipo de la BD no coincide con el Enum de Java: " + e.getMessage());
+			}
+			
+			return listaTipos;
+		}
 
 	// Creamos un método para actualizar los entrenamientos realizados y su
 	// modificación de los stats y cobrar
@@ -73,7 +105,7 @@ public class EntrenamientoDao {
 			// Actualizamos los Stats, la Experiencia y el Nivel del Pokémon
 			String sqlPokemon = "UPDATE pokemon SET VITALIDAD = ?, ATAQUE = ?, DEFENSA = ?, "
 					+ "ATAQUE_ESPECIAL = ?, DEFENSA_ESPECIAL = ?, VELOCIDAD = ?, "
-					+ "NIVEL = ?, EXPERIENCIA = ? WHERE ID_POKEMON = ?";
+					+ "NIVEL = ?, EXPERIENCIA = ?, NUM_POKEDEX = ? WHERE ID_POKEMON = ?";
 
 			try (PreparedStatement psP = c.prepareStatement(sqlPokemon)) {
 				psP.setInt(1, p.getVitalidad());
@@ -84,7 +116,8 @@ public class EntrenamientoDao {
 				psP.setInt(6, p.getVelocidad());
 				psP.setInt(7, p.getNivel());
 				psP.setInt(8, p.getExp());
-				psP.setInt(9, p.getIdPokemon());
+				psP.setInt(9, p.getNumPokedex().getNumPokedex());
+				psP.setInt(10, p.getIdPokemon());
 				psP.executeUpdate();
 			}
 
@@ -117,4 +150,37 @@ public class EntrenamientoDao {
 		}
 	}
 
+	// Método para obtener los datos de una especie concreta de la Pokédex
+	public Pokedex obtenerPokedexPorId(int idPokedex) {
+		Pokedex nuevaEspecie = null;
+		String sql = "SELECT * FROM pokedex WHERE NUM_POKEDEX = ?"; 
+
+		try (Connection con = conexionDB.getConnection(); 
+			 PreparedStatement ps = con.prepareStatement(sql)) {
+			
+			ps.setInt(1, idPokedex);
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next()) {
+				nuevaEspecie = new Pokedex();
+				
+				// Rellenamos los datos básicos según las columnas de tu SQL
+				nuevaEspecie.setNumPokedex(rs.getInt("NUM_POKEDEX"));
+				nuevaEspecie.setNomPokemon(rs.getString("NOM_POKEMON")); 
+				nuevaEspecie.setRutaImgFront(rs.getString("IMG_FRONT"));
+				nuevaEspecie.setRutaImgBack(rs.getString("IMG_BACK"));
+				nuevaEspecie.setSonido(rs.getString("SONIDO"));
+				
+				// Llamamos al método
+				nuevaEspecie.setTipos(obtenerTiposDePokedex(idPokedex));
+				
+			}
+		} catch (SQLException e) {
+			System.out.println("Error al obtener la Pokedex por ID: " + e.getMessage());
+		}
+		
+		return nuevaEspecie;
+	}
+
+	
 }

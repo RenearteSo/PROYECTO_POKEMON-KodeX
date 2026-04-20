@@ -17,8 +17,8 @@ public enum Entrenamiento {
 	    // Sube: Ataque, Atq. Especial y Velocidad (+5)
 		@Override
 		public void aplicarMejora(Pokemon p) {
-			p.setDefensa((p.getDefensa()) + 5);
-			p.setDefensaEspecial((p.getDefensaEspecial()) + 5);
+			p.setAtaque((p.getAtaque()) + 5);
+			p.setAtaqueEspecial((p.getAtaqueEspecial()) + 5);
 			p.setVitalidad((p.getVitalidad()) + 5);
 			System.out.println("¡Entrenamiento Furioso completado! (+5 Atk, +5 AtkEsp, +5 Vel)");
 		}
