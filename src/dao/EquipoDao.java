@@ -14,15 +14,16 @@ public class EquipoDao {
     public EquipoDao() {
     }
 
-    // Obtiene los Pokémon de un entrenador filtrando por su ubicación 
+    // Obtiene los Pokémon de un entrenador filtrando por su ubicación (Caja, Equipo)
     public List<Pokemon> obtenerPokemonPorUbicacion(int idEntrenador, String ubicacion) {
         List<Pokemon> lista = new ArrayList<>();
+        
         // Seleccionamos todos los campos del pokemon y la imagen de la pokedex
         String sql = "SELECT p.*, px.IMG_FRONT " +
                      "FROM pokemon p JOIN pokedex px ON p.NUM_POKEDEX = px.NUM_POKEDEX " +
                      "WHERE p.ID_ENTRENADOR = ? AND p.UBICACION = ?";
                      
-        // Abrimos la conexión llamando a tu clase ConexionDB
+        // Abrimos la conexión llamando a la clase ConexionDB
         try (Connection c = conexion.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
              
@@ -65,11 +66,11 @@ public class EquipoDao {
         return lista;
     }
 
-    // Actualiza la ubicación de un Pokémon (de Caja a Equipo o al revés)
+    // Actualizamos la ubicación de un Pokémon (de Caja a Equipo o al revés)
     public boolean moverPokemon(int idPokemon, String nuevaUbicacion) {
         String sql = "UPDATE pokemon SET UBICACION = ? WHERE ID_POKEMON = ?";
         
-        // Abrimos la conexión llamando a tu clase ConexionDB
+        // Abrimos la conexión llamando a la clase ConexionDB
         try (Connection c = conexion.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
              

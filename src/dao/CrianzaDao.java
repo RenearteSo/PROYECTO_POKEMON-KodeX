@@ -63,8 +63,8 @@ public class CrianzaDao {
 			con.setAutoCommit(false); // Empezamos la transacción
 
 			// Insertamos al hijo
-			String sqlHijo = "INSERT INTO POKEMON (ID_ENTRENADOR, NUM_POKEDEX, MOTE, NIVEL, VITALIDAD, ATAQUE, DEFENSA, VELOCIDAD, ATAQUE_ESPECIAL, DEFENSA_ESPECIAL, FERTILIDAD, SEXO, ESTADO, EXPERIENCIA, ESTAMINA) "
-					+ "VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, 5, ?, 'SALUDABLE', 0, 100)";
+			String sqlHijo = "INSERT INTO POKEMON (ID_ENTRENADOR, NUM_POKEDEX, MOTE, NIVEL, VITALIDAD, ATAQUE, DEFENSA, VELOCIDAD, ATAQUE_ESPECIAL, DEFENSA_ESPECIAL, FERTILIDAD, SEXO, ESTADO, EXPERIENCIA, ESTAMINA, UBICACION) "
+					+ "VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, 5, ?, 'SALUDABLE', 0, 100, 'CAJA')";
 
 			try (PreparedStatement psH = con.prepareStatement(sqlHijo)) {
 				psH.setInt(1, e.getIdEntrenador());
