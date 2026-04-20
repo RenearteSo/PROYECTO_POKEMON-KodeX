@@ -22,7 +22,7 @@
       </MediaView>
       <VBox alignment="CENTER_LEFT" layoutX="39.0" prefHeight="800.0" prefWidth="492.0" spacing="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="39.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Button fx:id="botonCombate" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarCombate" onMouseExited="#salirCombate" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Combate">
+            <Button fx:id="botonCombate" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseEntered="#entrarCombate" onMouseExited="#salirCombate" onMouseClicked="#irCombate" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: rgba(0,0,0,0.4); -fx-font-family: &quot;Pokemon GB&quot;; -fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold; -fx-background-radius: 15;" text="Combate">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>

@@ -20,23 +20,26 @@ public class Movimiento {
 	}
 
  // constructor parametrizado
- 	public Movimiento(int idMovimiento, int potencia, int pp, int numTurnos, int costeEstamina, int nivelAprendizaje,
- 			String claseMovimiento, String nomMovimiento, String descripMovimiento, Estado estado, String mejora,
- 			TipoPokemon tipoPokemon) {
- 		super();
- 		this.idMovimiento = idMovimiento;
- 		this.potencia = potencia;
- 		this.pp = pp;
- 		this.numTurnos = numTurnos;
- 		this.costeEstamina = calcularCosteEstamina();
- 		this.nivelAprendizaje = nivelAprendizaje;
- 		this.claseMovimiento = claseMovimiento.toLowerCase(); // nombre en minuscula
- 		this.nomMovimiento = nomMovimiento;
- 		this.descripMovimiento = descripMovimiento;
- 		this.estado = estado;
- 		this.mejora = mejora;
- 		this.tipoPokemon = tipoPokemon;
- 	}
+    public Movimiento(int idMovimiento, int potencia, int pp, int numTurnos, int costeEstamina, int nivelAprendizaje,
+            String claseMovimiento, String nomMovimiento, String descripMovimiento, Estado estado, String mejora,
+            TipoPokemon tipoPokemon) {
+        super();
+        this.idMovimiento = idMovimiento;
+        this.potencia = potencia;
+        this.pp = pp;
+        this.numTurnos = numTurnos;
+        
+        // asignamos la clase y la estamina
+        this.claseMovimiento = (claseMovimiento != null) ? claseMovimiento.toLowerCase() : "ataque";
+        this.costeEstamina = calcularCosteEstamina(); 
+        
+        this.nivelAprendizaje = nivelAprendizaje;
+        this.nomMovimiento = nomMovimiento;
+        this.descripMovimiento = descripMovimiento;
+        this.estado = estado;
+        this.mejora = mejora;
+        this.tipoPokemon = tipoPokemon;
+    }
  	
  	// constructor copia
  	public Movimiento(Movimiento m) {
