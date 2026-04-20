@@ -3,12 +3,16 @@ package controller;
 import javafx.event.ActionEvent;
 import java.io.InputStream;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import dao.EntrenamientoDao;
+import dao.MovimientoDao;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -24,6 +28,7 @@ import javafx.util.Duration;
 import model.Configuracion;
 import model.Entrenador;
 import model.Entrenamiento;
+import model.Movimiento;
 import model.Pokedex;
 import model.Pokemon;
 
@@ -36,7 +41,7 @@ public class EntrenamientoController implements DatosEntrenador {
 	@FXML
 	private Label etiquetaAtaque, etiquetaAtaqueEsp, etiquetaDefensa, etiquetaDefensaEsp, etiquetaMensaje,
 			etiquetaNombre, etiquetaVelocidad, etiquetaVitalidad, preAtaque, preAtaqueEsp, preDefensa, preDefensaEsp,
-			preVelocidad, preVitalidad, etiquetaPokedollares;
+			preVelocidad, preVitalidad, etiquetaPokedollares, etiquetaMov1, etiquetaMov2, etiquetaMov3, etiquetaMov4;
 	@FXML
 	private MediaView fondoVideo;
 	@FXML
@@ -56,6 +61,8 @@ public class EntrenamientoController implements DatosEntrenador {
 	private Image imgEncoger = new Image(getClass().getResourceAsStream("/img/Menu/botonMinimizar.png"));
 	// Variable para la música
 	private javafx.scene.media.MediaPlayer musicaEntrenamiento;
+
+	private MovimientoDao daoMovimientos = new MovimientoDao();
 
 	// Método para iniciar la vista
 
@@ -231,6 +238,15 @@ public class EntrenamientoController implements DatosEntrenador {
 
 		// Comprobamos si ese nuevo nivel provoca evolución
 		if (subioNivel) {
+
+			Movimiento nuevoAtaque = daoMovimientos.comprobarNuevoMovimiento(
+					pokemonSeleccionado.getNumPokedex().getNumPokedex(), pokemonSeleccionado.getNivel());
+			
+			if (nuevoAtaque != null) {
+				// Llama a la ventana emergente para preguntar si quiere aprenderlo
+				gestionarAprendizajeMovimiento(pokemonSeleccionado, nuevoAtaque);
+			}
+
 			int idNuevaEvolucion = pokemonSeleccionado.comprobarEvolucion(); // Devuelve la ID o -1
 
 			if (idNuevaEvolucion != -1) {
@@ -266,6 +282,9 @@ public class EntrenamientoController implements DatosEntrenador {
 				etiquetaMensaje.setStyle("-fx-text-fill: white; -fx-font-family: 'Pokemon GB'; -fx-font-size: 11px;");
 			}
 
+			// Llamamos al método que creamos para actualizar las etiquetas de Scene Builder
+			actualizarEtiquetasMovimientos(pokemonSeleccionado);
+
 			// Refrescamos los números de las stats
 			mostrarStatsEnPantalla(pokemonSeleccionado);
 			limpiarPrevias();
@@ -282,6 +301,74 @@ public class EntrenamientoController implements DatosEntrenador {
 		} else {
 			etiquetaMensaje.setText("Error en la Base de Datos...");
 			etiquetaMensaje.setStyle("-fx-text-fill: red;");
+		}
+	}
+
+	// Gestiona la lógica de la ventana emergente
+	private void gestionarAprendizajeMovimiento(Pokemon pokemon, Movimiento nuevoAtaque) {
+		Movimiento[] ataquesActuales = pokemon.getMovimiento();
+		int huecoLibre = -1;
+
+		// Buscamos hueco
+		for (int i = 0; i < ataquesActuales.length; i++) {
+			if (ataquesActuales[i] == null) {
+				huecoLibre = i;
+				break;
+			}
+		}
+
+		if (huecoLibre != -1) {
+			pokemon.getMovimiento()[huecoLibre] = nuevoAtaque;
+			mostrarAlerta("¡Nuevo ataque!", pokemon.getMote() + " aprendió " + nuevoAtaque.getNomMovimiento());
+		} else {
+			// Si no hay hueco, abrimos el selector de olvido
+			ChoiceDialog<Movimiento> dialogo = new ChoiceDialog<>(ataquesActuales[0], ataquesActuales);
+			
+			//Línea para que no se salga de pantalla completa
+			dialogo.initOwner(botonEntrenar.getScene().getWindow());
+			
+			dialogo.setTitle("Aprender Movimiento");
+			dialogo.setHeaderText(pokemon.getMote() + " quiere aprender " + nuevoAtaque.getNomMovimiento());
+			dialogo.setContentText("Selecciona el movimiento que deseas olvidar:");
+
+			Optional<Movimiento> res = dialogo.showAndWait();
+			if (res.isPresent()) {
+				for (int i = 0; i < 4; i++) {
+					if (ataquesActuales[i] == res.get()) {
+						pokemon.getMovimiento()[i] = nuevoAtaque;
+						mostrarAlerta("¡Hecho!",
+								"¡1, 2 y puf! " + pokemon.getMote() + " aprendió " + nuevoAtaque.getNomMovimiento());
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	// Método auxiliar para no repetir código de alertas
+	private void mostrarAlerta(String titulo, String contenido) {
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		
+		//Para que no salga de pantalla completa
+		alert.initOwner(botonEntrenar.getScene().getWindow());
+		
+		alert.setTitle(titulo);
+		alert.setHeaderText(null);
+		alert.setContentText(contenido);
+		alert.showAndWait();
+	}
+
+	// Método para refrescar los movimientos en la pantalla
+	private void actualizarEtiquetasMovimientos(Pokemon p) {
+		Label[] etiquetas = { etiquetaMov1, etiquetaMov2, etiquetaMov3, etiquetaMov4 };
+		Movimiento[] movimientos = p.getMovimiento();
+
+		for (int i = 0; i < etiquetas.length; i++) {
+			if (movimientos[i] != null && movimientos[i].getNomMovimiento() != null) {
+				etiquetas[i].setText(movimientos[i].getNomMovimiento().toUpperCase()); // En mayúsculas queda más retro
+			} else {
+				etiquetas[i].setText("---");
+			}
 		}
 	}
 
@@ -312,7 +399,7 @@ public class EntrenamientoController implements DatosEntrenador {
 		etiquetaAtaqueEsp.setText(String.valueOf(p.getAtaqueEspecial()));
 		etiquetaDefensaEsp.setText(String.valueOf(p.getDefensaEspecial()));
 		etiquetaVelocidad.setText(String.valueOf(p.getVelocidad()));
-
+		actualizarEtiquetasMovimientos(p);
 	}
 
 	// Método para cargar la imagen del pokemon de nuestra base de datos
@@ -434,6 +521,5 @@ public class EntrenamientoController implements DatosEntrenador {
 			botonPantalla.setImage(imgAgrandar);
 		}
 	}
-	
 
 }
