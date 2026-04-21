@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 
 import model.Entrenador;
+import model.Movimiento;
 import model.Pokedex;
 import model.Pokemon;
 import model.TipoPokemon;
@@ -51,6 +52,10 @@ public class EntrenamientoDao {
 				p.setUbicacion(rs.getString("UBICACION")); // Para saber si está en el equipo o caja
 				p.setNumPokedex(info);
 
+				// Cargamos sus movimientos desde la base de datos a su array
+				MovimientoDao movDao = new MovimientoDao();
+				p.setMovimiento(movDao.obtenerMovimientosEquipados(p.getIdPokemon()));
+				
 				lista.add(p);
 			}
 
@@ -92,63 +97,71 @@ public class EntrenamientoDao {
 		}
 
 	// Creamos un método para actualizar los entrenamientos realizados y su
-	// modificación de los stats y cobrar
-	public boolean guardarEntrenamiento(Entrenador entrenador, Pokemon p) {
-		Connection c = conexionDB.getConnection();
-		if (c == null)
-			return false;
+	// modificación de los stats, evoluciones, movimiento y cobrar
+		public boolean guardarEntrenamiento(Entrenador entrenador, Pokemon p) {
+		    Connection c = conexionDB.getConnection();
+		    if (c == null) return false;
 
-		try {
-			// Bloqueamos para que no haya cobros sin entrenamientos
-			c.setAutoCommit(false);
+		    try {
+		        c.setAutoCommit(false); // Iniciamos transacción
 
-			// Actualizamos los Stats, la Experiencia y el Nivel del Pokémon
-			String sqlPokemon = "UPDATE pokemon SET VITALIDAD = ?, ATAQUE = ?, DEFENSA = ?, "
-					+ "ATAQUE_ESPECIAL = ?, DEFENSA_ESPECIAL = ?, VELOCIDAD = ?, "
-					+ "NIVEL = ?, EXPERIENCIA = ?, NUM_POKEDEX = ? WHERE ID_POKEMON = ?";
+		        // 1. Actualizamos el Pokémon (Stats + Nivel + Exp + Posible Evolución)
+		        String sqlPokemon = "UPDATE pokemon SET VITALIDAD = ?, ATAQUE = ?, DEFENSA = ?, "
+		                + "ATAQUE_ESPECIAL = ?, DEFENSA_ESPECIAL = ?, VELOCIDAD = ?, "
+		                + "NIVEL = ?, EXPERIENCIA = ?, NUM_POKEDEX = ?, ESTAMINA = ? WHERE ID_POKEMON = ?";
 
-			try (PreparedStatement psP = c.prepareStatement(sqlPokemon)) {
-				psP.setInt(1, p.getVitalidad());
-				psP.setInt(2, p.getAtaque());
-				psP.setInt(3, p.getDefensa());
-				psP.setInt(4, p.getAtaqueEspecial());
-				psP.setInt(5, p.getDefensaEspecial());
-				psP.setInt(6, p.getVelocidad());
-				psP.setInt(7, p.getNivel());
-				psP.setInt(8, p.getExp());
-				psP.setInt(9, p.getNumPokedex().getNumPokedex());
-				psP.setInt(10, p.getIdPokemon());
-				psP.executeUpdate();
-			}
+		        try (PreparedStatement psP = c.prepareStatement(sqlPokemon)) {
+		            psP.setInt(1, p.getVitalidad());
+		            psP.setInt(2, p.getAtaque());
+		            psP.setInt(3, p.getDefensa());
+		            psP.setInt(4, p.getAtaqueEspecial());
+		            psP.setInt(5, p.getDefensaEspecial());
+		            psP.setInt(6, p.getVelocidad());
+		            psP.setInt(7, p.getNivel());
+		            psP.setInt(8, p.getExp());
+		            psP.setInt(9, p.getNumPokedex().getNumPokedex()); // ID de la especie
+		            psP.setInt(10, p.getEstamina());
+		            psP.setInt(11, p.getIdPokemon());
+		            psP.executeUpdate();
+		        }
 
-			// Actualizamos los pokedollares del entrenador
-			String sqlEntrenador = "UPDATE entrenador SET POKEDOLLAR = ? WHERE ID_ENTRENADOR = ?";
-			try (PreparedStatement psE = c.prepareStatement(sqlEntrenador)) {
-				psE.setInt(1, entrenador.getPokedollar());
-				psE.setInt(2, entrenador.getIdEntrenador());
-				psE.executeUpdate();
-			}
+		        // Actualizamos sus Movimientos 
+		        String sqlBorrarMovs = "DELETE FROM pokemon_movimiento WHERE ID_POKEMON = ?";
+		        try (PreparedStatement psB = c.prepareStatement(sqlBorrarMovs)) {
+		            psB.setInt(1, p.getIdPokemon());
+		            psB.executeUpdate();
+		        }
 
-			// Si llegamos aquí sin errores guardamos definitivamente
-			c.commit();
-			return true;
+		        String sqlInsertMov = "INSERT INTO pokemon_movimiento (ID_POKEMON, ID_MOVIMIENTOS, ACTIVO) VALUES (?, ?, 'SI')";
+		        try (PreparedStatement psI = c.prepareStatement(sqlInsertMov)) {
+		            for (Movimiento m : p.getMovimiento()) {
+		                if (m != null) {
+		                    psI.setInt(1, p.getIdPokemon());
+		                    psI.setInt(2, m.getIdMovimiento());
+		                    psI.executeUpdate();
+		                }
+		            }
+		        }
 
-		} catch (SQLException e) {
-			try {
-				c.rollback(); // Si algo falla deshacemos todo
-			} catch (SQLException ex) {
-				ex.printStackTrace();
-			}
-			e.printStackTrace();
-			return false;
-		} finally {
-			try {
-				c.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		        // Actualizamos el dinero del entrenador
+		        String sqlEntrenador = "UPDATE entrenador SET POKEDOLLAR = ? WHERE ID_ENTRENADOR = ?";
+		        try (PreparedStatement psE = c.prepareStatement(sqlEntrenador)) {
+		            psE.setInt(1, entrenador.getPokedollar());
+		            psE.setInt(2, entrenador.getIdEntrenador());
+		            psE.executeUpdate();
+		        }
+
+		        c.commit(); // Si todo ha ido bien, guardamos
+		        return true;
+
+		    } catch (SQLException e) {
+		        try { c.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+		        e.printStackTrace();
+		        return false;
+		    } finally {
+		        try { c.close(); } catch (SQLException e) { e.printStackTrace(); }
+		    }
 		}
-	}
 
 	// Método para obtener los datos de una especie concreta de la Pokédex
 	public Pokedex obtenerPokedexPorId(int idPokedex) {
