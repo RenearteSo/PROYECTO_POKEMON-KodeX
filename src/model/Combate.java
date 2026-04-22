@@ -16,6 +16,11 @@ public class Combate {
     
     private int totalDineroGanado = 0;
     private int totalExpGanada = 0;
+    
+ // LIGA POKEMON
+    private boolean esLiga = false;
+    private int numCombateLiga = 1;
+    private boolean descansoPrevioUsado = false;
 
     // constructor con entrenador y rival
  	public Combate(Entrenador jugador, Entrenador rival) {
@@ -61,6 +66,13 @@ public class Combate {
 
     public int getTotalExpGanada() { 
         return totalExpGanada; 
+    }
+    
+ // configurar la liga pokemon
+    public void configurarComoLiga(int numCombate, boolean descansoUsado) {
+        this.esLiga = true;
+        this.numCombateLiga = numCombate;
+        this.descansoPrevioUsado = descansoUsado;
     }
     
     // método para ejecutar el turno
@@ -364,28 +376,51 @@ public class Combate {
 		} 
     }
     
-    // calcula la experiencia, resta el dinero si pierdes y lo suma si ganas
+    // calcula la experiencia, resta el dinero si pierdes y lo suma si ganas, incluyendo la liga pokemon
     private void repartirRecompensas(Pokemon pJugador, Pokemon pRival) {
-		int dineroRobado = perdedor.getPokedollar() / 3;
-		perdedor.setPokedollar(perdedor.getPokedollar() - dineroRobado); 
-		ganador.setPokedollar(ganador.getPokedollar() + dineroRobado);   
-		
-        if (ganador == jugador) {
-            this.totalDineroGanado = dineroRobado;
+        
+        // --- LÓGICA DE DINERO ---
+        if (esLiga) {
+            if (ganador == jugador) {
+                // Premios específicos de la Liga Pokémon
+                int premio = 0;
+                switch (numCombateLiga) {
+                    case 1: premio = 1000; break;
+                    case 2: premio = descansoPrevioUsado ? 1000 : 2000; break;
+                    case 3: premio = descansoPrevioUsado ? 2000 : 4000; break;
+                    case 4: premio = descansoPrevioUsado ? 3000 : 6000; break;
+                    case 5: premio = descansoPrevioUsado ? 4000 : 8000; break;
+                }
+                ganador.setPokedollar(ganador.getPokedollar() + premio);
+                this.totalDineroGanado = premio;
+            } else if (ganador == rival) {
+                // Si pierdes en la liga, pierdes la mitad de TODOS tus ahorros
+                int penalizacion = perdedor.getPokedollar() / 2;
+                perdedor.setPokedollar(perdedor.getPokedollar() - penalizacion);
+            }
+        } else {
+            // Lógica normal de combate aleatorio (se roba 1/3)
+            int dineroRobado = perdedor.getPokedollar() / 3;
+            perdedor.setPokedollar(perdedor.getPokedollar() - dineroRobado); 
+            ganador.setPokedollar(ganador.getPokedollar() + dineroRobado);   
+            if (ganador == jugador) {
+                this.totalDineroGanado = dineroRobado;
+            }
         }
 
-		if (ganador == jugador && pJugador != null && pJugador.getVitalidad() > 0 && pRival != null) {
-			int expGanada = ((pJugador.getNivel() + (pRival.getNivel() * 10)) / 4) * Math.max(1, koRival);
-			pJugador.setExp(pJugador.getExp() + expGanada);
+        // --- LÓGICA DE EXPERIENCIA (Se mantiene igual) ---
+        if (ganador == jugador && pJugador != null && pJugador.getVitalidad() > 0 && pRival != null) {
+            int expGanada = ((pJugador.getNivel() + (pRival.getNivel() * 10)) / 4) * Math.max(1, koRival);
+            pJugador.setExp(pJugador.getExp() + expGanada);
             this.totalExpGanada = expGanada;
-			pJugador.subirNivel();
-		} 
-		else if (ganador == rival && pRival != null && pRival.getVitalidad() > 0 && pJugador != null) {
-			int expGanada = (pRival.getNivel() + (pJugador.getNivel() * 10)) / 4;
-			pRival.setExp(pRival.getExp() + expGanada);
-			pRival.subirNivel();
-		} 
-	}
+            pJugador.subirNivel();
+        } 
+        else if (ganador == rival && pRival != null && pRival.getVitalidad() > 0 && pJugador != null) {
+            int expGanada = (pRival.getNivel() + (pJugador.getNivel() * 10)) / 4;
+            pRival.setExp(pRival.getExp() + expGanada);
+            pRival.subirNivel();
+        } 
+    }
 
 
 }

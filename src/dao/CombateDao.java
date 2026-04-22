@@ -13,7 +13,7 @@ import model.TipoPokemon;
 
 public class CombateDao {
 
-   public void cargarEquipoJugador(Entrenador jugador) {
+  public void cargarEquipoJugador(Entrenador jugador) {
         
         // Preparamos una consulta bastante completa. Usamos JOIN para unir la tabla del pokemon con la Pokedex (para pillar la imagen trasera), 
         // y LEFT JOIN para traernos tambien el nombre de su tipo. 
@@ -42,13 +42,22 @@ public class CombateDao {
                 p.setIdPokemon(rs.getInt("ID_POKEMON"));
                 p.setMote(rs.getString("MOTE"));
                 
-                p.setVitalidad(rs.getInt("VITALIDAD")); 
-                p.setAtaque(rs.getInt("ATAQUE"));
-                p.setDefensa(rs.getInt("DEFENSA"));
-                p.setVelocidad(rs.getInt("VELOCIDAD"));
+                // Extraemos el nivel primero para poder calcular el resto de cosas
                 p.setNivel(rs.getInt("NIVEL"));
                 p.setExp(rs.getInt("EXPERIENCIA"));
                 p.setEstamina(100); 
+                
+                // --- EL ARREGLO MÁGICO DE ESTADÍSTICAS ---
+                // En lugar de leer el "10" estático de la base de datos, calculamos tus stats reales
+                // en base a tu nivel. ¡Así tu Pokémon será tan fuerte como el del rival!
+                int statBaseBD = 10;
+                int nivelP = p.getNivel();
+                
+                p.setVitalidad(15 + statBaseBD + (nivelP * 3)); 
+                p.setAtaque(statBaseBD + (nivelP * 2));
+                p.setDefensa(statBaseBD + (nivelP * 2));
+                p.setVelocidad(statBaseBD + (nivelP * 2));
+                // ------------------------------------------
                 
                 Pokedex px = new Pokedex();
                 px.setNumPokedex(rs.getInt("NUM_POKEDEX"));
@@ -147,17 +156,16 @@ public class CombateDao {
                 int nivelEnemigo = (int) (Math.random() * (nivelMax - nivelMin + 1)) + nivelMin;
                 p.setNivel(nivelEnemigo);
                 
-                // Generamos una estadística base aleatoria de 1 a 10 y la escalamos multiplicando su nivel.
-                int statBase = (int) (Math.random() * 10) + 1;
+                // CORRECCIÓN DE BALANCEO: 
+                // Como tu tabla 'pokedex' no tiene stats base guardados, y tu tabla 'pokemon' 
+                // da un DEFAULT de 10, vamos a hacer que el rival use exactamente esos 
+                // mismos 10 puntos de base de la BD para que sea un combate 100% justo.
+                int statBaseBD = 10; 
                 
-                // CORRECCIÓN: En lugar de 100 fijos, simulamos la vitalidad base (15) más lo que ganaría por nivel.
-                // Así un rival nv 1 tendrá ~20 HP, y un rival nv 30 tendrá ~110 HP, haciendo el combate justo.
-                int hpSimulado = 15 + statBase + (nivelEnemigo * 3);
-                p.setVitalidad(hpSimulado); 
-                
-                p.setAtaque(statBase + (nivelEnemigo * 2));
-                p.setDefensa(statBase + (nivelEnemigo * 2));
-                p.setVelocidad(statBase + (nivelEnemigo * 2));
+                p.setVitalidad(statBaseBD + (nivelEnemigo * 2)); 
+                p.setAtaque(statBaseBD + (nivelEnemigo * 1));
+                p.setDefensa(statBaseBD + (nivelEnemigo * 1));
+                p.setVelocidad(statBaseBD + (nivelEnemigo * 1));
                 p.setEstamina(100);
                 
                 p.setMote(rs.getString("NOM_POKEMON"));
@@ -194,7 +202,6 @@ public class CombateDao {
         rival.setEquipoPrincipal(equipoRival);
         return rival;
     }
-
     public void actualizarRecompensasBD(Entrenador jugador) {
         
         // dos sentencias UPDATE separadas: una para actualizar la cartera del jugador
