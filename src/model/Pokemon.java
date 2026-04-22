@@ -364,14 +364,18 @@ public class Pokemon {
 			this.nivel++;
 			subidaNivel = true;
 
-			// Al subir de nivel se mejorará de 1 a 5 aleatoriamente cada estadística de
-			// nuestro pokemon.
-			this.vitalidad += (int) (Math.random() * (5 - 1 + 1) + 1);
-			this.ataque += (int) (Math.random() * (5 - 1 + 1) + 1);
-			this.defensa += (int) (Math.random() * (5 - 1 + 1) + 1);
-			this.ataqueEspecial += (int) (Math.random() * (5 - 1 + 1) + 1);
-			this.defensaEspecial += (int) (Math.random() * (5 - 1 + 1) + 1);
-			this.velocidad += (int) (Math.random() * (5 - 1 + 1) + 1);
+			// Al subir de nivel se mejorará de forma justa usando la fórmula del DAO
+			int statBaseBD = 10;
+			this.vitalidad = 15 + statBaseBD + (this.nivel * 3);
+			this.ataque = statBaseBD + (this.nivel * 2);
+			this.defensa = statBaseBD + (this.nivel * 2);
+			this.velocidad = statBaseBD + (this.nivel * 2);
+			this.ataqueEspecial = statBaseBD + (this.nivel * 2);
+			this.defensaEspecial = statBaseBD + (this.nivel * 2);
+
+            // Reestablecemos la vida, estamina y estado al subir de nivel (como se pidió)
+            this.estamina = 100;
+            this.estadoActual = Estado.SALUDABLE;
 
 			// Creamos la condición para que cada 3 niveles nuestro pokemon pueda aprender
 			// un nuevo movimiento!

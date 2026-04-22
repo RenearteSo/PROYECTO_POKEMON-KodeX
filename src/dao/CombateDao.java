@@ -93,6 +93,26 @@ public class CombateDao {
             
         } catch (SQLException e) {}
     }
+  
+//Obtenemos los datos de la nueva especie para poder evolucionar
+  public Pokedex obtenerPokedexPorId(int id) {
+      String sql = "SELECT * FROM pokedex WHERE NUM_POKEDEX = ?";
+      ConexionDB connection = new ConexionDB();
+      try (Connection con = connection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+          ps.setInt(1, id);
+          ResultSet rs = ps.executeQuery();
+          if (rs.next()) {
+              Pokedex px = new Pokedex();
+              px.setNumPokedex(rs.getInt("NUM_POKEDEX"));
+              px.setNomPokemon(rs.getString("NOM_POKEMON"));
+              px.setRutaImgFront(rs.getString("IMG_FRONT"));
+              px.setRutaImgBack(rs.getString("IMG_BACK"));
+              px.setSonido("audio/Pokemon/cries_pokemon_legacy_" + px.getNumPokedex() + ".ogg");
+              return px;
+          }
+      } catch (SQLException e) {}
+      return null;
+  }
 
     public int[] obtenerRangoNivelesEquipo(int idEntrenador) {
         int min = 1, max = 1;
@@ -202,12 +222,24 @@ public class CombateDao {
         rival.setEquipoPrincipal(equipoRival);
         return rival;
     }
-    public void actualizarRecompensasBD(Entrenador jugador) {
+  
+  public void actualizarRecompensasBD(Entrenador jugador) {
         
         // dos sentencias UPDATE separadas: una para actualizar la cartera del jugador
         // y otra para ir guardando la experiencia y el nivel que han ganado sus pokémon en el combate.
-        String sqlDinero = "UPDATE entrenador SET POKEDOLLAR = ? WHERE ID_ENTRENADOR = ?";
-        String sqlExp = "UPDATE pokemon SET EXPERIENCIA = ?, NIVEL = ? WHERE ID_POKEMON = ?";
+        String sqlDinero = "UPDATE entrenador "
+        		+ "SET POKEDOLLAR = ? "
+        		+ "WHERE ID_ENTRENADOR = ?";
+        
+        // Ahora también guardamos la nueva ID de la Pokedex (por si evoluciona) y la vitalidad/estamina curada
+        String sqlExp = "UPDATE pokemon "
+        		+ "SET EXPERIENCIA = ?, "
+        		+ "NIVEL = ?, "
+        		+ "NUM_POKEDEX = ?, "
+        		+ "VITALIDAD = ?, "
+        		+ "ESTAMINA = ?, "
+        		+ "ESTADO = ? "
+        		+ "WHERE ID_POKEMON = ?";
         
         ConexionDB connection = new ConexionDB();
         try (Connection con = connection.getConnection()) {
@@ -225,13 +257,15 @@ public class CombateDao {
                     if (p != null && p.getIdPokemon() != 0) { 
                         pstmt.setInt(1, p.getExp());
                         pstmt.setInt(2, p.getNivel());
-                        pstmt.setInt(3, p.getIdPokemon());
+                        pstmt.setInt(3, p.getNumPokedex().getNumPokedex()); // Guardamos la posible evolución
+                        pstmt.setInt(4, p.getVitalidad()); // Guardamos la curación
+                        pstmt.setInt(5, p.getEstamina());
+                        pstmt.setString(6, p.getEstadoActual().name());
+                        pstmt.setInt(7, p.getIdPokemon());
                         pstmt.executeUpdate();
                     }
                 }
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        } catch (SQLException ex) { }
     }
 }

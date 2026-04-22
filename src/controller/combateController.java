@@ -609,6 +609,27 @@ public class combateController implements DatosEntrenador {
                 txtLog.appendText("\n>>> ¡HAS GANADO EL COMBATE! <<<");
                 txtLog.appendText("\nHas obtenido " + combate.getTotalDineroGanado() + " PokéDólares.");
                 txtLog.appendText("\nTus Pokémon han ganado " + combate.getTotalExpGanada() + " puntos de EXP.\n");
+                
+                // --- NUEVA LÓGICA DE EVOLUCIÓN TRAS EL COMBATE ---
+                for (Pokemon p : jugadorActual.getEquipoPrincipal()) {
+                    if (p != null && p.getVitalidad() > 0) {
+                        int idNuevaEvolucion = p.comprobarEvolucion();
+                        if (idNuevaEvolucion != -1) {
+                            Pokedex nuevaPokedex = dao.obtenerPokedexPorId(idNuevaEvolucion);
+                            if (nuevaPokedex != null) {
+                                String moteAntiguo = p.getMote();
+                                p.evolucionar(nuevaPokedex);
+                                // Si no le pusimos un mote customizado, actualizamos el nombre a la nueva especie
+                                if (moteAntiguo.equals(p.getNumPokedex().getNomPokemon())) {
+                                    p.setMote(nuevaPokedex.getNomPokemon());
+                                }
+                                txtLog.appendText("\n✨ ¡QUÉ ES ESTO! ¡Tu " + moteAntiguo + " ha evolucionado a " + nuevaPokedex.getNomPokemon() + "! ✨\n");
+                            }
+                        }
+                    }
+                }
+                // -------------------------------------------------
+                
             } else {
                 txtLog.appendText("\n>>> TE HAS QUEDADO SIN POKÉMON. HAS PERDIDO... <<<\n");
             }
@@ -616,7 +637,7 @@ public class combateController implements DatosEntrenador {
             btnHuir.setDisable(false);
             btnHuir.setText("VOLVER AL MENÚ");
             
-            // guardamos el progreso de exp y dinero en la base de datos
+            // guardamos el progreso de exp, dinero, evolución y curación en la base de datos
             dao.actualizarRecompensasBD(jugadorActual);
         }
     }
