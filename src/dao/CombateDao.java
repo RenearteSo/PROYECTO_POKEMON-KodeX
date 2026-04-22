@@ -114,7 +114,7 @@ public class CombateDao {
         return new int[]{min, max};
     }
 
-   public Entrenador generarRivalAleatorio(int nivelMin, int nivelMax, int cantidadPokemon) {
+  public Entrenador generarRivalAleatorio(int nivelMin, int nivelMax, int cantidadPokemon) {
         String[] posiblesNombres = {"LuisRe", "Fernando", "Carrión"};
         String nombreElegido = posiblesNombres[(int)(Math.random() * posiblesNombres.length)];
         
@@ -149,7 +149,12 @@ public class CombateDao {
                 
                 // Generamos una estadística base aleatoria de 1 a 10 y la escalamos multiplicando su nivel.
                 int statBase = (int) (Math.random() * 10) + 1;
-                p.setVitalidad(100); 
+                
+                // CORRECCIÓN: En lugar de 100 fijos, simulamos la vitalidad base (15) más lo que ganaría por nivel.
+                // Así un rival nv 1 tendrá ~20 HP, y un rival nv 30 tendrá ~110 HP, haciendo el combate justo.
+                int hpSimulado = 15 + statBase + (nivelEnemigo * 3);
+                p.setVitalidad(hpSimulado); 
+                
                 p.setAtaque(statBase + (nivelEnemigo * 2));
                 p.setDefensa(statBase + (nivelEnemigo * 2));
                 p.setVelocidad(statBase + (nivelEnemigo * 2));
