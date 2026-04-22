@@ -580,6 +580,9 @@ INSERT IGNORE INTO `pokedex_movimiento` (`NUM_POKEDEX`, `ID_MOVIMIENTOS`) VALUES
 (144, 26), (144, 40), (144, 41), (145, 26), (145, 21), (145, 22), (146, 26), (146, 9), (146, 10),
 (150, 34), (150, 6), (150, 5), (150, 44), (151, 34), (151, 6), (151, 14), (151, 10);
 
+INSERT IGNORE INTO pokedex_movimiento (NUM_POKEDEX, ID_MOVIMIENTOS)
+SELECT NUM_POKEDEX, 1 FROM pokedex;
+
 INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 
 (1,3),(2,3),(3,3),(43,3),(44,3),(45,3),(69,3),(70,3),(71,3),(102,3),(103,3),(114,3);
 INSERT INTO `pokedex_tipo` (`NUM_POKEDEX`, `ID_TIPO`) VALUES 

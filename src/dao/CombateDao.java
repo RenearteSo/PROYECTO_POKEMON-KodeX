@@ -13,7 +13,7 @@ import model.TipoPokemon;
 
 public class CombateDao {
 
-    public void cargarEquipoJugador(Entrenador jugador) {
+   public void cargarEquipoJugador(Entrenador jugador) {
         
         // Preparamos una consulta bastante completa. Usamos JOIN para unir la tabla del pokemon con la Pokedex (para pillar la imagen trasera), 
         // y LEFT JOIN para traernos tambien el nombre de su tipo. 
@@ -66,12 +66,15 @@ public class CombateDao {
                 p.setTipoPokemon(tipos);
                 
                 // ataques basicos
-                Movimiento[] movs = new Movimiento[4];
-                movs[0] = new Movimiento(1, 40, 35, 0, 20, 1, "ataque", "Placaje", "", null, "", TipoPokemon.NORMAL);
-                movs[1] = new Movimiento(2, 60, 25, 0, 30, 1, "ataque", "Pistola Agua", "", null, "", TipoPokemon.AGUA);
-                movs[2] = new Movimiento(3, 60, 25, 0, 30, 1, "ataque", "Ascuas", "", null, "", TipoPokemon.FUEGO);
-                movs[3] = new Movimiento(4, 50, 30, 0, 25, 1, "ataque", "Látigo Cepa", "", null, "", TipoPokemon.PLANTA);
-                p.setMovimiento(movs);
+                MovimientoDao movDao = new MovimientoDao();
+                Movimiento[] movsRecuperados = movDao.obtenerMovimientosEquipados(p.getIdPokemon());
+                
+                // PARCHE DE SEGURIDAD: Si no tiene ningún ataque equipado en la BD, le damos un básico por defecto
+                if (movsRecuperados[0] == null) {
+                    movsRecuperados[0] = new Movimiento(0, 40, 35, 0, 20, 1, "ataque", "Placaje", "Ataque básico por defecto.", null, "", TipoPokemon.NORMAL);
+                }
+                
+                p.setMovimiento(movsRecuperados);
                 
                 equipo[i] = p;
                 i++;
@@ -88,9 +91,9 @@ public class CombateDao {
         // usamos min y max para obtener el rango de niveles del equipo
         // calculamos despues
         String sql = "SELECT MIN(NIVEL) as min_lvl, MAX(NIVEL) as max_lvl "
-        		+ "FROM pokemon "
-        		+ "WHERE ID_ENTRENADOR = ? "
-        		+ "AND UBICACION = 'EQUIPO'";
+                + "FROM pokemon "
+                + "WHERE ID_ENTRENADOR = ? "
+                + "AND UBICACION = 'EQUIPO'";
         ConexionDB connection = new ConexionDB();
         
         try (Connection con = connection.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql)) {
@@ -101,7 +104,9 @@ public class CombateDao {
                 min = rs.getInt("min_lvl");
                 max = rs.getInt("max_lvl");
             }
-        } catch (SQLException ex) { }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
         
         // asi evitamos que nos devuelva niveles como 0 o negativos
         if (min <= 0) min = 1;
@@ -109,7 +114,7 @@ public class CombateDao {
         return new int[]{min, max};
     }
 
-    public Entrenador generarRivalAleatorio(int nivelMin, int nivelMax, int cantidadPokemon) {
+   public Entrenador generarRivalAleatorio(int nivelMin, int nivelMax, int cantidadPokemon) {
         String[] posiblesNombres = {"LuisRe", "Fernando", "Carrión"};
         String nombreElegido = posiblesNombres[(int)(Math.random() * posiblesNombres.length)];
         
@@ -166,11 +171,15 @@ public class CombateDao {
                 if (tipos.isEmpty()) tipos.add(TipoPokemon.NORMAL);
                 p.setTipoPokemon(tipos);
                 
-                Movimiento[] movs = new Movimiento[4];
-                movs[0] = new Movimiento(1, 40, 35, 0, 20, 1, "ataque", "Placaje", "", null, "", TipoPokemon.NORMAL);
-                movs[1] = new Movimiento(2, 50, 25, 0, 25, 1, "ataque", "Ataque Rápido", "", null, "", TipoPokemon.NORMAL);
-                movs[2] = new Movimiento(3, 65, 15, 0, 30, 1, "ataque", "Golpe Fuerte", "", null, "", TipoPokemon.LUCHA);
-                p.setMovimiento(movs);
+                MovimientoDao movDao = new MovimientoDao();
+                Movimiento[] movsRival = movDao.generarMovimientosIniciales(p.getNumPokedex().getNumPokedex(), nivelEnemigo);
+                
+                // PARCHE DE SEGURIDAD: Evita que el rival se quede sin ataques si la base de datos no le da ninguno
+                if (movsRival[0] == null) {
+                    movsRival[0] = new Movimiento(0, 40, 35, 0, 20, 1, "ataque", "Placaje", "Ataque básico por defecto.", null, "", TipoPokemon.NORMAL);
+                }
+                
+                p.setMovimiento(movsRival);
                 
                 equipoRival[i] = p;
                 i++;
@@ -209,6 +218,8 @@ public class CombateDao {
                     }
                 }
             }
-        } catch (SQLException ex) { }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }

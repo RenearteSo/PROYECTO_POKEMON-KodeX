@@ -318,49 +318,28 @@ public class Pokemon {
 	}
 
 	// Método para obtener el ataque total con el objeto aplicado al pokemon.
-	public int ataqueObjetoAplicado() {
-		double modificador = 1.0;
-		// Si tiene un objeto leemos su modificador
-		if (this.objetoEquipado != null) {
-			modificador = this.objetoEquipado.getModAtaque();
-		}
-		// Devolvemos el ataque base * el modificador
-		return (int) (this.ataque * modificador);
-	}
+    public int ataqueObjetoAplicado() {
+        if (this.objetoEquipado == null || this.objetoEquipado.getNomObjeto() == null) return this.ataque;
+        return (int) (this.ataque + (this.ataque * this.objetoEquipado.getModAtaque() / 100));
+    }
 
-	// Método para obtener la defensa total con el objeto aplicado al pokemon.
-	public int defensaObjetoAplicado() {
-		double modificador = 1.0;
-		// Si tiene un objeto leemos su modificador
-		if (this.objetoEquipado != null) {
-			modificador = this.objetoEquipado.getModDefensa();
-		}
-		// Devolvemos el ataque base * el modificador
-		return (int) (this.defensa * modificador);
-	}
+    // Método para obtener la defensa total con el objeto aplicado al pokemon.
+    public int defensaObjetoAplicado() {
+        if (this.objetoEquipado == null || this.objetoEquipado.getNomObjeto() == null) return this.defensa;
+        return (int) (this.defensa + (this.defensa * this.objetoEquipado.getModDefensa() / 100));
+    }
 
-	// Método para obtener la velocidad total con el objeto aplicado al pokemon.
-	public int velocidadaObjetoAplicado() {
-		double modificador = 1.0;
-		// Si tiene un objeto leemos su modificador
-		if (this.objetoEquipado != null) {
-			modificador = this.objetoEquipado.getModVelocidad();
-		}
-		// Devolvemos el ataque base * el modificador
-		return (int) (this.velocidad * modificador);
-	}
+    // Método para obtener la velocidad total con el objeto aplicado al pokemon.
+    public int velocidadaObjetoAplicado() {
+        if (this.objetoEquipado == null || this.objetoEquipado.getNomObjeto() == null) return this.velocidad;
+        return (int) (this.velocidad + (this.velocidad * this.objetoEquipado.getModVelocidad() / 100));
+    }
 
-	// Método para obtener la defensa especial total con el objeto aplicado al
-	// pokemon.
-	public int defEspecialObjetoAplicado() {
-		double modificador = 1.0;
-		// Si tiene un objeto leemos su modificador
-		if (this.objetoEquipado != null) {
-			modificador = this.objetoEquipado.getModDefEsp();
-		}
-		// Devolvemos el ataque base * el modificador
-		return (int) (this.defensaEspecial * modificador);
-	}
+    // Método para obtener la defensa especial total con el objeto aplicado al pokemon.
+    public int defEspecialObjetoAplicado() {
+        if (this.objetoEquipado == null || this.objetoEquipado.getNomObjeto() == null) return this.defensaEspecial;
+        return (int) (this.defensaEspecial + (this.defensaEspecial * this.objetoEquipado.getModDefEsp() / 100));
+    }
 
 	// Creamos un método de clase para generar las stats aleatorias cuando el
 	// pokemon nace. Las generamos por defecto
@@ -463,8 +442,13 @@ public class Pokemon {
 		return hijo;
 	}
 
-	// Creamos el método atacar a otro pokemon
-	// Le pasamos como argumentos un pokemon al que atacar y un movimiento.
+	
+	/** Creamos el método atacar a otro pokemon
+	 * Le pasamos como argumentos un pokemon al que atacar y un movimiento.
+	 * 
+	 * @param pokemonEnemigo Parametro para pasarle el pokemon enemigo
+	 * @param movElegido Parametro para enviar el movimiento a ejecutar
+	 */
 	public void atacar(Pokemon pokemonEnemigo, Movimiento movElegido) {
 
 		int coste = movElegido.calcularCosteEstamina();
@@ -560,31 +544,43 @@ public class Pokemon {
 		}
 	}
 
-	// Creamos el método descansar para recuperar la estamina perdida que gastamos
-	// en combate o haceindo algún movimiento
+
+    /**
+     * 
+	 *  Creamos el método descansar para recuperar la estamina perdida que gastamos
+	 *  en combate o haceindo algún movimiento
+	 */
 	public void descansar() {
-		double modRecup = 1.0;
-		// Calculamos la recuperación con objeto
-		if (this.objetoEquipado != null) {
-			modRecup = this.objetoEquipado.getModRecupEstamina();
-		}
-		int cantRecuperada = (int) (20 * modRecup);
-		this.estamina += cantRecuperada;
+        double modRecup = 1.0;
+        double modMax = 1.0;
+        
+        // Solo aplicamos mods si el objeto es real y tiene nombre
+        if (this.objetoEquipado != null && this.objetoEquipado.getNomObjeto() != null) {
+            if (this.objetoEquipado.getModRecupEstamina() > 0) modRecup = this.objetoEquipado.getModRecupEstamina();
+            if (this.objetoEquipado.getModEstamina() > 0) modMax = this.objetoEquipado.getModEstamina();
+        }
+        
+        // Aseguramos un mínimo de 20 de recuperación para evitar bucles infinitos
+        int cantRecuperada = (int) (20 * modRecup);
+        if (cantRecuperada <= 0) cantRecuperada = 20; 
+        
+        this.estamina += cantRecuperada;
+        
+        int topeMax = (int) (100 * modMax);
+        if (topeMax <= 0) topeMax = 100;
+        
+        if (this.estamina > topeMax) { 
+            this.estamina = topeMax;
+        }
+    }
 
-		// Cálculo para halla el tope máximo de recuperación
-		double modMax = 1.0;
-		if (this.objetoEquipado != null) {
-			modMax = this.objetoEquipado.getModEstamina();
-		}
-		// El tope ya no es 100 fijo, es 100 * modificador.
-		int topeMax = (int) (100 * modMax);
-		if (this.estamina > topeMax) { // Ajustamos el tope si nos pasamos de él.
-			this.estamina = topeMax;
-		}
 
-	}
-
-	// Método aprender nuevo movimiento.
+	/**
+	 * Método para aprender un nuevo movimiento
+	 * @param nuevoMov Le pasamos el movimiento a aprender
+	 * @param indice 
+	 * @return
+	 */
 	public Movimiento aprenderMovimiento(Movimiento nuevoMov, int indice) {
 		// Condición para evitar que se introduzca un índice erróneo en nuestro array
 		if (indice < 0 || indice >= this.movimiento.length) {

@@ -145,29 +145,129 @@ public class Combate {
     
     // ejecuta la accion seleccionada por el jugador o el rival
     private void resolverAccion(Turno.TipoAccion accion, Entrenador entrenador, Pokemon actuante, Pokemon enemigo, Turno t) {
-    	if (actuante.getVitalidad() <= 0) return; 
-    	
-    	switch(accion) {
-    		case ATACAR:
-    			Movimiento mov = (entrenador == jugador) ? t.getMovEntrenador() : t.getMovRival();
-    			if (puedeMoverse(actuante)) {
-    				actuante.atacar(enemigo, mov);
-    			}
-    			break;
-    		case MOCHILA: break;
-    		case CAMBIO:
-    			if (actuante.getEstadoActual() == Estado.ATRAPADO) return;	
-                if (entrenador == jugador) logCombate.registrarAccion("cambio1", actuante, enemigo, jugador, rival, t.getTurnoActual());
-                else logCombate.registrarAccion("cambio2", enemigo, actuante, jugador, rival, t.getTurnoActual());
-    			break;
-    		case HUIR:
-    			if (actuante.getEstadoActual() == Estado.ATRAPADO) return;
-    			this.perdedor = entrenador;
-				this.ganador = (entrenador == jugador) ? rival : jugador;
-				break;
-			default: break;
+        if (actuante.getVitalidad() <= 0) return; 
+        
+        switch(accion) {
+            case ATACAR:
+                Movimiento mov = (entrenador == jugador) ? t.getMovEntrenador() : t.getMovRival();
+                
+                if (actuante.getEstamina() >= mov.getCosteEstamina()) {
+                    actuante.setEstamina(actuante.getEstamina() - mov.getCosteEstamina());
+
+                    // Cálculo de efectividad y STAB
+                    double multiplicador = 1.0;
+                    if (actuante.getTipoPokemon().contains(mov.getTipoPokemon())) multiplicador *= 1.5;
+                    
+                    if (enemigo.getTipoPokemon() != null) {
+                        for (TipoPokemon tp : enemigo.getTipoPokemon()) {
+                            multiplicador *= calcularEfectividad(mov.getTipoPokemon(), tp);
+                        }
+                    }
+
+                    if (mov.getClaseMovimiento().equalsIgnoreCase("ataque")) {
+                        // Fórmula de daño equilibrada y segura
+                        double ataqueActuante = actuante.ataqueObjetoAplicado();
+                        double defensaEnemigo = Math.max(1, enemigo.defensaObjetoAplicado());
+                        
+                        int danioBase = (int) ((( (2 * actuante.getNivel() / 5.0 + 2) * mov.getPotencia() * (ataqueActuante / defensaEnemigo) ) / 50) + 2);
+                        int danioFinal = (int) (danioBase * multiplicador);
+                        
+                        if (multiplicador == 0) danioFinal = 0; // Inmunidad
+                        
+                        // Aplicamos el daño al enemigo actual
+                        enemigo.setVitalidad(Math.max(0, enemigo.getVitalidad() - danioFinal));
+                        
+                        if (entrenador == jugador) t.setDanioEntrenador(danioFinal);
+                        else t.setDanioRival(danioFinal);
+                        
+                    } else if (mov.getClaseMovimiento().equalsIgnoreCase("estado")) {
+                        enemigo.setEstadoActual(mov.getEstado());
+                    }
+                }
+                break;
+            case CAMBIO:
+                // El cambio tiene prioridad y no debe procesar daño contra el pokemon que sale
+                break;
+            case HUIR:
+                this.perdedor = entrenador;
+                this.ganador = (entrenador == jugador) ? rival : jugador;
+                break;
+            default: break;
         }
-    }  
+    }
+
+    // Método auxiliar para calcular la efectividad de un tipo contra otro (Tabla Gen 1)
+    private double calcularEfectividad(TipoPokemon tipoAtaque, TipoPokemon tipoDefensa) {
+        if (tipoAtaque == null || tipoDefensa == null) return 1.0;
+        
+        switch (tipoAtaque) {
+            case NORMAL:
+                if (tipoDefensa == TipoPokemon.ROCA) return 0.5;
+                if (tipoDefensa == TipoPokemon.FANTASMA) return 0.0;
+                break;
+            case FUEGO:
+                if (tipoDefensa == TipoPokemon.PLANTA || tipoDefensa == TipoPokemon.BICHO || tipoDefensa == TipoPokemon.HIELO) return 2.0;
+                if (tipoDefensa == TipoPokemon.FUEGO || tipoDefensa == TipoPokemon.AGUA || tipoDefensa == TipoPokemon.ROCA || tipoDefensa == TipoPokemon.DRAGON) return 0.5;
+                break;
+            case AGUA:
+                if (tipoDefensa == TipoPokemon.FUEGO || tipoDefensa == TipoPokemon.TIERRA || tipoDefensa == TipoPokemon.ROCA) return 2.0;
+                if (tipoDefensa == TipoPokemon.AGUA || tipoDefensa == TipoPokemon.PLANTA || tipoDefensa == TipoPokemon.DRAGON) return 0.5;
+                break;
+            case PLANTA:
+                if (tipoDefensa == TipoPokemon.AGUA || tipoDefensa == TipoPokemon.TIERRA || tipoDefensa == TipoPokemon.ROCA) return 2.0;
+                if (tipoDefensa == TipoPokemon.FUEGO || tipoDefensa == TipoPokemon.PLANTA || tipoDefensa == TipoPokemon.VENENO || tipoDefensa == TipoPokemon.VOLADOR || tipoDefensa == TipoPokemon.BICHO || tipoDefensa == TipoPokemon.DRAGON) return 0.5;
+                break;
+            case ELECTRICO:
+                if (tipoDefensa == TipoPokemon.AGUA || tipoDefensa == TipoPokemon.VOLADOR) return 2.0;
+                if (tipoDefensa == TipoPokemon.ELECTRICO || tipoDefensa == TipoPokemon.PLANTA || tipoDefensa == TipoPokemon.DRAGON) return 0.5;
+                if (tipoDefensa == TipoPokemon.TIERRA) return 0.0;
+                break;
+            case HIELO:
+                if (tipoDefensa == TipoPokemon.PLANTA || tipoDefensa == TipoPokemon.TIERRA || tipoDefensa == TipoPokemon.VOLADOR || tipoDefensa == TipoPokemon.DRAGON) return 2.0;
+                if (tipoDefensa == TipoPokemon.FUEGO || tipoDefensa == TipoPokemon.AGUA || tipoDefensa == TipoPokemon.HIELO) return 0.5;
+                break;
+            case LUCHA:
+                if (tipoDefensa == TipoPokemon.NORMAL || tipoDefensa == TipoPokemon.HIELO || tipoDefensa == TipoPokemon.ROCA) return 2.0;
+                if (tipoDefensa == TipoPokemon.VENENO || tipoDefensa == TipoPokemon.VOLADOR || tipoDefensa == TipoPokemon.PSIQUICO || tipoDefensa == TipoPokemon.BICHO) return 0.5;
+                if (tipoDefensa == TipoPokemon.FANTASMA) return 0.0;
+                break;
+            case VENENO:
+                if (tipoDefensa == TipoPokemon.PLANTA || tipoDefensa == TipoPokemon.BICHO) return 2.0;
+                if (tipoDefensa == TipoPokemon.VENENO || tipoDefensa == TipoPokemon.TIERRA || tipoDefensa == TipoPokemon.ROCA || tipoDefensa == TipoPokemon.FANTASMA) return 0.5;
+                break;
+            case TIERRA:
+                if (tipoDefensa == TipoPokemon.FUEGO || tipoDefensa == TipoPokemon.ELECTRICO || tipoDefensa == TipoPokemon.VENENO || tipoDefensa == TipoPokemon.ROCA) return 2.0;
+                if (tipoDefensa == TipoPokemon.PLANTA || tipoDefensa == TipoPokemon.BICHO) return 0.5;
+                if (tipoDefensa == TipoPokemon.VOLADOR) return 0.0;
+                break;
+            case VOLADOR:
+                if (tipoDefensa == TipoPokemon.PLANTA || tipoDefensa == TipoPokemon.LUCHA || tipoDefensa == TipoPokemon.BICHO) return 2.0;
+                if (tipoDefensa == TipoPokemon.ELECTRICO || tipoDefensa == TipoPokemon.ROCA) return 0.5;
+                break;
+            case PSIQUICO:
+                if (tipoDefensa == TipoPokemon.LUCHA || tipoDefensa == TipoPokemon.VENENO) return 2.0;
+                if (tipoDefensa == TipoPokemon.PSIQUICO) return 0.5;
+                break;
+            case BICHO:
+                if (tipoDefensa == TipoPokemon.PLANTA || tipoDefensa == TipoPokemon.PSIQUICO || tipoDefensa == TipoPokemon.VENENO) return 2.0;
+                if (tipoDefensa == TipoPokemon.FUEGO || tipoDefensa == TipoPokemon.LUCHA || tipoDefensa == TipoPokemon.VOLADOR || tipoDefensa == TipoPokemon.FANTASMA) return 0.5;
+                break;
+            case ROCA:
+                if (tipoDefensa == TipoPokemon.FUEGO || tipoDefensa == TipoPokemon.HIELO || tipoDefensa == TipoPokemon.VOLADOR || tipoDefensa == TipoPokemon.BICHO) return 2.0;
+                if (tipoDefensa == TipoPokemon.LUCHA || tipoDefensa == TipoPokemon.TIERRA) return 0.5;
+                break;
+            case FANTASMA:
+                if (tipoDefensa == TipoPokemon.FANTASMA) return 2.0;
+                if (tipoDefensa == TipoPokemon.NORMAL || tipoDefensa == TipoPokemon.PSIQUICO) return 0.0;
+                break;
+            case DRAGON:
+                if (tipoDefensa == TipoPokemon.DRAGON) return 2.0;
+                break;
+            default:
+                return 1.0;
+        }
+        return 1.0;
+    } 
     
     // valida si un pokemon puede hacer una accion dependiendo de su estado
     private boolean puedeMoverse(Pokemon p) {

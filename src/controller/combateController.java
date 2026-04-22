@@ -111,6 +111,19 @@ public class combateController implements DatosEntrenador {
             }
         });
     }
+    
+    private void ponerPokemonAlFrente(Entrenador ent, Pokemon pActivo) {
+        if (ent == null || ent.getEquipoPrincipal() == null || pActivo == null) return;
+        Pokemon[] equipo = ent.getEquipoPrincipal();
+        for (int i = 0; i < equipo.length; i++) {
+            if (equipo[i] != null && equipo[i].getIdPokemon() == pActivo.getIdPokemon()) {
+                Pokemon temp = equipo[0];
+                equipo[0] = equipo[i];
+                equipo[i] = temp;
+                break;
+            }
+        }
+    }
 
     // preparamos todo para empezar la pelea
     private void iniciarCombate() {
@@ -129,7 +142,9 @@ public class combateController implements DatosEntrenador {
         combate = new Combate(jugadorActual, rivalActual);
         
         pokeActivoJugador = obtenerSiguientePokemonVivo(jugadorActual);
+        ponerPokemonAlFrente(jugadorActual, pokeActivoJugador);
         pokeActivoRival = obtenerSiguientePokemonVivo(rivalActual);
+        ponerPokemonAlFrente(rivalActual, pokeActivoRival);
         
         // guardamos la vida maxima para poder calcular los porcentajes de las barras
         if (pokeActivoJugador != null) maxHpJugador = Math.max(1, pokeActivoJugador.getVitalidad());
@@ -217,19 +232,45 @@ public class combateController implements DatosEntrenador {
     }
 
     // cargamos la foto usando un try-catch por si acaso no encuentra la ruta y crashea
+   // cargamos la foto usando un try-catch por si acaso no encuentra la ruta y crashea
     private void cargarImagen(ImageView visor, String rutaBD, boolean esBack) {
         try {
+            if (rutaBD == null || rutaBD.trim().isEmpty()) {
+                visor.setVisible(false);
+                return;
+            }
+            
         	// buscamos al final del rutaDB para obtener el nombre del archivo
         	String nombreArchivo = rutaBD.substring(rutaBD.lastIndexOf("/") + 1);
             // miramos en que carpeta buscar dependiendo de si es espalda o frente 
             String carpeta = esBack ? "Back" : "Front";
             
-            // montamos la ruta usando la carpeta y el nombre que viene de la base de datos 
-            String rutaFinal = "/img/Pokemon/" + carpeta + "/" + nombreArchivo;
+            // convertimos la extension a gif para buscarlo en la carpeta local
+            String nombreGif = nombreArchivo.toLowerCase().replace(".png", ".gif").replace(".jpg", ".gif");
+            
+            // montamos la ruta usando la carpeta gif y el nombre que viene de la base de datos 
+            String rutaFinal = "/img/Pokemon/gif/" + carpeta + "/" + nombreGif;
+            InputStream is = getClass().getResourceAsStream(rutaFinal);
+            
+            // si no encuentra el gif en su carpeta de Front/Back, busca en la raiz de gif
+            if (is == null) {
+                rutaFinal = "/img/Pokemon/gif/" + nombreGif;
+                is = getClass().getResourceAsStream(rutaFinal);
+            }
+            
+            // si tampoco hay gif, usamos la ruta normal con el png de la base de datos como respaldo
+            if (is == null) {
+                rutaFinal = "/img/Pokemon/" + carpeta + "/" + nombreArchivo;
+                is = getClass().getResourceAsStream(rutaFinal);
+            }
             
             // intentamos cargar la imagen y mostrarla 
-            visor.setImage(new Image(getClass().getResourceAsStream(rutaFinal)));
-            visor.setVisible(true);
+            if (is != null) {
+                visor.setImage(new Image(is));
+                visor.setVisible(true);
+            } else {
+                visor.setVisible(false);
+            }
 
         } catch (Exception e) {
             // si algo falla (ruta mal puesta o archivo borrado) ocultamos el visor 
@@ -394,14 +435,19 @@ public class combateController implements DatosEntrenador {
     }
 
     // sacamos una ventanita para cambiar de pokemon si nos quedan mas vivos
-    @FXML
+  @FXML
     public void accionEquipo(ActionEvent event) {
         if (combate.getGanador() != null || pokeActivoJugador == null) return;
+
+        // Comprobación extra: Si está atrapado, no puede usar la opción EQUIPO
+        if (pokeActivoJugador.getEstadoActual() == Estado.ATRAPADO) {
+            txtLog.appendText("¡" + pokeActivoJugador.getMote() + " está atrapado y no puede ser cambiado!\n");
+            return;
+        }
 
         List<Pokemon> vivos = new ArrayList<>();
         List<String> nombres = new ArrayList<>();
         
-        // metemos en la lista solo a los que pueden pelear y no estan ya fuera
         for(Pokemon p : jugadorActual.getEquipoPrincipal()) {
             if(p != null && p.getVitalidad() > 0 && p != pokeActivoJugador) {
                 vivos.add(p);
@@ -413,7 +459,6 @@ public class combateController implements DatosEntrenador {
             txtLog.appendText("No te quedan otros Pokémon vivos en el equipo para cambiar.\n");
             return;
         }
-        // DIALOGO DE ELECCION
         
         ChoiceDialog<String> dialog = new ChoiceDialog<>(nombres.get(0), nombres);
         dialog.setTitle("Cambio de Pokémon");
@@ -426,7 +471,18 @@ public class combateController implements DatosEntrenador {
             int indiceSel = nombres.indexOf(result.get());
             Pokemon seleccionado = vivos.get(indiceSel);
             
-            int hpJugadorAntes = pokeActivoJugador.getVitalidad();
+            // Cambiamos el puntero al nuevo pokemon activo
+            pokeActivoJugador = seleccionado;
+            
+            // Sincronizamos el array para que los métodos de daño usen al bicho correcto
+            ponerPokemonAlFrente(jugadorActual, pokeActivoJugador);
+            
+            // ACTUALIZACIÓN CRUCIAL: Sincronizamos la vida máxima del Pokémon que ENTRA 
+            // Esto evita que el sistema crea que tiene 1 de vida y muera al primer golpe
+            maxHpJugador = Math.max(1, pokeActivoJugador.getVitalidad());
+
+            // Forzamos el cambio visual de imagen y barra ANTES del turno
+            actualizarUI();
 
             Turno turno = new Turno(combate.getContadorTurnos(), jugadorActual, rivalActual);
             turno.prepararCambioEntrenador(seleccionado);
@@ -434,18 +490,14 @@ public class combateController implements DatosEntrenador {
             gestionarTurnoRival(turno);
             combate.ejecutarTurno(turno);
             
-            turno.setDanioRival(hpJugadorAntes - Math.max(0, pokeActivoJugador.getVitalidad()));
-            
-            pokeActivoJugador = seleccionado;
-            maxHpJugador = Math.max(1, pokeActivoJugador.getVitalidad());
+            // Registramos el daño que ha recibido el nuevo Pokémon al entrar
+            turno.setDanioRival(maxHpJugador - Math.max(0, pokeActivoJugador.getVitalidad()));
             
             txtLog.appendText(turno.toString() + "\n\n");
             
             animarTurno(turno, () -> {
                 revisarEstadoPostTurno();
-                if (combate.getGanador() == null) {
-                    bloquearBotones(false);
-                }
+                if (combate.getGanador() == null) bloquearBotones(false);
             });
         }
     }
@@ -478,20 +530,45 @@ public class combateController implements DatosEntrenador {
         } catch (Exception e) {}
     }
 
-    // la ia del rival, pilla el primer ataque que pueda pagar con estamina o descansa
+ // la IA del rival mejorada y a prueba de bloqueos
     private void gestionarTurnoRival(Turno turno) {
-        Movimiento movRiv = null;
-        for(Movimiento m : pokeActivoRival.getMovimiento()) {
-            if(m != null && pokeActivoRival.getEstamina() >= m.getCosteEstamina()) {
-                movRiv = m; 
-                break;
+        List<Movimiento> movsValidos = new ArrayList<>();
+        boolean tieneAtaques = false;
+        
+        // Buscamos que ataques tiene el rival en su array y cuáles puede pagar
+        for (Movimiento m : pokeActivoRival.getMovimiento()) {
+            if (m != null) {
+                tieneAtaques = true;
+                // Si la estamina le da para pagar el ataque, lo añade a la lista de posibles
+                if (pokeActivoRival.getEstamina() >= m.getCosteEstamina()) {
+                    movsValidos.add(m);
+                }
             }
         }
-        if (movRiv != null) {
+        
+        // si tiene ataques que puede pagar, elige uno al azar y ataca
+        if (!movsValidos.isEmpty()) {
+            Movimiento movRiv = movsValidos.get((int) (Math.random() * movsValidos.size()));
             turno.prepararAtaqueRival(movRiv);
-        } else {
-            turno.setAccionRival(Turno.TipoAccion.NADA);
-            pokeActivoRival.descansar();
+        } 
+        // si no tiene ataques válidos, averiguamos el problema real
+        else {
+            // La BD da error y el Pokémon aparece vacio
+            if (!tieneAtaques) {
+                // Le forzamos a usar Placaje siempre que tenga al menos 20 de estamina
+                if (pokeActivoRival.getEstamina() >= 20) {
+                    Movimiento forceAtq = new Movimiento(0, 40, 35, 0, 20, 1, "ataque", "Placaje", "Ataque base", null, "", TipoPokemon.NORMAL);
+                    turno.prepararAtaqueRival(forceAtq);
+                } else {
+                    turno.setAccionRival(Turno.TipoAccion.NADA);
+                    pokeActivoRival.descansar();
+                }
+            } 
+            // Si tiene ataques, pero está completamente agotado
+            else {
+                turno.setAccionRival(Turno.TipoAccion.NADA);
+                pokeActivoRival.descansar();
+            }
         }
     }
 
@@ -499,20 +576,29 @@ public class combateController implements DatosEntrenador {
     private void revisarEstadoPostTurno() {
         if(pokeActivoJugador != null && pokeActivoJugador.getVitalidad() <= 0) {
             txtLog.appendText("¡" + pokeActivoJugador.getMote() + " se ha debilitado!\n");
+            
             pokeActivoJugador = obtenerSiguientePokemonVivo(jugadorActual);
+            ponerPokemonAlFrente(jugadorActual, pokeActivoJugador);
+            
             if (pokeActivoJugador != null) {
+                // Sincronizamos la vida máxima del nuevo Pokémon tras el debilitamiento
                 maxHpJugador = Math.max(1, pokeActivoJugador.getVitalidad());
                 txtLog.appendText("¡Adelante " + pokeActivoJugador.getMote() + "!\n");
             }
         }
+
         if(pokeActivoRival != null && pokeActivoRival.getVitalidad() <= 0) {
             txtLog.appendText("¡El " + pokeActivoRival.getMote() + " enemigo se ha debilitado!\n");
+            
             pokeActivoRival = obtenerSiguientePokemonVivo(rivalActual);
+            ponerPokemonAlFrente(rivalActual, pokeActivoRival);
+            
             if (pokeActivoRival != null) {
                 maxHpRival = Math.max(1, pokeActivoRival.getVitalidad());
                 txtLog.appendText("El rival saca a " + pokeActivoRival.getMote() + ".\n");
             }
         }
+        
         actualizarUI();
     }
 
