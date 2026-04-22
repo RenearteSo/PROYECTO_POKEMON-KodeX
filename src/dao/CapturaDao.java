@@ -141,8 +141,10 @@ public class CapturaDao {
 			ps.setInt(13, p.getEstamina());
 			ps.setInt(14, p.getExp());
 
-			String sexoBD = (p.getSexo() != null && p.getSexo().equalsIgnoreCase("MACHO")) ? "M" : "H";
+			// CORRECCIÓN: Comprobamos si es "M" en lugar de "MACHO" para que guarde machos y hembras al 50%
+			String sexoBD = (p.getSexo() != null && p.getSexo().equalsIgnoreCase("M")) ? "M" : "H";
 			ps.setString(15, sexoBD);
+			
 			ps.setString(16, p.getEstadoActual().toString());
 			ps.setString(17, ub);
 
