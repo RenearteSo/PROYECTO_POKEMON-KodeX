@@ -31,8 +31,8 @@ import dao.CombateDao;
 public class combateController implements DatosEntrenador {
 
     // enlazamos todas las cosas de la interfaz visual
-    @FXML 
-    private ImageView fondoBatalla, imgPokemonJugador, imgPokemonRival, botonPantalla;
+	@FXML 
+    private ImageView fondoBatalla, imgPokemonJugador, imgPokemonRival, botonPantalla, imgEntrenadorLiga;
     
     @FXML
     private Label lblNombreJugador, lblNivelJugador, lblNombreRival, lblNivelRival;
@@ -81,29 +81,47 @@ public class combateController implements DatosEntrenador {
         iniciarCombate();
     }
 
-    @FXML
+ @FXML
     public void initialize() {
+        try {
+            imgAgrandar = new Image(getClass().getResourceAsStream("/img/Menu/botonAgrandar.png"));
+            imgEncoger = new Image(getClass().getResourceAsStream("/img/Menu/botonMinimizar.png"));
+        } catch (Exception e) {
+            System.out.println("Aviso: No se encontraron los iconos de minimizar/agrandar.");
+        }
+
         Platform.runLater(() -> {
             if (fondoBatalla.getScene() != null) {
                 Scene scene = fondoBatalla.getScene();
                 Stage stage = (Stage) scene.getWindow();
 
-                // hacemos que el fondo y los pokemon se adapten si cambiamos el tamaño de la ventana
                 fondoBatalla.fitWidthProperty().bind(scene.widthProperty());
                 fondoBatalla.fitHeightProperty().bind(scene.heightProperty());
 
+                // Actualización dinámica cuando se redimensiona la ventana
                 scene.widthProperty().addListener((obs, oldVal, newVal) -> {
                     double ancho = newVal.doubleValue();
                     imgPokemonJugador.setLayoutX((ancho * 0.28) - (imgPokemonJugador.getFitWidth() / 2));
                     imgPokemonRival.setLayoutX((ancho * 0.60) - (imgPokemonRival.getFitWidth() / 2));
+                    
+                    // CENTRAR ENTRENADOR LIGA 
+                    if (imgEntrenadorLiga != null) {
+                        imgEntrenadorLiga.setLayoutX((ancho / 2) - (imgEntrenadorLiga.getFitWidth() / 2) - 100);
+                    }
                 });
 
                 scene.heightProperty().addListener((obs, oldVal, newVal) -> {
                     double alto = newVal.doubleValue();
                     imgPokemonJugador.setLayoutY((alto * 0.70) - imgPokemonJugador.getFitHeight());
                     imgPokemonRival.setLayoutY((alto * 0.50) - imgPokemonRival.getFitHeight());
+                    
+                    // CENTRAR ENTRENADOR LIGA (Restamos 250px)
+                    if (imgEntrenadorLiga != null) {
+                        imgEntrenadorLiga.setLayoutY((alto / 2) - (imgEntrenadorLiga.getFitHeight() / 2) - 250);
+                    }
                 });
                 
+                // Posicionamiento inicial nada mas abrir la pantalla
                 double wInicial = scene.getWidth();
                 double hInicial = scene.getHeight();
                 imgPokemonJugador.setLayoutX((wInicial * 0.28) - (imgPokemonJugador.getFitWidth() / 2));
@@ -111,8 +129,12 @@ public class combateController implements DatosEntrenador {
                 imgPokemonJugador.setLayoutY((hInicial * 0.70) - imgPokemonJugador.getFitHeight());
                 imgPokemonRival.setLayoutY((hInicial * 0.50) - imgPokemonRival.getFitHeight());
 
-                if (botonPantalla != null) {
-                    // cambiamos el icono dependiendo de si estamos en pantalla completa o no
+                if (imgEntrenadorLiga != null) {
+                    imgEntrenadorLiga.setLayoutX((wInicial / 2) - (imgEntrenadorLiga.getFitWidth() / 2) - 100);
+                    imgEntrenadorLiga.setLayoutY((hInicial / 2) - (imgEntrenadorLiga.getFitHeight() / 2) - 250);
+                }
+
+                if (botonPantalla != null && imgAgrandar != null && imgEncoger != null) {
                     botonPantalla.setImage(stage.isFullScreen() ? imgEncoger : imgAgrandar);
                     stage.fullScreenProperty().addListener((obs, ov, nv) -> botonPantalla.setImage(nv ? imgEncoger : imgAgrandar));
                 }
@@ -133,18 +155,16 @@ public class combateController implements DatosEntrenador {
         }
     }
 
-    // preparamos todo para empezar la pelea
+   // preparamos todo para empezar la pelea
     private void iniciarCombate() {
         if(jugadorActual == null) return;
         
-        // --- COMPROBACIÓN DE LIGA POKÉMON ---
+        // liga pokemon
         if (modoLigaActivo) {
-            // El rival ya viene sacado de la lista
             rivalActual = rivalesLiga.get(rondaLigaActual - 1);
             combate = new Combate(jugadorActual, rivalActual);
             combate.configurarComoLiga(rondaLigaActual, descansoUsadoEstaRonda);
         } else {
-            // Lógica normal que ya tenías
             int[] niveles = dao.obtenerRangoNivelesEquipo(jugadorActual.getIdEntrenador());
             int numPokemonsJugador = 0;
             for(Pokemon p : jugadorActual.getEquipoPrincipal()) {
@@ -161,12 +181,48 @@ public class combateController implements DatosEntrenador {
         pokeActivoRival = obtenerSiguientePokemonVivo(rivalActual);
         ponerPokemonAlFrente(rivalActual, pokeActivoRival);
         
-        // guardamos la vida maxima para poder calcular los porcentajes de las barras
         if (pokeActivoJugador != null) maxHpJugador = Math.max(1, pokeActivoJugador.getVitalidad());
         if (pokeActivoRival != null) maxHpRival = Math.max(1, pokeActivoRival.getVitalidad());
         
         if (modoLigaActivo) {
             txtLog.setText("¡Ronda " + rondaLigaActual + " de la Liga Pokémon contra " + rivalActual.getNombreEntrenador() + "!\n\n");
+            
+            // animacion entrenador
+            if (rivalActual.getRutaImgFrontal() != null && !rivalActual.getRutaImgFrontal().isEmpty()) {
+                try {
+                    InputStream is = getClass().getResourceAsStream(rivalActual.getRutaImgFrontal());
+                    if (is != null) {
+                        imgEntrenadorLiga.setImage(new Image(is));
+                        
+                        imgEntrenadorLiga.setOpacity(0.0);
+                        imgEntrenadorLiga.setVisible(true);
+                        
+                        bloquearBotones(true);
+                        imgPokemonRival.setOpacity(0.0); 
+                        
+                        // El entrenador aparece suavemente y se queda
+                        FadeTransition fadeInEntrenador = new FadeTransition(Duration.millis(800), imgEntrenadorLiga);
+                        fadeInEntrenador.setFromValue(0.0);
+                        fadeInEntrenador.setToValue(1.0);
+                        
+                        
+                        FadeTransition fadeInPokemon = new FadeTransition(Duration.millis(800), imgPokemonRival);
+                        fadeInPokemon.setDelay(Duration.millis(500)); // esperamos un poquito
+                        fadeInPokemon.setFromValue(0.0);
+                        fadeInPokemon.setToValue(1.0);
+                        
+                        fadeInPokemon.setOnFinished(e -> {
+                            bloquearBotones(false);
+                        });
+                        
+                        // Reproducimos ambas 
+                        fadeInEntrenador.play();
+                        fadeInPokemon.play();
+                    }
+                } catch (Exception e) {}
+            }
+            // ------------------------------------------------
+            
         } else {
             txtLog.setText("¡Comienza el combate contra " + rivalActual.getNombreEntrenador() + "!\n\n");
         }
@@ -178,9 +234,9 @@ public class combateController implements DatosEntrenador {
             btnHuir.setText("VOLVER");
             return;
         }
+        
         actualizarUI();
     }
-
     // buscamos el primer pokemon que no este debilitado
     private Pokemon obtenerSiguientePokemonVivo(Entrenador ent) {
         if (ent == null || ent.getEquipoPrincipal() == null) return null;
