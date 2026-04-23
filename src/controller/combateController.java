@@ -23,6 +23,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
 import model.*;
 import dao.CombateDao;
@@ -705,35 +706,45 @@ public class combateController implements DatosEntrenador {
         stage.setFullScreen(!stage.isFullScreen());
     }
     
-    private void lanzarDialogoDescansoLiga() {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Victoria en la Ronda " + rondaLigaActual);
-            alert.setHeaderText("¿Quieres descansar antes del siguiente combate?");
-            alert.setContentText("Si descansas, tu equipo se curará entero, pero ganarás la MITAD de dinero en el siguiente combate.");
+ private void lanzarDialogoDescansoLiga() {
+    Platform.runLater(() -> {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Victoria en la Ronda " + rondaLigaActual);
+        alert.setHeaderText("¿Quieres descansar antes del siguiente combate?");
+        alert.setContentText("Si descansas, tu equipo se curará entero, pero ganarás la MITAD de dinero en el siguiente combate.");
+        
+        // obtenemos la ventana a través del txtLog 
+        Window owner = txtLog.getScene().getWindow();
+        alert.initOwner(owner);
 
-            ButtonType btnDescansar = new ButtonType("Descansar y Curar");
-            ButtonType btnContinuar = new ButtonType("Continuar (Doble Dinero)");
-
-            alert.getButtonTypes().setAll(btnDescansar, btnContinuar);
-            Optional<ButtonType> result = alert.showAndWait();
-            
-            rondaLigaActual++; // Avanzamos de ronda
-            
-            if (result.isPresent() && result.get() == btnDescansar) {
-                descansoUsadoEstaRonda = true;
-                ligaDao.curarEquipoEntero(jugadorActual);
-                dao.actualizarRecompensasBD(jugadorActual); // guardamos la cura en la BD
-                txtLog.setText("Tu equipo ha descansado. ¡Prepárate para la Ronda " + rondaLigaActual + "!\n\n");
-            } else {
-                descansoUsadoEstaRonda = false;
-                txtLog.setText("¡Has decidido ser valiente! ¡Prepárate para la Ronda " + rondaLigaActual + "!\n\n");
-            }
-            
-            iniciarCombate();
-            bloquearBotones(false);
+        // logica para centrar el diálogo y que no se salga de la pantalla
+        alert.setOnShowing(e -> {
+            alert.setX(owner.getX() + (owner.getWidth() / 2) - (alert.getDialogPane().getWidth() / 2));
+            alert.setY(owner.getY() + (owner.getHeight() / 2) - (alert.getDialogPane().getHeight() / 2));
         });
-    }
+
+        ButtonType btnDescansar = new ButtonType("Descansar y Curar");
+        ButtonType btnContinuar = new ButtonType("Continuar (Doble Dinero)");
+
+        alert.getButtonTypes().setAll(btnDescansar, btnContinuar);
+        Optional<ButtonType> result = alert.showAndWait();
+        
+        rondaLigaActual++; // Avanzamos de ronda
+        
+        if (result.isPresent() && result.get() == btnDescansar) {
+            descansoUsadoEstaRonda = true;
+            ligaDao.curarEquipoEntero(jugadorActual);
+            dao.actualizarRecompensasBD(jugadorActual); // guardamos la cura en la BD
+            txtLog.setText("Tu equipo ha descansado. ¡Prepárate para la Ronda " + rondaLigaActual + "!\n\n");
+        } else {
+            descansoUsadoEstaRonda = false;
+            txtLog.setText("¡Has decidido ser valiente! ¡Prepárate para la Ronda " + rondaLigaActual + "!\n\n");
+        }
+        
+        iniciarCombate();
+        bloquearBotones(false);
+    });
+}
 
     // cambiamos el fondo de la batalla dependiendo del tipo que tenga el rival
     private void ponerFondoSegunTipo(String tipo) {
