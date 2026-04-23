@@ -62,6 +62,13 @@ public class combateController implements DatosEntrenador {
     private Pokemon pokeActivoJugador;
     private Pokemon pokeActivoRival;
     
+ // VARIABLES DE LIGA
+    public boolean modoLigaActivo = false;
+    public int rondaLigaActual = 1;
+    public boolean descansoUsadoEstaRonda = false;
+    public List<Entrenador> rivalesLiga;
+    private dao.LigaDao ligaDao = new dao.LigaDao();
+    
     private int maxHpJugador = 1;
     private int maxHpRival = 1;
 
@@ -129,17 +136,24 @@ public class combateController implements DatosEntrenador {
     private void iniciarCombate() {
         if(jugadorActual == null) return;
         
-        int[] niveles = dao.obtenerRangoNivelesEquipo(jugadorActual.getIdEntrenador());
-        
-        // miramos cuantos pokemon llevamos para que el rival saque los mismos y sea justo
-        int numPokemonsJugador = 0;
-        for(Pokemon p : jugadorActual.getEquipoPrincipal()) {
-            if(p != null && p.getVitalidad() > 0) numPokemonsJugador++;
-        }
-        if (numPokemonsJugador == 0) numPokemonsJugador = 1;
+        // --- COMPROBACIÓN DE LIGA POKÉMON ---
+        if (modoLigaActivo) {
+            // El rival ya viene sacado de la lista
+            rivalActual = rivalesLiga.get(rondaLigaActual - 1);
+            combate = new Combate(jugadorActual, rivalActual);
+            combate.configurarComoLiga(rondaLigaActual, descansoUsadoEstaRonda);
+        } else {
+            // Lógica normal que ya tenías
+            int[] niveles = dao.obtenerRangoNivelesEquipo(jugadorActual.getIdEntrenador());
+            int numPokemonsJugador = 0;
+            for(Pokemon p : jugadorActual.getEquipoPrincipal()) {
+                if(p != null && p.getVitalidad() > 0) numPokemonsJugador++;
+            }
+            if (numPokemonsJugador == 0) numPokemonsJugador = 1;
 
-        rivalActual = dao.generarRivalAleatorio(niveles[0], niveles[1], numPokemonsJugador);
-        combate = new Combate(jugadorActual, rivalActual);
+            rivalActual = dao.generarRivalAleatorio(niveles[0], niveles[1], numPokemonsJugador);
+            combate = new Combate(jugadorActual, rivalActual);
+        }
         
         pokeActivoJugador = obtenerSiguientePokemonVivo(jugadorActual);
         ponerPokemonAlFrente(jugadorActual, pokeActivoJugador);
@@ -150,7 +164,11 @@ public class combateController implements DatosEntrenador {
         if (pokeActivoJugador != null) maxHpJugador = Math.max(1, pokeActivoJugador.getVitalidad());
         if (pokeActivoRival != null) maxHpRival = Math.max(1, pokeActivoRival.getVitalidad());
         
-        txtLog.setText("¡Comienza el combate contra " + rivalActual.getNombreEntrenador() + "!\n\n");
+        if (modoLigaActivo) {
+            txtLog.setText("¡Ronda " + rondaLigaActual + " de la Liga Pokémon contra " + rivalActual.getNombreEntrenador() + "!\n\n");
+        } else {
+            txtLog.setText("¡Comienza el combate contra " + rivalActual.getNombreEntrenador() + "!\n\n");
+        }
 
         if (pokeActivoJugador == null) {
             txtLog.appendText("¡No tienes Pokémon en condiciones para luchar!\n");
@@ -619,26 +637,41 @@ public class combateController implements DatosEntrenador {
                             if (nuevaPokedex != null) {
                                 String moteAntiguo = p.getMote();
                                 p.evolucionar(nuevaPokedex);
-                                // Si no le pusimos un mote customizado, actualizamos el nombre a la nueva especie
                                 if (moteAntiguo.equals(p.getNumPokedex().getNomPokemon())) {
                                     p.setMote(nuevaPokedex.getNomPokemon());
                                 }
-                                txtLog.appendText("\n✨ ¡QUÉ ES ESTO! ¡Tu " + moteAntiguo + " ha evolucionado a " + nuevaPokedex.getNomPokemon() + "! ✨\n");
+                                txtLog.appendText("\n ¡QUÉ ES ESTO! ¡Tu " + moteAntiguo + " ha evolucionado a " + nuevaPokedex.getNomPokemon() + "! \n");
                             }
                         }
                     }
                 }
-                // -------------------------------------------------
+                
+                // --- LÓGICA DE AVANCE EN LA LIGA ---
+                if (modoLigaActivo) {
+                    dao.actualizarRecompensasBD(jugadorActual); // Guardamos progreso intermedio
+                    if (rondaLigaActual == 5) {
+                        txtLog.appendText("\n\n¡ENHORABUENA! ¡HAS SUPERADO LA LIGA POKÉMON Y ERES EL NUEVO CAMPEÓN!");
+                        bloquearBotones(true);
+                        btnHuir.setDisable(false);
+                        btnHuir.setText("VOLVER AL MENÚ");
+                    } else {
+                        lanzarDialogoDescansoLiga(); // Preguntamos si quiere descansar
+                    }
+                } else {
+                    dao.actualizarRecompensasBD(jugadorActual);
+                    bloquearBotones(true);
+                    btnHuir.setDisable(false);
+                    btnHuir.setText("VOLVER AL MENÚ");
+                }
                 
             } else {
                 txtLog.appendText("\n>>> TE HAS QUEDADO SIN POKÉMON. HAS PERDIDO... <<<\n");
+                if (modoLigaActivo) txtLog.appendText("Tu intento en la Liga Pokémon ha terminado aquí.\n");
+                dao.actualizarRecompensasBD(jugadorActual);
+                bloquearBotones(true);
+                btnHuir.setDisable(false);
+                btnHuir.setText("VOLVER AL MENÚ");
             }
-            bloquearBotones(true);
-            btnHuir.setDisable(false);
-            btnHuir.setText("VOLVER AL MENÚ");
-            
-            // guardamos el progreso de exp, dinero, evolución y curación en la base de datos
-            dao.actualizarRecompensasBD(jugadorActual);
         }
     }
 
@@ -670,6 +703,36 @@ public class combateController implements DatosEntrenador {
     void gestionarPantalla(MouseEvent event) {
         Stage stage = (Stage) fondoBatalla.getScene().getWindow();
         stage.setFullScreen(!stage.isFullScreen());
+    }
+    
+    private void lanzarDialogoDescansoLiga() {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Victoria en la Ronda " + rondaLigaActual);
+            alert.setHeaderText("¿Quieres descansar antes del siguiente combate?");
+            alert.setContentText("Si descansas, tu equipo se curará entero, pero ganarás la MITAD de dinero en el siguiente combate.");
+
+            ButtonType btnDescansar = new ButtonType("Descansar y Curar");
+            ButtonType btnContinuar = new ButtonType("Continuar (Doble Dinero)");
+
+            alert.getButtonTypes().setAll(btnDescansar, btnContinuar);
+            Optional<ButtonType> result = alert.showAndWait();
+            
+            rondaLigaActual++; // Avanzamos de ronda
+            
+            if (result.isPresent() && result.get() == btnDescansar) {
+                descansoUsadoEstaRonda = true;
+                ligaDao.curarEquipoEntero(jugadorActual);
+                dao.actualizarRecompensasBD(jugadorActual); // guardamos la cura en la BD
+                txtLog.setText("Tu equipo ha descansado. ¡Prepárate para la Ronda " + rondaLigaActual + "!\n\n");
+            } else {
+                descansoUsadoEstaRonda = false;
+                txtLog.setText("¡Has decidido ser valiente! ¡Prepárate para la Ronda " + rondaLigaActual + "!\n\n");
+            }
+            
+            iniciarCombate();
+            bloquearBotones(false);
+        });
     }
 
     // cambiamos el fondo de la batalla dependiendo del tipo que tenga el rival

@@ -379,10 +379,10 @@ public class Combate {
     // calcula la experiencia, resta el dinero si pierdes y lo suma si ganas, incluyendo la liga pokemon
     private void repartirRecompensas(Pokemon pJugador, Pokemon pRival) {
         
-        // --- LÓGICA DE DINERO ---
+        // LÓGICA DE DINERO
         if (esLiga) {
             if (ganador == jugador) {
-                // Premios específicos de la Liga Pokémon
+                // premios específicos de la Liga Pokémon
                 int premio = 0;
                 switch (numCombateLiga) {
                     case 1: premio = 1000; break;
@@ -394,7 +394,7 @@ public class Combate {
                 ganador.setPokedollar(ganador.getPokedollar() + premio);
                 this.totalDineroGanado = premio;
             } else if (ganador == rival) {
-                // Si pierdes en la liga, pierdes la mitad de TODOS tus ahorros
+                // si pierdes en la liga, pierdes la mitad de TODOS tus ahorros
                 int penalizacion = perdedor.getPokedollar() / 2;
                 perdedor.setPokedollar(perdedor.getPokedollar() - penalizacion);
             }
@@ -408,7 +408,7 @@ public class Combate {
             }
         }
 
-        // --- LÓGICA DE EXPERIENCIA (Se mantiene igual) ---
+        // LOGICA DE EXPERIENCIA
         if (ganador == jugador && pJugador != null && pJugador.getVitalidad() > 0 && pRival != null) {
             int expGanada = ((pJugador.getNivel() + (pRival.getNivel() * 10)) / 4) * Math.max(1, koRival);
             pJugador.setExp(pJugador.getExp() + expGanada);

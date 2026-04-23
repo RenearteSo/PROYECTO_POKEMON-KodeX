@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" style="-fx-background-color: #2b2b2b;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.EleccionCombateController">
+   <children>
+      <VBox alignment="CENTER" layoutX="340.0" layoutY="200.0" prefHeight="400.0" prefWidth="600.0" spacing="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label text="SELECCIONA EL MODO DE COMBATE" textFill="WHITE">
+               <font>
+                  <Font name="Pokemon GB" size="24.0" />
+               </font>
+            </Label>
+            <Button mnemonicParsing="false" onAction="#accionCombateNormal" prefHeight="80.0" prefWidth="400.0" style="-fx-background-color: #87CEFA; -fx-border-color: #4169E1; -fx-border-width: 4; -fx-border-radius: 10; -fx-background-radius: 10;" text="COMBATE NORMAL">
+               <font>
+                  <Font name="Pokemon GB" size="18.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#accionLigaPokemon" prefHeight="80.0" prefWidth="400.0" style="-fx-background-color: #FFD700; -fx-border-color: #DAA520; -fx-border-width: 4; -fx-border-radius: 10; -fx-background-radius: 10;" text="LIGA POKÉMON">
+               <font>
+                  <Font name="Pokemon GB" size="18.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#accionVolver" prefHeight="50.0" prefWidth="200.0" style="-fx-background-color: #FF6B6B; -fx-border-color: #CC0000; -fx-border-width: 3; -fx-border-radius: 8; -fx-background-radius: 8;" text="VOLVER">
+               <font>
+                  <Font name="Pokemon GB" size="14.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

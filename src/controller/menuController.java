@@ -376,7 +376,7 @@ public class menuController implements DatosEntrenador{
 	@FXML
 	void irCombate(MouseEvent event) {
 		// Usamos el método genérico
-		cambiarEscena("combate.fxml", botonCrianza);
+		cambiarEscena("eleccionCombate.fxml", botonCombate);
 	}
 	//Método implementado de la interfaz Datos Entrenador
 	@Override
