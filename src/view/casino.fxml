@@ -47,7 +47,7 @@
                   <ImageView fx:id="imgRuleta" fitHeight="200.0" fitWidth="200.0" layoutX="175.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true" visible="false" />
                   <Label fx:id="labelResultadoJuego" alignment="CENTER" layoutX="0.0" layoutY="195.0" prefHeight="22.0" prefWidth="550.0" textFill="#b29600">
                      <font>
-                        <Font name="Pokemon GB" size="16.0" />
+                        <Font name="Pokemon GB" size="15.0" />
                      </font>
                   </Label>
                   <Button fx:id="btnAdivinar" layoutX="50.0" layoutY="229.0" mnemonicParsing="false" onAction="#clickAdivinar" onMouseEntered="#animarEntradaBoton" onMouseExited="#animarSalidaBoton" prefHeight="80.0" prefWidth="450.0" style="-fx-background-color: #1DA1C2; -fx-border-color: #ffffff; -fx-border-width: 2px; -fx-border-radius: 6px; -fx-background-radius: 6px;" text="ADIVINA EL NÚMERO" textFill="WHITE">

@@ -72,6 +72,14 @@ public class combateController implements DatosEntrenador {
     
     private int maxHpJugador = 1;
     private int maxHpRival = 1;
+    
+ // MUSICA
+    private MediaPlayer musicaCombate;
+    @FXML private ImageView botonSonido;
+    @FXML private Slider sliderVolumen;
+    private Image imgVolMax = new Image(getClass().getResourceAsStream("/img/Menu/volumenMax.png"));
+    private Image imgVolMin = new Image(getClass().getResourceAsStream("/img/Menu/volumenMin.png"));
+    private Image imgVolMute = new Image(getClass().getResourceAsStream("/img/Menu/sinVolumen.png"));
 
     // pillamos los datos del jugador desde la otra pantalla y cargamos su equipo
     @Override
@@ -140,6 +148,26 @@ public class combateController implements DatosEntrenador {
                 }
             }
         });
+     // MUSICA
+        iniciarMusica();
+        if (sliderVolumen != null) {
+            sliderVolumen.setVisible(false);
+            sliderVolumen.valueProperty().addListener((obs, oldVal, newVal) -> {
+                double vol = newVal.doubleValue();
+                if (musicaCombate != null) musicaCombate.setVolume(vol);
+                
+                if (botonSonido != null) {
+                    if (vol == 0) {
+                        botonSonido.setImage(imgVolMute);
+                    } else if (vol < 0.5) {
+                        botonSonido.setImage(imgVolMin);
+                    } else {
+                        botonSonido.setImage(imgVolMax);
+                    }
+                }
+            });
+            sliderVolumen.setValue(sliderVolumen.getValue());
+        }
     }
     
     private void ponerPokemonAlFrente(Entrenador ent, Pokemon pActivo) {
@@ -305,8 +333,42 @@ public class combateController implements DatosEntrenador {
             btn.setVisible(false);
         }
     }
+ //  METODO PARA LA MUSICA
+    private void iniciarMusica() {
+        try {
 
-    // cargamos la foto usando un try-catch por si acaso no encuentra la ruta y crashea
+            String ruta = getClass().getResource("/audio/musica/musicaCombate.mp3").toExternalForm();
+            Media sonido = new Media(ruta);
+            musicaCombate = new MediaPlayer(sonido);
+            musicaCombate.setCycleCount(MediaPlayer.INDEFINITE);
+            
+            if (sliderVolumen != null) {
+                musicaCombate.setVolume(sliderVolumen.getValue());
+            } else {
+                musicaCombate.setVolume(Configuracion.volumenMusica);
+            }
+            musicaCombate.play();
+        } catch (Exception e) {
+            System.err.println("Error música: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void mostrarBarraVolumen(MouseEvent event) {
+        if (sliderVolumen != null) {
+            if (event.getClickCount() == 2) { 
+                sliderVolumen.setValue(0);
+            } else {
+                sliderVolumen.setVisible(!sliderVolumen.isVisible());
+            }
+        }
+    }
+
+    @FXML
+    private void ocultarSlider(MouseEvent event) {
+        if (sliderVolumen != null) sliderVolumen.setVisible(false);
+    }
+    
    // cargamos la foto usando un try-catch por si acaso no encuentra la ruta y crashea
     private void cargarImagen(ImageView visor, String rutaBD, boolean esBack) {
         try {
@@ -753,6 +815,11 @@ public class combateController implements DatosEntrenador {
             }
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);
+         // paramos la musica
+            if (musicaCombate != null) {
+                musicaCombate.stop();
+                musicaCombate.dispose();
+            }
         } catch (Exception e) {}
     }
     
