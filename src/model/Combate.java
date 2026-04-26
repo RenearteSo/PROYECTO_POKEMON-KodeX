@@ -22,7 +22,11 @@ public class Combate {
     private int numCombateLiga = 1;
     private boolean descansoPrevioUsado = false;
 
-    // constructor con entrenador y rival
+    /**
+     * constructor con entrenador y rival
+     * @param jugador Entrenador principal.
+     * @param rival Entrenador oponente.
+     */
  	public Combate(Entrenador jugador, Entrenador rival) {
  		this.jugador = jugador;
  		this.rival = rival;
@@ -36,46 +40,85 @@ public class Combate {
  	}
 
     // METÓDOS GET Y SET
+    /**
+     * Metodo para obtener el ganador
+     * @return El entrenador ganador.
+     */
 	public Entrenador getGanador() { 
         return ganador; 
     }
 
+    /**
+     * Metodo para obtener el entrenador del perdedor
+     * @return El entrenador perdedor.
+     */
 	public Entrenador getPerdedor() { 
         return perdedor; 
     }
 
+    /**
+     * Metodo para obtener el contador de turnos
+     * @return Número de turno actual.
+     */
 	public int getContadorTurnos() { 
         return contadorTurnos; 
     }
 
+    /**
+     * Metodo para obtener el historial de turnos en LinkedList
+     * @return Lista de turnos jugados.
+     */
 	public LinkedList<Turno> getHistorialTurnos() { 
         return historialTurnos; 
     }
 
+    /**
+     * Metodo para obtener los KOs del jugador
+     * @return KOs sufridos por el jugador.
+     */
 	public int getKoJugador() { 
         return koJugador; 
     }
 
+    /**
+     * Metodo para obtener los KO dekl rival
+     * @return KOs sufridos por el rival.
+     */
 	public int getKoRival() { 
         return koRival; 
     }
 
+    /**
+     * Metodo para obtener el dinero ganado total
+     * @return Cantidad de dinero ganada.
+     */
     public int getTotalDineroGanado() { 
         return totalDineroGanado; 
     }
 
+    /**
+     * Metodo para obtener la experiencia total ganada
+     * @return Cantidad de experiencia ganada.
+     */
     public int getTotalExpGanada() { 
         return totalExpGanada; 
     }
     
- // configurar la liga pokemon
+    /**
+     * configurar la liga pokemon
+     * @param numCombate Numero del combate
+     * @param descansoUsado Si se descansó antes.
+     */
     public void configurarComoLiga(int numCombate, boolean descansoUsado) {
         this.esLiga = true;
         this.numCombateLiga = numCombate;
         this.descansoPrevioUsado = descansoUsado;
     }
     
-    // método para ejecutar el turno
+    /**
+     * método para ejecutar el turno
+     * @param t Turno
+     */
     public void ejecutarTurno (Turno t) {
     	
     	// obtenemos los respectivos pokemon
@@ -155,7 +198,14 @@ public class Combate {
 		contadorTurnos++;
     } 
     
-    // ejecuta la accion seleccionada por el jugador o el rival
+    /**
+     * ejecuta la accion seleccionada por el jugador o el rival
+     * @param accion Accion elegida.
+     * @param entrenador Entrenador que actua.
+     * @param actuante Pokemon que ejecuta la accion.
+     * @param enemigo Pokemon objetivo.
+     * @param t Turno actual.
+     */
     private void resolverAccion(Turno.TipoAccion accion, Entrenador entrenador, Pokemon actuante, Pokemon enemigo, Turno t) {
         if (actuante.getVitalidad() <= 0) return; 
         
@@ -208,7 +258,12 @@ public class Combate {
         }
     }
 
-    // Método auxiliar para calcular la efectividad de un tipo contra otro (Tabla Gen 1)
+    /**
+     * Metodo auxiliar para calcular la efectividad de un tipo contra otro 
+     * @param tipoAtaque Tipo del movimiento.
+     * @param tipoDefensa Tipo del Pokemon defensor.
+     * @return Multiplicador de danio.
+     */
     private double calcularEfectividad(TipoPokemon tipoAtaque, TipoPokemon tipoDefensa) {
         if (tipoAtaque == null || tipoDefensa == null) return 1.0;
         
@@ -281,7 +336,11 @@ public class Combate {
         return 1.0;
     } 
     
-    // valida si un pokemon puede hacer una accion dependiendo de su estado
+    /**
+     * valida si un pokemon puede hacer una accion dependiendo de su estado
+     * @param p Pokemon para a comprobar.
+     * @return si puede moverse.
+     */
     private boolean puedeMoverse(Pokemon p) {
     	if(p.getEstadoActual() == Estado.DORMIDO) return false;
     	if(p.getEstadoActual() == Estado.CONGELADO) return false;
@@ -300,7 +359,11 @@ public class Combate {
     	return true; 
     }
     
-    // aplica efectos residuales
+    /**
+     * aplica efectos residuales
+     * @param p Pokemon afectado.
+     * @param enemigo Pokemon rival.
+     */
     private void aplicarEfectosFinDeTurno(Pokemon p, Pokemon enemigo) {
 		if (p == null || p.getVitalidad() <= 0) return;
 		int danioResidual = 0;
@@ -342,7 +405,11 @@ public class Combate {
 		}
     }
     
-    // si esta debilitado, y lo logeamos
+    /**
+     * si esta debilitado, y lo logeamos
+     * @param pJ Pokemon del jugador.
+     * @param pR Pokemon del rival.
+     */
     private void comprobarDebilitados(Pokemon pJ, Pokemon pR) {
     	if (pJ != null && pJ.getVitalidad() <= 0 && pJ.getEstadoActual() != Estado.DEBILITADO) {
 			pJ.setEstadoActual(Estado.DEBILITADO);
@@ -356,7 +423,11 @@ public class Combate {
         }
     }
     
-    // mira si nos queda algun pokemon vivo en la reserva
+    /**
+     * mira si nos queda algun pokemon vivo en la reserva
+     * @param ent Entrenador a revisar.
+     * @return Si quedan vivos
+     */
     private boolean equipoVivo(Entrenador ent) {
         if (ent == null || ent.getEquipoPrincipal() == null) return false;
         for (Pokemon p : ent.getEquipoPrincipal()) {
@@ -365,7 +436,9 @@ public class Combate {
         return false;
     }
     
-    // comprobamos los KO en este metodo para dar la victoria
+    /**
+     * comprobamos los KO en este metodo para dar la victoria
+     */
     private void comprobarVictoria() {
 		if (koRival >= 6 || !equipoVivo(rival)) {
 			this.ganador = jugador;
@@ -376,7 +449,11 @@ public class Combate {
 		} 
     }
     
-    // calcula la experiencia, resta el dinero si pierdes y lo suma si ganas, incluyendo la liga pokemon
+    /**
+     * calcula la experiencia, resta el dinero si pierdes y lo suma si ganas, incluyendo la liga pokemon
+     * @param pJugador Pokemon del jugador.
+     * @param pRival Pokemon del rival.
+     */
     private void repartirRecompensas(Pokemon pJugador, Pokemon pRival) {
         
         // LÓGICA DE DINERO
