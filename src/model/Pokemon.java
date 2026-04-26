@@ -3,6 +3,11 @@ package model;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+/**
+ * Representa a un Pokémon individual dentro del juego.
+ * Gestiona sus estadísticas, movimientos, estado de salud, 
+ * experiencia, nivel y la lógica de combate y crianza.
+ */
 public class Pokemon {
 
 	// Constantes para el nivel, y fertilidad por defecto.
@@ -19,12 +24,14 @@ public class Pokemon {
 	private Movimiento[] movimiento = new Movimiento[4]; // Array para la lista de movimientos que tiene el pokemon.
 	private LinkedList<TipoPokemon> tipoPokemon; // Creamos una lista para guardar los tipos pokemons
 	private String sexo;
-	private Estado estadoActual; // Usamos composición para poder asignar los efectos de cada estado específico a
-									// nuestro pokemon.
+	private Estado estadoActual; // Usamos composición para poder asignar los efectos de cada estado específico a nuestro pokemon.
 	private int turnosEstado;
 	private String ubicacion;
 
-	// Constructor por defecto
+	/**
+	 * Constructor por defecto.
+	 * Genera un Pokémon base con estadísticas aleatorias y valores iniciales por defecto.
+	 */
 	public Pokemon() {
 		super();
 		this.idPokemon = 0;
@@ -50,7 +57,31 @@ public class Pokemon {
 		this.ubicacion = "";
 	}
 
-	// Constructor con parámetros
+	/**
+	 * Constructor con parámetros completos.
+	 * Utilizado principalmente para reconstruir un Pokémon extrayendo sus datos de la Base de Datos.
+	 * * @param idPokemon El ID único del Pokémon en la partida.
+	 * @param idEntrenador El ID del entrenador dueño.
+	 * @param numPokedex Objeto Pokedex con los datos de su especie.
+	 * @param objetoEquipado Objeto que lleva el Pokémon (si lo hay).
+	 * @param mote El apodo dado por el entrenador.
+	 * @param vitalidad Puntos de vida actuales.
+	 * @param ataque Estadística de ataque físico.
+	 * @param defensa Estadística de defensa física.
+	 * @param velocidad Estadística de velocidad.
+	 * @param estamina Energía actual para realizar movimientos.
+	 * @param exp Experiencia actual acumulada.
+	 * @param nivel Nivel de poder actual.
+	 * @param fertilidad Número de veces que puede criar.
+	 * @param ataqueEspecial Estadística de ataque especial.
+	 * @param defensaEspecial Estadística de defensa especial.
+	 * @param movimiento Array con los 4 movimientos que conoce.
+	 * @param tipoPokemon Lista con los tipos elementales del Pokémon.
+	 * @param sexo Género del Pokémon ("M" o "H").
+	 * @param estadoActual Alteración de estado que sufre (ej: SALUDABLE, QUEMADO).
+	 * @param ubicacion Lugar donde está guardado (EQUIPO o CAJA).
+	 * @param turnosEstado Turnos restantes si sufre un estado temporal.
+	 */
 	public Pokemon(int idPokemon, int idEntrenador, Pokedex numPokedex, Objeto objetoEquipado, String mote,
 			int vitalidad, int ataque, int defensa, int velocidad, int estamina, int exp, int nivel, int fertilidad,
 			int ataqueEspecial, int defensaEspecial, Movimiento[] movimiento, LinkedList<TipoPokemon> tipoPokemon,
@@ -79,7 +110,11 @@ public class Pokemon {
 		this.turnosEstado = turnosEstado;
 	}
 
-	// Constructor copia
+	/**
+	 * Constructor copia.
+	 * Crea un Pokémon exactamente igual a otro, realizando copias profundas de sus arrays y colecciones.
+	 * * @param p El Pokémon que se desea clonar.
+	 */
 	public Pokemon(Pokemon p) {
 		super();
 		this.idPokemon = p.idPokemon;
@@ -97,19 +132,16 @@ public class Pokemon {
 		this.fertilidad = p.fertilidad;
 		this.ataqueEspecial = p.ataqueEspecial;
 		this.defensaEspecial = p.defensaEspecial;
-		// Realizamos una copia profunda en la variable movimiento para que si
-		// modificamos el array, los movimientos de un pokemon no se modificquen en los
-		// otros.
+		
+		// Realizamos una copia profunda en la variable movimiento para que si modificamos el array, 
+		// los movimientos de un pokemon no se modifiquen en los otros.
 		if (p.movimiento != null) {
-			this.movimiento = p.movimiento.clone(); // Creamos un nuevo array con los mismos datos con clone. Lo
-													// clonamos para evitar errores.
+			this.movimiento = p.movimiento.clone(); 
 		} else {
 			this.movimiento = new Movimiento[4];
 		}
 		if (p.tipoPokemon != null) {
-			this.tipoPokemon = new LinkedList<>(p.tipoPokemon); // Aqui usamos la misma lógica, creamos una nueva lista
-																// con los datos que ya teníamos para evitar que las
-																// modificaciones alteren los demás pokemons
+			this.tipoPokemon = new LinkedList<>(p.tipoPokemon); 
 		} else {
 			this.tipoPokemon = new LinkedList<>();
 		}
@@ -119,8 +151,12 @@ public class Pokemon {
 		this.ubicacion = p.ubicacion;
 	}
 
-	// Creamos un constructor Nacimiento, en el que solamente se pidan los valores
-	// que no se van a conocer cuando el pokemon nace.
+	/**
+	 * Constructor de Nacimiento / Captura.
+	 * Pide solamente los valores esenciales, el resto (stats, sexo) se generan de forma aleatoria por defecto.
+	 * * @param numPokedex Los datos de la especie extraídos de la Pokédex.
+	 * @param mote El nombre que se le asigna al nacer o ser capturado.
+	 */
 	public Pokemon(Pokedex numPokedex, String mote) {
 		super();
 		this.idPokemon = 0;
@@ -146,50 +182,18 @@ public class Pokemon {
 	}
 
 	// Getters and setters
-	public int getIdPokemon() {
-		return idPokemon;
-	}
-
-	public void setIdPokemon(int idPokemon) {
-		this.idPokemon = idPokemon;
-	}
-
-	public int getIdEntrenador() {
-		return idEntrenador;
-	}
-
-	public void setIdEntrenador(int idEntrenador) {
-		this.idEntrenador = idEntrenador;
-	}
-
-	public Pokedex getNumPokedex() {
-		return numPokedex;
-	}
-
-	public void setNumPokedex(Pokedex numPokedex) {
-		this.numPokedex = numPokedex;
-	}
-
-	public Objeto getObjetoEquipado() {
-		return objetoEquipado;
-	}
-
-	public void setObjetoEquipado(Objeto objetoEquipado) {
-		this.objetoEquipado = objetoEquipado;
-	}
-
-	public String getMote() {
-		return mote;
-	}
-
-	public void setMote(String mote) {
-		this.mote = mote;
-	}
-
-	public int getVitalidad() {
-		return vitalidad;
-	}
-
+	public int getIdPokemon() { return idPokemon; }
+	public void setIdPokemon(int idPokemon) { this.idPokemon = idPokemon; }
+	public int getIdEntrenador() { return idEntrenador; }
+	public void setIdEntrenador(int idEntrenador) { this.idEntrenador = idEntrenador; }
+	public Pokedex getNumPokedex() { return numPokedex; }
+	public void setNumPokedex(Pokedex numPokedex) { this.numPokedex = numPokedex; }
+	public Objeto getObjetoEquipado() { return objetoEquipado; }
+	public void setObjetoEquipado(Objeto objetoEquipado) { this.objetoEquipado = objetoEquipado; }
+	public String getMote() { return mote; }
+	public void setMote(String mote) { this.mote = mote; }
+	
+	public int getVitalidad() { return vitalidad; }
 	public void setVitalidad(int vitalidad) {
 		this.vitalidad = vitalidad;
 		if (this.vitalidad < 0) {
@@ -197,168 +201,98 @@ public class Pokemon {
 		}
 	}
 
-	public int getAtaque() {
-		return ataque;
+	public int getAtaque() { return ataque; }
+	public void setAtaque(int ataque) { this.ataque = ataque; }
+	public int getDefensa() { return defensa; }
+	public void setDefensa(int defensa) { this.defensa = defensa; }
+	public int getVelocidad() { return velocidad; }
+	public void setVelocidad(int velocidad) { this.velocidad = velocidad; }
+	public int getEstamina() { return estamina; }
+	public void setEstamina(int estamina) { this.estamina = estamina; }
+	public int getExp() { return exp; }
+	public void setExp(int exp) { this.exp = exp; }
+	public int getNivel() { return nivel; }
+	public void setNivel(int nivel) { this.nivel = nivel; }
+	public int getFertilidad() { return fertilidad; }
+	public void setFertilidad(int fertilidad) { this.fertilidad = fertilidad; }
+	public int getAtaqueEspecial() { return ataqueEspecial; }
+	public void setAtaqueEspecial(int ataqueEspecial) { this.ataqueEspecial = ataqueEspecial; }
+	public int getDefensaEspecial() { return defensaEspecial; }
+	public void setDefensaEspecial(int defensaEspecial) { this.defensaEspecial = defensaEspecial; }
+	public Movimiento[] getMovimiento() { return movimiento; }
+	public void setMovimiento(Movimiento[] movimiento) { this.movimiento = movimiento; }
+	public LinkedList<TipoPokemon> getTipoPokemon() { return tipoPokemon; }
+	public void setTipoPokemon(LinkedList<TipoPokemon> tipoPokemon) { this.tipoPokemon = tipoPokemon; }
+	public String getSexo() { return sexo; }
+	public void setSexo(String sexo) { this.sexo = sexo; }
+	public Estado getEstadoActual() { return estadoActual; }
+	public void setEstadoActual(Estado estadoActual) { this.estadoActual = estadoActual; }
+	public String getUbicacion() { return ubicacion; }
+	public void setUbicacion(String ubicacion) { this.ubicacion = ubicacion; }
+	public int getTurnosEstado() { return turnosEstado; }
+	public void setTurnosEstado(int turnosEstado) { this.turnosEstado = turnosEstado; }
+
+	/**
+	 * Método para obtener el ataque total con el plus del objeto que lleve equipado.
+	 * * @return El stat de ataque modificado o el base si no lleva objeto.
+	 */
+	public int ataqueObjetoAplicado() {
+		if (this.objetoEquipado == null || this.objetoEquipado.getNomObjeto() == null) return this.ataque;
+		return (int) (this.ataque + (this.ataque * this.objetoEquipado.getModAtaque() / 100));
 	}
 
-	public void setAtaque(int ataque) {
-		this.ataque = ataque;
+	/**
+	 * Método para obtener la defensa total con el plus del objeto que lleve equipado.
+	 * * @return El stat de defensa modificado o el base si no lleva objeto.
+	 */
+	public int defensaObjetoAplicado() {
+		if (this.objetoEquipado == null || this.objetoEquipado.getNomObjeto() == null) return this.defensa;
+		return (int) (this.defensa + (this.defensa * this.objetoEquipado.getModDefensa() / 100));
 	}
 
-	public int getDefensa() {
-		return defensa;
+	/**
+	 * Método para obtener la velocidad total con el plus del objeto que lleve equipado.
+	 * * @return El stat de velocidad modificado o el base si no lleva objeto.
+	 */
+	public int velocidadaObjetoAplicado() {
+		if (this.objetoEquipado == null || this.objetoEquipado.getNomObjeto() == null) return this.velocidad;
+		return (int) (this.velocidad + (this.velocidad * this.objetoEquipado.getModVelocidad() / 100));
 	}
 
-	public void setDefensa(int defensa) {
-		this.defensa = defensa;
+	/**
+	 * Método para obtener la defensa especial total con el plus del objeto que lleve equipado.
+	 * * @return El stat de defensa especial modificado o el base si no lleva objeto.
+	 */
+	public int defEspecialObjetoAplicado() {
+		if (this.objetoEquipado == null || this.objetoEquipado.getNomObjeto() == null) return this.defensaEspecial;
+		return (int) (this.defensaEspecial + (this.defensaEspecial * this.objetoEquipado.getModDefEsp() / 100));
 	}
 
-	public int getVelocidad() {
-		return velocidad;
-	}
-
-	public void setVelocidad(int velocidad) {
-		this.velocidad = velocidad;
-	}
-
-	public int getEstamina() {
-		return estamina;
-	}
-
-	public void setEstamina(int estamina) {
-		this.estamina = estamina;
-	}
-
-	public int getExp() {
-		return exp;
-	}
-
-	public void setExp(int exp) {
-		this.exp = exp;
-	}
-
-	public int getNivel() {
-		return nivel;
-	}
-
-	public void setNivel(int nivel) {
-		this.nivel = nivel;
-	}
-
-	public int getFertilidad() {
-		return fertilidad;
-	}
-
-	public void setFertilidad(int fertilidad) {
-		this.fertilidad = fertilidad;
-	}
-
-	public int getAtaqueEspecial() {
-		return ataqueEspecial;
-	}
-
-	public void setAtaqueEspecial(int ataqueEspecial) {
-		this.ataqueEspecial = ataqueEspecial;
-	}
-
-	public int getDefensaEspecial() {
-		return defensaEspecial;
-	}
-
-	public void setDefensaEspecial(int defensaEspecial) {
-		this.defensaEspecial = defensaEspecial;
-	}
-
-	public Movimiento[] getMovimiento() {
-		return movimiento;
-	}
-
-	public void setMovimiento(Movimiento[] movimiento) {
-		this.movimiento = movimiento;
-	}
-
-	public LinkedList<TipoPokemon> getTipoPokemon() {
-		return tipoPokemon;
-	}
-
-	public void setTipoPokemon(LinkedList<TipoPokemon> tipoPokemon) {
-		this.tipoPokemon = tipoPokemon;
-	}
-
-	public String getSexo() {
-		return sexo;
-	}
-
-	public void setSexo(String sexo) {
-		this.sexo = sexo;
-	}
-
-	public Estado getEstadoActual() {
-		return estadoActual;
-	}
-
-	public void setEstadoActual(Estado estadoActual) {
-		this.estadoActual = estadoActual;
-	}
-
-	public String getUbicacion() {
-		return ubicacion;
-	}
-
-	public int getTurnosEstado() {
-		return turnosEstado;
-	}
-
-	public void setTurnosEstado(int turnosEstado) {
-		this.turnosEstado = turnosEstado;
-	}
-
-	public void setUbicacion(String ubicacion) {
-		this.ubicacion = ubicacion;
-	}
-
-	// Método para obtener el ataque total con el objeto aplicado al pokemon.
-    public int ataqueObjetoAplicado() {
-        if (this.objetoEquipado == null || this.objetoEquipado.getNomObjeto() == null) return this.ataque;
-        return (int) (this.ataque + (this.ataque * this.objetoEquipado.getModAtaque() / 100));
-    }
-
-    // Método para obtener la defensa total con el objeto aplicado al pokemon.
-    public int defensaObjetoAplicado() {
-        if (this.objetoEquipado == null || this.objetoEquipado.getNomObjeto() == null) return this.defensa;
-        return (int) (this.defensa + (this.defensa * this.objetoEquipado.getModDefensa() / 100));
-    }
-
-    // Método para obtener la velocidad total con el objeto aplicado al pokemon.
-    public int velocidadaObjetoAplicado() {
-        if (this.objetoEquipado == null || this.objetoEquipado.getNomObjeto() == null) return this.velocidad;
-        return (int) (this.velocidad + (this.velocidad * this.objetoEquipado.getModVelocidad() / 100));
-    }
-
-    // Método para obtener la defensa especial total con el objeto aplicado al pokemon.
-    public int defEspecialObjetoAplicado() {
-        if (this.objetoEquipado == null || this.objetoEquipado.getNomObjeto() == null) return this.defensaEspecial;
-        return (int) (this.defensaEspecial + (this.defensaEspecial * this.objetoEquipado.getModDefEsp() / 100));
-    }
-
-	// Creamos un método de clase para generar las stats aleatorias cuando el
-	// pokemon nace. Las generamos por defecto
+	/**
+	 * Método de clase para generar stats aleatorias cuando el Pokémon nace.
+	 * * @return Un número entero aleatorio entre 1 y 10.
+	 */
 	private static int generarStatAleatoria() {
 		return (int) (Math.random() * 10) + 1;
 	}
 
-	// Creamos método para la aleatoriedad del sexo.
+	/**
+	 * Método para la aleatoriedad del sexo.
+	 * Utiliza un operador ternario: Si el número generado es menor que 0.5 es macho, si es mayor es hembra.
+	 * * @return Una cadena "M" o "H".
+	 */
 	private static String generarSexoAleatorio() {
-		// Operador terniario
-		// Condición: Numero que genera Math.random es menor que 0.5? Si es verdadero es
-		// macho, si es falso es hembra.
 		return (Math.random() < 0.5) ? "M" : "H";
 	}
 
-	// Método para la subida de nivel del pokemon
+	/**
+	 * Método para gestionar la subida de nivel del Pokémon mediante la experiencia acumulada.
+	 * Resta la experiencia consumida y recalcula las estadísticas de forma justa.
+	 * * @return true si el Pokémon ha logrado subir al menos un nivel, false en caso contrario.
+	 */
 	public boolean subirNivel() {
 		boolean subidaNivel = false;
-		// Usamos un bucle While para los caso en los que se gane mucha experiencia.
+		// Usamos un bucle While para los caso en los que se gane mucha experiencia de golpe.
 		while (this.exp >= this.nivel * 10) {
 			this.exp -= (this.nivel * 10); // Gastamos la experiencia que teníamos
 			this.nivel++;
@@ -373,12 +307,11 @@ public class Pokemon {
 			this.ataqueEspecial = statBaseBD + (this.nivel * 2);
 			this.defensaEspecial = statBaseBD + (this.nivel * 2);
 
-            // Reestablecemos la vida, estamina y estado al subir de nivel (como se pidió)
-            this.estamina = 100;
-            this.estadoActual = Estado.SALUDABLE;
+			// Reestablecemos la vida, estamina y estado al subir de nivel (como se pidió)
+			this.estamina = 100;
+			this.estadoActual = Estado.SALUDABLE;
 
-			// Creamos la condición para que cada 3 niveles nuestro pokemon pueda aprender
-			// un nuevo movimiento!
+			// Condición para que cada 3 niveles el pokemon avise de nuevo movimiento
 			if (this.nivel % 3 == 0) {
 				System.out.println("¡El pokemon puede aprender un nuevo movimiento!");
 			}
@@ -387,21 +320,26 @@ public class Pokemon {
 		return subidaNivel;
 	}
 
-	// Método que comprueba si el pokemon ha alcanzado el nivel para evolucionar
-	// Devuelve el ID de la nueva especie, o -1 si no le toca evolucionar
+	/**
+	 * Comprueba si el Pokémon ha alcanzado el nivel necesario para evolucionar a su siguiente fase.
+	 * * @return Devuelve el ID de la nueva especie si le toca evolucionar, o -1 si no tiene evolución pendiente.
+	 */
 	public int comprobarEvolucion() {
 		int[] datosEvo = obtenerDatosEvolucion();
 
-		// Si tiene una evolución programada y su nivel actual es mayor o igual al
-		// requerido evolucionará
+		// Si tiene una evolución programada y su nivel actual es mayor o igual al requerido evolucionará
 		if (datosEvo != null && this.nivel >= datosEvo[1]) {
-			return datosEvo[0]; // Devolvemos el ID del nuevo Pokémon
+			return datosEvo[0]; 
 		}
 
-		return -1; // No evoluciona aún
+		return -1; 
 	}
 
-	// Método para mutar al pokemon a su nueva forma
+	/**
+	 * Método para mutar al Pokémon a su nueva forma tras evolucionar.
+	 * Se encarga de cambiar su especie, otorgar el plus de estadísticas y curarlo.
+	 * * @param nuevaEspecie Objeto Pokedex con los datos de la evolución.
+	 */
 	public void evolucionar(Pokedex nuevaEspecie) {
 		this.numPokedex = nuevaEspecie; // Cambiamos su especie
 
@@ -413,45 +351,45 @@ public class Pokemon {
 		this.defensaEspecial += 10;
 		this.velocidad += 10;
 
-		// Curamos al pokemonn
+		// Curamos al pokemon
 		this.estamina = 100;
 	}
 
-	// Creamos método para concebir a un pokemon.
+	/**
+	 * Método para concebir a un Pokémon nuevo mediante crianza.
+	 * Genera un hijo que hereda la especie de la madre y la media matemática de las estadísticas de los padres.
+	 * * @param padre El Pokémon macho.
+	 * @param madre El Pokémon hembra.
+	 * @return Un nuevo Pokémon recién nacido (Nivel 1).
+	 */
 	public static Pokemon engendrarHijo(Pokemon padre, Pokemon madre) {
 		// Hereda la especie de la madre (regla clásica de Pokémon)
 		// Usamos el constructor de copia o nacimiento
 		Pokemon hijo = new Pokemon(madre.getNumPokedex(), "Huevo de " + madre.getMote());
 
 		// Hacemos que herede la media de los STATS de padre y madre
-		// Vitalidad
 		hijo.setVitalidad((padre.getVitalidad() + madre.getVitalidad()) / 2);
-		// Ataque
 		hijo.setAtaque((padre.getAtaque() + madre.getAtaque()) / 2);
-		// Defensa
 		hijo.setDefensa((padre.getDefensa() + madre.getDefensa()) / 2);
-		// Velocidad
 		hijo.setVelocidad((padre.getVelocidad() + madre.getVelocidad()) / 2);
-		// Ataque Especial
 		hijo.setAtaqueEspecial((padre.getAtaqueEspecial() + madre.getAtaqueEspecial()) / 2);
-		// Defensa Especial
 		hijo.setDefensaEspecial((padre.getDefensaEspecial() + madre.getDefensaEspecial()) / 2);
 
 		// Nivel al que nace el hijo
 		hijo.setNivel(1);
 		hijo.setEstamina(100); // Nace descansado
 		hijo.setExp(0); // Nace sin exp.
-		hijo.setFertilidad(5); // Nacse con el máximo de fertilidad
+		hijo.setFertilidad(5); // Nace con el máximo de fertilidad
 
 		return hijo;
 	}
 
 	
-	/** Creamos el método atacar a otro pokemon
-	 * Le pasamos como argumentos un pokemon al que atacar y un movimiento.
-	 * 
-	 * @param pokemonEnemigo Parametro para pasarle el pokemon enemigo
-	 * @param movElegido Parametro para enviar el movimiento a ejecutar
+	/** * Creamos el método atacar a otro pokemon.
+	 * Gestiona el coste de estamina, cálculo de daño y efectividad elemental, 
+	 * e impone estados alterados si corresponde.
+	 * * @param pokemonEnemigo Parametro para pasarle el pokemon enemigo que recibe el golpe.
+	 * @param movElegido Parametro para enviar el movimiento que se va a ejecutar.
 	 */
 	public void atacar(Pokemon pokemonEnemigo, Movimiento movElegido) {
 
@@ -489,10 +427,9 @@ public class Pokemon {
 					factorDefensa = 1.0;
 
 				int danioBase = (int) ((ataqueReal + movElegido.getPotencia()) / factorDefensa);
-
 				int danioFinal = (int) (danioBase * efectividad);
 
-				// Daño mínimo garantizado para que el combate fluya [cite: 1, 130]
+				// Daño mínimo garantizado para que el combate fluya
 				if (danioFinal < 10) {
 					danioFinal = 10 + (this.nivel * 2);
 				}
@@ -514,26 +451,18 @@ public class Pokemon {
 				if (pokemonEnemigo.getEstadoActual() == Estado.SALUDABLE) {
 					boolean esInmune = false;
 					for (TipoPokemon tipo : pokemonEnemigo.getTipoPokemon()) {
-						if (movElegido.getEstado() == Estado.QUEMADO && tipo == TipoPokemon.FUEGO)
-							esInmune = true;
-						if (movElegido.getEstado() == Estado.CONGELADO && tipo == TipoPokemon.HIELO)
-							esInmune = true;
-						if (movElegido.getEstado() == Estado.HELADO && tipo == TipoPokemon.HIELO)
-							esInmune = true;
-						if (movElegido.getEstado() == Estado.DRENADORAS && tipo == TipoPokemon.PLANTA)
-							esInmune = true;
-						if (movElegido.getEstado() == Estado.PARALIZADO && tipo == TipoPokemon.ELECTRICO)
-							esInmune = true;
-						if ((movElegido.getEstado() == Estado.ENVENENADO
-								|| movElegido.getEstado() == Estado.GRAVEMENTE_ENVENENADO)
-								&& tipo == TipoPokemon.VENENO)
-							esInmune = true;
+						if (movElegido.getEstado() == Estado.QUEMADO && tipo == TipoPokemon.FUEGO) esInmune = true;
+						if (movElegido.getEstado() == Estado.CONGELADO && tipo == TipoPokemon.HIELO) esInmune = true;
+						if (movElegido.getEstado() == Estado.HELADO && tipo == TipoPokemon.HIELO) esInmune = true;
+						if (movElegido.getEstado() == Estado.DRENADORAS && tipo == TipoPokemon.PLANTA) esInmune = true;
+						if (movElegido.getEstado() == Estado.PARALIZADO && tipo == TipoPokemon.ELECTRICO) esInmune = true;
+						if ((movElegido.getEstado() == Estado.ENVENENADO || movElegido.getEstado() == Estado.GRAVEMENTE_ENVENENADO)
+								&& tipo == TipoPokemon.VENENO) esInmune = true;
 					}
 
 					if (!esInmune) {
 						pokemonEnemigo.setEstadoActual(movElegido.getEstado());
-						System.out.println(
-								"¡" + pokemonEnemigo.getMote() + " ahora está " + movElegido.getEstado() + "!");
+						System.out.println("¡" + pokemonEnemigo.getMote() + " ahora está " + movElegido.getEstado() + "!");
 						if (movElegido.getEstado() == Estado.DORMIDO) {
 							pokemonEnemigo.setTurnosEstado((int) (Math.random() * 3) + 1);
 						}
@@ -549,41 +478,41 @@ public class Pokemon {
 	}
 
 
-    /**
-     * 
-	 *  Creamos el método descansar para recuperar la estamina perdida que gastamos
-	 *  en combate o haceindo algún movimiento
+	/**
+	 * Creamos el método descansar para recuperar la estamina perdida que gastamos
+	 * en combate o haciendo algún movimiento.
 	 */
 	public void descansar() {
-        double modRecup = 1.0;
-        double modMax = 1.0;
-        
-        // Solo aplicamos mods si el objeto es real y tiene nombre
-        if (this.objetoEquipado != null && this.objetoEquipado.getNomObjeto() != null) {
-            if (this.objetoEquipado.getModRecupEstamina() > 0) modRecup = this.objetoEquipado.getModRecupEstamina();
-            if (this.objetoEquipado.getModEstamina() > 0) modMax = this.objetoEquipado.getModEstamina();
-        }
-        
-        // Aseguramos un mínimo de 20 de recuperación para evitar bucles infinitos
-        int cantRecuperada = (int) (20 * modRecup);
-        if (cantRecuperada <= 0) cantRecuperada = 20; 
-        
-        this.estamina += cantRecuperada;
-        
-        int topeMax = (int) (100 * modMax);
-        if (topeMax <= 0) topeMax = 100;
-        
-        if (this.estamina > topeMax) { 
-            this.estamina = topeMax;
-        }
-    }
+		double modRecup = 1.0;
+		double modMax = 1.0;
+		
+		// Solo aplicamos mods si el objeto es real y tiene nombre
+		if (this.objetoEquipado != null && this.objetoEquipado.getNomObjeto() != null) {
+			if (this.objetoEquipado.getModRecupEstamina() > 0) modRecup = this.objetoEquipado.getModRecupEstamina();
+			if (this.objetoEquipado.getModEstamina() > 0) modMax = this.objetoEquipado.getModEstamina();
+		}
+		
+		// Aseguramos un mínimo de 20 de recuperación para evitar bucles infinitos
+		int cantRecuperada = (int) (20 * modRecup);
+		if (cantRecuperada <= 0) cantRecuperada = 20; 
+		
+		this.estamina += cantRecuperada;
+		
+		int topeMax = (int) (100 * modMax);
+		if (topeMax <= 0) topeMax = 100;
+		
+		if (this.estamina > topeMax) { 
+			this.estamina = topeMax;
+		}
+	}
 
 
 	/**
 	 * Método para aprender un nuevo movimiento
-	 * @param nuevoMov Le pasamos el movimiento a aprender
-	 * @param indice 
-	 * @return
+	 * Reemplaza el movimiento situado en el índice indicado y lo devuelve.
+	 * * @param nuevoMov Le pasamos el movimiento que queremos aprender.
+	 * @param indice El hueco (0-3) que va a ocupar.
+	 * @return El movimiento antiguo que ha sido reemplazado (para que el Controller lo guarde o descarte).
 	 */
 	public Movimiento aprenderMovimiento(Movimiento nuevoMov, int indice) {
 		// Condición para evitar que se introduzca un índice erróneo en nuestro array
@@ -593,6 +522,7 @@ public class Pokemon {
 		// Reemplazamos el movimiento que queremos olvidar y lo guardamos en una
 		// variable para luego en el MAIN guardarlo en una COLECCIÓN.
 		Movimiento movOlvidado = this.movimiento[indice];
+		
 		// Sobreescribimos el nuevo movimiento encima y lo guardamos en nuestro array de
 		// movimientos actuales del pokemon
 		this.movimiento[indice] = nuevoMov;
@@ -601,7 +531,12 @@ public class Pokemon {
 		return movOlvidado;
 	}
 
-	// Método que sabe qué bebé sale de cada evolución
+	/**
+	 * Método que sabe qué bebé sale de cada evolución.
+	 * Devuelve el ID de la primera fase evolutiva dependiendo de qué ID tenga la madre.
+	 * * @param idMadre El número en la Pokédex de la madre.
+	 * @return El número en la Pokédex correspondiente a su fase inicial.
+	 */
 	public static int obtenerIdBebe(int idMadre) {
 		return switch (idMadre) {
 		// Iniciales
@@ -687,8 +622,11 @@ public class Pokemon {
 		};
 	}
 
-	// Método que define a qué ID evoluciona cada pokemon y a qué nivel.
-	// Si no evoluciona, devuelve null.
+	/**
+	 * Método que define a qué ID evoluciona cada Pokémon y a qué nivel.
+	 * * @return Un array con dos valores [ID Nueva Especie, Nivel Requerido]. 
+	 * Si no evoluciona por nivel, devuelve null.
+	 */
 	public int[] obtenerDatosEvolucion() {
 		// Obtenemos el ID de la especie actual
 		int miIdEspecie = this.numPokedex.getNumPokedex();
@@ -769,7 +707,10 @@ public class Pokemon {
 		};
 	}
 
-	// Método toString
+	/**
+	 * Método toString.
+	 * Devuelve un desglose completo con todas las propiedades de la instancia del Pokémon actual.
+	 */
 	@Override
 	public String toString() {
 		return "Pokemon [idPokemon=" + idPokemon + ", idEntrenador=" + idEntrenador + ", numPokedex=" + numPokedex
