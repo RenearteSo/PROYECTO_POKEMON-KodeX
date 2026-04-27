@@ -11,9 +11,20 @@ import model.Pokedex;
 import model.Pokemon;
 import model.TipoPokemon;
 
+/**
+ * Clase de acceso a datos (DAO) encargada de gestionar toda la lógica de base de datos
+ * relacionada con los combates. Se encarga de cargar el equipo del jugador, generar 
+ * rivales aleatorios balanceados y guardar las recompensas (dinero y experiencia) al finalizar.
+ */
 public class CombateDao {
 
-  public void cargarEquipoJugador(Entrenador jugador) {
+	/**
+	 * Carga el equipo principal (máximo 6 Pokémon) del jugador desde la base de datos.
+	 * Utiliza un sistema de consultas cruzadas (JOIN) para obtener la imagen trasera
+	 * de la Pokédex y los tipos elementales, asegurando que no haya filas duplicadas.
+	 * * @param jugador El objeto Entrenador al que se le va a cargar el equipo principal.
+	 */
+	public void cargarEquipoJugador(Entrenador jugador) {
         
         // Preparamos una consulta bastante completa. Usamos JOIN para unir la tabla del pokemon con la Pokedex (para pillar la imagen trasera), 
         // y LEFT JOIN para traernos tambien el nombre de su tipo. 
@@ -36,7 +47,7 @@ public class CombateDao {
             Pokemon[] equipo = new Pokemon[6];
             int i = 0;
             
-            // Vamos leyendo los resultados de la base de datos y cargamdo cada Pokemon
+            // Vamos leyendo los resultados de la base de datos y cargando cada Pokemon
             while(rs.next() && i < 6) {
                 Pokemon p = new Pokemon();
                 p.setIdPokemon(rs.getInt("ID_POKEMON"));
@@ -94,27 +105,38 @@ public class CombateDao {
         } catch (SQLException e) {}
     }
   
-//Obtenemos los datos de la nueva especie para poder evolucionar
-  public Pokedex obtenerPokedexPorId(int id) {
-      String sql = "SELECT * FROM pokedex WHERE NUM_POKEDEX = ?";
-      ConexionDB connection = new ConexionDB();
-      try (Connection con = connection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-          ps.setInt(1, id);
-          ResultSet rs = ps.executeQuery();
-          if (rs.next()) {
-              Pokedex px = new Pokedex();
-              px.setNumPokedex(rs.getInt("NUM_POKEDEX"));
-              px.setNomPokemon(rs.getString("NOM_POKEMON"));
-              px.setRutaImgFront(rs.getString("IMG_FRONT"));
-              px.setRutaImgBack(rs.getString("IMG_BACK"));
-              px.setSonido("audio/Pokemon/cries_pokemon_legacy_" + px.getNumPokedex() + ".ogg");
-              return px;
-          }
-      } catch (SQLException e) {}
-      return null;
-  }
+	/**
+	 * Obtiene los datos base de una especie concreta desde la tabla Pokédex.
+	 * Utilizado principalmente para gestionar las evoluciones al ganar combates.
+	 * * @param id El número de la Pokédex de la especie que se desea consultar.
+	 * @return Un objeto Pokedex con la información rellena, o null si falla la consulta.
+	 */
+	public Pokedex obtenerPokedexPorId(int id) {
+		String sql = "SELECT * FROM pokedex WHERE NUM_POKEDEX = ?";
+		ConexionDB connection = new ConexionDB();
+		try (Connection con = connection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				Pokedex px = new Pokedex();
+				px.setNumPokedex(rs.getInt("NUM_POKEDEX"));
+				px.setNomPokemon(rs.getString("NOM_POKEMON"));
+				px.setRutaImgFront(rs.getString("IMG_FRONT"));
+				px.setRutaImgBack(rs.getString("IMG_BACK"));
+				px.setSonido("audio/Pokemon/cries_pokemon_legacy_" + px.getNumPokedex() + ".ogg");
+				return px;
+			}
+		} catch (SQLException e) {}
+		return null;
+	}
 
-    public int[] obtenerRangoNivelesEquipo(int idEntrenador) {
+	/**
+	 * Analiza el equipo del jugador para encontrar el nivel más alto y el más bajo.
+	 * Esto sirve para balancear automáticamente el nivel de los rivales.
+	 * * @param idEntrenador El ID del jugador actual.
+	 * @return Un array de enteros donde la posición [0] es el nivel mínimo y la [1] el máximo.
+	 */
+	public int[] obtenerRangoNivelesEquipo(int idEntrenador) {
         int min = 1, max = 1;
         
         // usamos min y max para obtener el rango de niveles del equipo
@@ -143,7 +165,16 @@ public class CombateDao {
         return new int[]{min, max};
     }
 
-  public Entrenador generarRivalAleatorio(int nivelMin, int nivelMax, int cantidadPokemon) {
+	/**
+	 * Genera un NPC (Entrenador rival) de forma completamente aleatoria para el combate.
+	 * Selecciona especies al azar de la Pokédex, ajusta sus niveles en base al jugador
+	 * y les asigna estadísticas base equilibradas.
+	 * * @param nivelMin El nivel mínimo que pueden tener los Pokémon del rival.
+	 * @param nivelMax El nivel máximo que pueden tener los Pokémon del rival.
+	 * @param cantidadPokemon El número de Pokémon que formarán el equipo del rival (1 a 6).
+	 * @return Un objeto Entrenador completamente configurado y listo para combatir.
+	 */
+	public Entrenador generarRivalAleatorio(int nivelMin, int nivelMax, int cantidadPokemon) {
         String[] posiblesNombres = {"LuisRe", "Fernando", "Carrión"};
         String nombreElegido = posiblesNombres[(int)(Math.random() * posiblesNombres.length)];
         
@@ -152,8 +183,8 @@ public class CombateDao {
         Pokemon[] equipoRival = new Pokemon[6];
         
         // Esta consulta es super importante. Sacamos la info directamente de la pokedex y sus tipos.
-        // "ORDER BY RAND() LIMIT ? es para pedir desordene la tabla aleatoriamente y 
-        //nos devuelva solo la cantidad de pokemon que le pasemos
+        // "ORDER BY RAND() LIMIT ?" es para pedir que desordene la tabla aleatoriamente y 
+        // nos devuelva solo la cantidad de pokemon que le pasemos
         String sql = "SELECT p.NUM_POKEDEX, p.NOM_POKEMON, p.IMG_FRONT, t.NOM_TIPO " +
                      "FROM pokedex p " +
                      "LEFT JOIN pokedex_tipo pt ON p.NUM_POKEDEX = pt.NUM_POKEDEX " +
@@ -223,23 +254,29 @@ public class CombateDao {
         return rival;
     }
   
-  public void actualizarRecompensasBD(Entrenador jugador) {
+	/**
+	 * Actualiza en la base de datos todos los progresos conseguidos tras ganar o perder un combate.
+	 * Registra el nuevo dinero del entrenador y recorre el equipo guardando la experiencia,
+	 * nivel, posibles evoluciones y la recuperación de estamina/salud.
+	 * * @param jugador El Entrenador cuyos datos y equipo se van a actualizar en la BD.
+	 */
+	public void actualizarRecompensasBD(Entrenador jugador) {
         
         // dos sentencias UPDATE separadas: una para actualizar la cartera del jugador
         // y otra para ir guardando la experiencia y el nivel que han ganado sus pokémon en el combate.
         String sqlDinero = "UPDATE entrenador "
-        		+ "SET POKEDOLLAR = ? "
-        		+ "WHERE ID_ENTRENADOR = ?";
+                + "SET POKEDOLLAR = ? "
+                + "WHERE ID_ENTRENADOR = ?";
         
         // Ahora también guardamos la nueva ID de la Pokedex (por si evoluciona) y la vitalidad/estamina curada
         String sqlExp = "UPDATE pokemon "
-        		+ "SET EXPERIENCIA = ?, "
-        		+ "NIVEL = ?, "
-        		+ "NUM_POKEDEX = ?, "
-        		+ "VITALIDAD = ?, "
-        		+ "ESTAMINA = ?, "
-        		+ "ESTADO = ? "
-        		+ "WHERE ID_POKEMON = ?";
+                + "SET EXPERIENCIA = ?, "
+                + "NIVEL = ?, "
+                + "NUM_POKEDEX = ?, "
+                + "VITALIDAD = ?, "
+                + "ESTAMINA = ?, "
+                + "ESTADO = ? "
+                + "WHERE ID_POKEMON = ?";
         
         ConexionDB connection = new ConexionDB();
         try (Connection con = connection.getConnection()) {

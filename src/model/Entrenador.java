@@ -8,7 +8,6 @@ import java.util.LinkedList;
  * Gestiona la información del jugador, su dinero, su equipo principal,
  * los Pokémon almacenados en la caja y los objetos de su mochila.
  * * @author KodeX
- * @version 1.0
  */
 public class Entrenador {
 
