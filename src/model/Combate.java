@@ -2,6 +2,13 @@ package model;
 
 import java.util.LinkedList;
 
+/**
+ * La Clase Combate gestiona la lógica de un enfrentamiento entre dos entrenadores,
+ * controla los turnos, el cálculo de daño, las alteraciones de estado,
+ * el registro en el log y las recompensas (experiencia y dinero),
+ * incluyendo las reglas especiales de la Liga Pokémon.
+ */
+
 public class Combate {
 
     private Entrenador jugador;
@@ -18,13 +25,15 @@ public class Combate {
     private int totalExpGanada = 0;
     
  // LIGA POKEMON
+    // Atributos para la lógica de la Liga Pókemon
     private boolean esLiga = false;
     private int numCombateLiga = 1;
     private boolean descansoPrevioUsado = false;
 
     /**
-     * constructor con entrenador y rival
-     * @param jugador Entrenador principal.
+     * Constructor principal para iniciar un combate.
+     * Aquí se inicializan los marcadores de KO, el historial y el sistema de log.
+     * @param jugador Entrenador principal (el que controal el usuario).
      * @param rival Entrenador oponente.
      */
  	public Combate(Entrenador jugador, Entrenador rival) {
@@ -105,9 +114,9 @@ public class Combate {
     }
     
     /**
-     * configurar la liga pokemon
-     * @param numCombate Numero del combate
-     * @param descansoUsado Si se descansó antes.
+     * Configuración para activar las reglas de la Liga Pókemon.
+     * @param numCombate Numero del combate dentro de la Liga (1-5).
+     * @param descansoUsado Indica si el jugador descansó antes.
      */
     public void configurarComoLiga(int numCombate, boolean descansoUsado) {
         this.esLiga = true;
@@ -116,8 +125,10 @@ public class Combate {
     }
     
     /**
-     * método para ejecutar el turno
-     * @param t Turno
+     * Lógica completa de los turnos en el combate
+     * Gestiona la prioridad de movimiento que se basa en la velocidad y estados.
+     * Resuelve las acciones, aplica daño residual y comprueba la victoria.
+     * @param t Turno Objeto que contiene las decisiones que toman ambos jugadores.
      */
     public void ejecutarTurno (Turno t) {
     	
@@ -199,12 +210,14 @@ public class Combate {
     } 
     
     /**
-     * ejecuta la accion seleccionada por el jugador o el rival
-     * @param accion Accion elegida.
-     * @param entrenador Entrenador que actua.
+     * Procesa la acción como el Ataque, Cambio, Huida.
+     * En caso de ataque, se calcula el daño final basandose en el nivel, potencia, estadística,
+     * y los multiplicadores elementales.
+     * @param accion Tipo de acción que se va a realizar.
+     * @param entrenador Entrenador que ejecuta la acción.
      * @param actuante Pokemon que ejecuta la accion.
-     * @param enemigo Pokemon objetivo.
-     * @param t Turno actual.
+     * @param enemigo Pokemon que recibe la acción.
+     * @param t Turno actual para registrar el daño.
      */
     private void resolverAccion(Turno.TipoAccion accion, Entrenador entrenador, Pokemon actuante, Pokemon enemigo, Turno t) {
         if (actuante.getVitalidad() <= 0) return; 
@@ -259,10 +272,10 @@ public class Combate {
     }
 
     /**
-     * Metodo auxiliar para calcular la efectividad de un tipo contra otro 
-     * @param tipoAtaque Tipo del movimiento.
+     * Metodo auxiliar para calcular la efectividad de un tipo contra otro. 
+     * @param tipoAtaque Tipo del movimiento ejecutado.
      * @param tipoDefensa Tipo del Pokemon defensor.
-     * @return Multiplicador de danio.
+     * @return Multiplicador de danio, 2.0 Eficaz, 0.5 Resistida, 0.0 Inmune y 1.0 Neutro.
      */
     private double calcularEfectividad(TipoPokemon tipoAtaque, TipoPokemon tipoDefensa) {
         if (tipoAtaque == null || tipoDefensa == null) return 1.0;
@@ -337,9 +350,10 @@ public class Combate {
     } 
     
     /**
-     * valida si un pokemon puede hacer una accion dependiendo de su estado
-     * @param p Pokemon para a comprobar.
-     * @return si puede moverse.
+     * Verificamos si un Pókemon tiene permitido actuar según el estado en el que se encuentra actualmente.
+     * Gestiona las probabilidades de parálisis, confusión y sueño.
+     * @param p Pokemon a comprobar.
+     * @return true si puede moverse, false si no puede.
      */
     private boolean puedeMoverse(Pokemon p) {
     	if(p.getEstadoActual() == Estado.DORMIDO) return false;
@@ -360,7 +374,7 @@ public class Combate {
     }
     
     /**
-     * aplica efectos residuales
+     * Aplica los daños o curaciones al finalizar cada turno según el estado en el que se encuentre.
      * @param p Pokemon afectado.
      * @param enemigo Pokemon rival.
      */
@@ -406,7 +420,8 @@ public class Combate {
     }
     
     /**
-     * si esta debilitado, y lo logeamos
+     * Comprueba si los puntos de salud de los Pókemons han llegado a cero.
+     * Actualiza el estado Debilitado e incrementa los contadores de KO.
      * @param pJ Pokemon del jugador.
      * @param pR Pokemon del rival.
      */
@@ -424,9 +439,9 @@ public class Combate {
     }
     
     /**
-     * mira si nos queda algun pokemon vivo en la reserva
+     * Verifica si un entrenador aún tiene Pókemons para seguir luchando-
      * @param ent Entrenador a revisar.
-     * @return Si quedan vivos
+     * @return true si tiene al menos un Pókemon en el equipo principal con la Vitalidad mayor que cero.
      */
     private boolean equipoVivo(Entrenador ent) {
         if (ent == null || ent.getEquipoPrincipal() == null) return false;
@@ -437,7 +452,7 @@ public class Combate {
     }
     
     /**
-     * comprobamos los KO en este metodo para dar la victoria
+     * Comprobamos los KO en este metodo para determinar la victoria
      */
     private void comprobarVictoria() {
 		if (koRival >= 6 || !equipoVivo(rival)) {
@@ -450,9 +465,11 @@ public class Combate {
     }
     
     /**
-     * calcula la experiencia, resta el dinero si pierdes y lo suma si ganas, incluyendo la liga pokemon
-     * @param pJugador Pokemon del jugador.
-     * @param pRival Pokemon del rival.
+     * Ejecuta las transacciones económcias y la subida de experiencia.
+     * En la Liga, el dinero que se gana depende del uso del descanso y el número de combate.
+     * En los combates normales, se da un tercio del dinero del perdedor al ganador.
+     * @param pJugador Pokemon actual del jugador para dar la experiencia..
+     * @param pRival Pokemon actual del rival para calcular la base de experiencia.
      */
     private void repartirRecompensas(Pokemon pJugador, Pokemon pRival) {
         

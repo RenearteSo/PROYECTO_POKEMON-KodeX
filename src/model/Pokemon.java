@@ -10,8 +10,14 @@ import java.util.LinkedList;
  */
 public class Pokemon {
 
-	// Constantes para el nivel, y fertilidad por defecto.
+	/* 
+	 * Nivel inicial por defecto para cuando se genera un Pókemon.
+	 */
 	private final int NIVELDEF = 1;
+	
+	/* 
+	 * Punetos de fertilidad inicial por defecto para la crianza.
+	 */
 	private final int FERTILIDADDEF = 5;
 
 	private int idPokemon;
