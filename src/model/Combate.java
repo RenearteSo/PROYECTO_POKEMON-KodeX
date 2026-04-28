@@ -3,10 +3,10 @@ package model;
 import java.util.LinkedList;
 
 /**
- * La Clase Combate gestiona la lógica de un enfrentamiento entre dos entrenadores,
- * controla los turnos, el cálculo de daño, las alteraciones de estado,
- * el registro en el log y las recompensas (experiencia y dinero),
- * incluyendo las reglas especiales de la Liga Pokémon.
+ * La Clase Combate controla los turnos, el daño, alteraciones de estado, estamina
+ * el registro en el log y las recompensas (experiencia y pokedollares),
+ * así como la Liga Pokemon.
+ * *  @author KodeX
  */
 
 public class Combate {
