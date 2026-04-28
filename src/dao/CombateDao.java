@@ -107,9 +107,9 @@ public class CombateDao {
   
 	/**
 	 * Obtiene los datos base de una especie concreta desde la tabla Pokédex.
-	 * Utilizado principalmente para gestionar las evoluciones al ganar combates.
-	 * * @param id El número de la Pokédex de la especie que se desea consultar.
-	 * @return Un objeto Pokedex con la información rellena, o null si falla la consulta.
+	 * Utilizado principalmente para las evoluciones al ganar los combates
+	 * * @param id El número de la Pokédex de la especie
+	 * @return Un objeto Pokedex con la información rellena, o null si no se encuentra
 	 */
 	public Pokedex obtenerPokedexPorId(int id) {
 		String sql = "SELECT * FROM pokedex WHERE NUM_POKEDEX = ?";
@@ -132,9 +132,9 @@ public class CombateDao {
 
 	/**
 	 * Analiza el equipo del jugador para encontrar el nivel más alto y el más bajo.
-	 * Esto sirve para balancear automáticamente el nivel de los rivales.
-	 * * @param idEntrenador El ID del jugador actual.
-	 * @return Un array de enteros donde la posición [0] es el nivel mínimo y la [1] el máximo.
+	 * Para equilibrar el nivel de los rivales.
+	 * * @param idEntrenador El ID del jugador.
+	 * @return Un array de enteros donde el 0 es el nivel mínimo y 1 el max
 	 */
 	public int[] obtenerRangoNivelesEquipo(int idEntrenador) {
         int min = 1, max = 1;
@@ -166,13 +166,13 @@ public class CombateDao {
     }
 
 	/**
-	 * Genera un NPC (Entrenador rival) de forma completamente aleatoria para el combate.
-	 * Selecciona especies al azar de la Pokédex, ajusta sus niveles en base al jugador
-	 * y les asigna estadísticas base equilibradas.
+	 * Genera un Entrenador rival de forma aleatoria para el combate.
+	 * Selecciona pokemons al azar de la Pokédex, ajustando los niveles dependiendo del juagdor
+	 * y les da estadísticas equilibradas.
 	 * * @param nivelMin El nivel mínimo que pueden tener los Pokémon del rival.
 	 * @param nivelMax El nivel máximo que pueden tener los Pokémon del rival.
 	 * @param cantidadPokemon El número de Pokémon que formarán el equipo del rival (1 a 6).
-	 * @return Un objeto Entrenador completamente configurado y listo para combatir.
+	 * @return Un objeto Entrenador
 	 */
 	public Entrenador generarRivalAleatorio(int nivelMin, int nivelMax, int cantidadPokemon) {
         String[] posiblesNombres = {"LuisRe", "Fernando", "Carrión"};
@@ -255,10 +255,10 @@ public class CombateDao {
     }
   
 	/**
-	 * Actualiza en la base de datos todos los progresos conseguidos tras ganar o perder un combate.
+	 * Actualiza en la base de datos lo conseguido tras ganar o perder un combate.
 	 * Registra el nuevo dinero del entrenador y recorre el equipo guardando la experiencia,
-	 * nivel, posibles evoluciones y la recuperación de estamina/salud.
-	 * * @param jugador El Entrenador cuyos datos y equipo se van a actualizar en la BD.
+	 * nivel y la recuperación de estamina y salud.
+	 * * @param jugador El Entrenador a actualizar en la base de datos
 	 */
 	public void actualizarRecompensasBD(Entrenador jugador) {
         
